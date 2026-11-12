@@ -10,8 +10,8 @@ tables at the end. Each symbol keeps one meaning throughout.
 The notation follows the usual conventions for epidemic models where they
 exist: $N$ for population size, $I_0$ for the number initially infected,
 $\beta$ for transmission rates, $c$ for the contact rate, $\tau$ for time
-since infection, and $\sigma$ for the standard deviation of the log of a
-lognormal random variable. Because $S$, $I$ and $R$ conventionally name the
+since infection, $\mu$ and $\sigma$ for the mean and standard deviation of
+the log of a lognormal random variable, and $\rho$ for a correlation. Because $S$, $I$ and $R$ conventionally name the
 compartments of an SIR model, they are not used for individual quantities.
 
 Individual state changes only at discrete times. A quantity written as a
@@ -77,7 +77,7 @@ At time 0, $I_0$ individuals chosen uniformly at random without replacement
 are infected ([Infection](#sec-infection)). For every other individual,
 $X_i = 0$, where $X_i$ is 1 if individual $i$ is infected and 0 otherwise.
 Before these initial infections, no individual has any immunity: the time
-since their most recent immunity boost is $\tau_i^{\mathrm{b}} = \infty$
+since their most recent immunity boost is $\tau_i^{\mathrm{boost}} = \infty$
 and their immunity level is $z_i = 0$
 ([Recovery and immunity](#sec-immunity)).
 
@@ -211,25 +211,55 @@ nothing happens. When $V_j = 0$, $\beta_k = 0$ and $p_k = 0$.
 ### Infection
 
 When individual $i$ is infected, at the start of the simulation or by a
-contact event, their viral load level is drawn, their current immunity is
-recorded, their immunity is boosted, and their time since infection is set
-to zero:
+contact event:
 
 <a id="eq-infection"></a>
 
 ```math
-\nu_i \sim \mathrm{LogNormal}(0, \sigma_\nu), \qquad
 z_i^{\mathrm{inf}} \leftarrow z_i, \qquad
-\tau_i^{\mathrm{b}} \leftarrow 0, \qquad
-X_i \leftarrow 1, \qquad \tau_i \leftarrow 0
+X_i \leftarrow 1, \qquad \tau_i^{\mathrm{inf}} \leftarrow 0, \qquad
+\tau_i^{\mathrm{boost}} \leftarrow 0
 ```
 
-where $\nu_i$ is the viral load level of the infection, $\sigma_\nu$ is the
-standard deviation of its log, $z_i^{\mathrm{inf}}$ is the immunity level
-at infection, and $\tau_i$ is the time since infection in days. The boost
-takes effect on the immunity level at step 3
+where $z_i$ is the individual's current immunity level, left from earlier
+infections ([immunity equation](#eq-immunity)), and $z_i^{\mathrm{inf}}$
+records it at the moment of infection. $z_i^{\mathrm{inf}}$ reduces the
+viral load of this infection ([Viral load over time](#sec-viral-load-over-time)).
+$\tau_i^{\mathrm{inf}}$ is the time since infection and
+$\tau_i^{\mathrm{boost}}$ the time since the most recent immunity boost, both
+in days: every infection boosts immunity.
+
+At the same time, the infection's viral load level $\nu_i$ and the size of
+its immunity boost $z_i^{\mathrm{boost}}$ are drawn. Both are lognormal, and
+their logs are correlated:
+
+<a id="eq-infection-draws"></a>
+
+```math
+\begin{pmatrix} \log \nu_i \\ \log z_i^{\mathrm{boost}} \end{pmatrix}
+\sim \mathrm{Normal}\left(
+  \begin{pmatrix} 0 \\ \mu_z \end{pmatrix},
+  \begin{pmatrix} \sigma_\nu^2 & \rho \sigma_\nu \sigma_z \\
+                  \rho \sigma_\nu \sigma_z & \sigma_z^2 \end{pmatrix}
+\right)
+```
+
+where $\sigma_\nu$ is the standard deviation of $\log \nu_i$, $\mu_z$ and
+$\sigma_z$ are the mean and standard deviation of $\log z_i^{\mathrm{boost}}$,
+and $\rho$ is the correlation between the two logs. Equivalently, from two
+independent standard normal draws $\epsilon_i^{\nu}$ and $\epsilon_i^{z}$:
+
+<a id="eq-infection-draws-construction"></a>
+
+```math
+\nu_i = \exp\left(\sigma_\nu \epsilon_i^{\nu}\right), \qquad
+z_i^{\mathrm{boost}} = \exp\left(\mu_z + \sigma_z \left(\rho\, \epsilon_i^{\nu}
+  + \sqrt{1 - \rho^2}\, \epsilon_i^{z}\right)\right)
+```
+
+The new boost changes the immunity level at step 3
 ([Advancing individuals](#sec-advance)); it does not affect the viral load
-of the infection that caused it.
+of the infection that caused it, which depends on $z_i^{\mathrm{inf}}$.
 
 The mean of $\log \nu_i$ is fixed at 0, so that the viral load of a typical
 infection (with the median level, $\nu_i = 1$, and no immunity) peaks at 1.
@@ -247,7 +277,7 @@ immunity they had when infected:
 <a id="eq-viral-load"></a>
 
 ```math
-V_i(t) = X_i \, \nu_i \, g\left(\tau_i(t)\right) \exp\left(-\kappa z_i^{\mathrm{inf}}\right)
+V_i(t) = X_i \, \nu_i \, g\left(\tau_i^{\mathrm{inf}}(t)\right) \exp\left(-\kappa z_i^{\mathrm{inf}}\right)
 ```
 
 where $g$ is the viral load profile and $\kappa$ is the reduction in log
@@ -304,7 +334,7 @@ passed its peak and is below a threshold recovers:
 <a id="eq-recovery"></a>
 
 ```math
-\text{if } X_i = 1, \ \tau_i \ge \tau_{\mathrm{peak}} \text{ and } V_i < \theta: \qquad
+\text{if } X_i = 1, \ \tau_i^{\mathrm{inf}} \ge \tau_{\mathrm{peak}} \text{ and } V_i < \theta: \qquad
 X_i \leftarrow 0
 ```
 
@@ -315,18 +345,19 @@ Recovery ends transmission and allows reinfection; it does not change
 immunity.
 
 Immunity is boosted at infection ([Infection](#sec-infection)). A boost
-restores immunity to its maximum whatever immunity remained. Immunity then
+sets immunity to the size of the boost, whatever immunity remained. Immunity then
 declines linearly with time since the boost, and is lost after
 $D_{\mathrm{imm}}$ days:
 
 <a id="eq-immunity"></a>
 
 ```math
-z_i(t) = z_{\max} \max\left(0,\ 1 - \frac{\tau_i^{\mathrm{b}}(t)}{D_{\mathrm{imm}}}\right)
+z_i(t) = z_i^{\mathrm{boost}} \max\left(0,\ 1 - \frac{\tau_i^{\mathrm{boost}}(t)}{D_{\mathrm{imm}}}\right)
 ```
 
-where $z_{\max}$ is the immunity level immediately after a boost, and
-$z_i = 0$ when $\tau_i^{\mathrm{b}} = \infty$.
+where $z_i^{\mathrm{boost}}$ is the size of the most recent boost
+([Infection](#sec-infection)), and $z_i = 0$ when
+$\tau_i^{\mathrm{boost}} = \infty$.
 
 The hazard of infection is proportional to $\exp(-z_i)$
 ([susceptibility score equation](#eq-susceptibility-score)), so it rises
@@ -352,7 +383,7 @@ which viral load falls below $\theta$:
 ```
 
 and the infection ends at the first step 2 at which
-$\tau_i \ge \tau_{\mathrm{end}}$. A typical infection, with
+$\tau_i^{\mathrm{inf}} \ge \tau_{\mathrm{end}}$. A typical infection, with
 $\nu_i e^{-\kappa z_i^{\mathrm{inf}}} = 1$, lasts about
 $\tau_{\mathrm{peak}} \exp\left(w \sqrt{-2 \log \theta}\right)$
 days. Infections with a higher viral load level last longer, and immunity
@@ -368,8 +399,8 @@ At step 3 of each timestep, for every individual:
 
 ```math
 a_i \leftarrow a_i + \frac{\Delta t}{365.25}, \qquad
-\tau_i \leftarrow \tau_i + \Delta t \ \text{ if } X_i = 1, \qquad
-\tau_i^{\mathrm{b}} \leftarrow \tau_i^{\mathrm{b}} + \Delta t
+\tau_i^{\mathrm{inf}} \leftarrow \tau_i^{\mathrm{inf}} + \Delta t \ \text{ if } X_i = 1, \qquad
+\tau_i^{\mathrm{boost}} \leftarrow \tau_i^{\mathrm{boost}} + \Delta t
 ```
 
 then $z_i$ is recalculated from the [immunity equation](#eq-immunity), and
@@ -407,7 +438,9 @@ Ages are in years and elapsed times in days.
 | $\tau_{\mathrm{peak}}$ | time since infection at which viral load peaks | $(0, \infty)$ | days | `viral_load_peak_time` |
 | $w$ | width of the viral load profile on the log time scale; also the sdlog of the intrinsic generation interval | $(0, \infty)$ | | `viral_load_profile_width` |
 | $\kappa$ | reduction in log viral load per unit of immunity level at infection | $[0, \infty)$ | | `viral_load_immunity_effect` |
-| $z_{\max}$ | immunity level immediately after a boost | $[0, \infty)$ | log hazard ratio | `immunity_boost_level` |
+| $\mu_z$ | meanlog of the size of an immunity boost | $\mathbb{R}$ | | `immunity_boost_meanlog` |
+| $\sigma_z$ | sdlog of the size of an immunity boost | $[0, \infty)$ | | `immunity_boost_sdlog` |
+| $\rho$ | correlation between the log viral load level and the log size of the immunity boost of an infection | $[-1, 1]$ | | `viral_load_boost_correlation` |
 | $D_{\mathrm{imm}}$ | time from a boost (at infection) until immunity is lost | $(0, \infty)$ | days | `immunity_duration` |
 
 **Individual state**, for individual $i$
@@ -418,8 +451,10 @@ Ages are in years and elapsed times in days.
 | $a_i$ | age | years | `age` |
 | $g_i$ | 1 if a child, 0 if an adult | | `is_child()` |
 | $X_i$ | 1 if infected, 0 otherwise | | `infected` |
-| $\tau_i$ | time since most recent infection | days | `time_since_infection` |
-| $\tau_i^{\mathrm{b}}$ | time since most recent immunity boost, which is at infection; $\infty$ if never boosted | days | `time_since_boost` |
+| $\tau_i^{\mathrm{inf}}$ | time since most recent infection | days | `time_since_infection` |
+| $\tau_i^{\mathrm{boost}}$ | time since most recent immunity boost, which is at infection; $\infty$ if never boosted | days | `time_since_boost` |
+| $z_i^{\mathrm{boost}}$ | size of the most recent immunity boost: the immunity level immediately after it | log hazard ratio | `immunity_boost` |
+| $\epsilon_i^{\nu}$, $\epsilon_i^{z}$ | independent standard normal draws, made at infection, that generate $\nu_i$ and $z_i^{\mathrm{boost}}$ | | `viral_load_draw`, `boost_draw` |
 | $\nu_i$ | viral load level of the current or most recent infection | | `viral_load_level` |
 | $V_i$ | viral load | | `viral_load` |
 | $z_i$ | immunity level: the reduction in log hazard of infection | log hazard ratio | `immunity_level` |
