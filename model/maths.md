@@ -317,9 +317,9 @@ Ages are in years and elapsed times in days.
 | $\alpha_{\mathrm{inf}}$ | log hazard ratio for an infected individual who is a child | $\mathbb{R}$ | | `child_infectiousness_score` |
 | $\alpha_{\mathrm{sus}}$ | log hazard ratio for an uninfected individual who is a child | $\mathbb{R}$ | | `child_susceptibility_score` |
 | $\alpha_{\mathrm{hh}}$ | log hazard ratio for a household contact event | $\mathbb{R}$ | | `household_location_score` |
-| $\bar d_{\mathrm{hh}}$ | daily duration of a household contact event | $[0, 24]$ | hours per day | `household_contact_hours_per_day` |
-| $\bar d_{\mathrm{nh}}$ | daily duration of a non-household contact event | $[0, 24]$ | hours per day | `non_household_contact_hours_per_day` |
-| $c$ | non-household contact events per person per day | $[0, \infty)$ | per day | `non_household_contacts_per_person_per_day` |
+| $\bar d_{\mathrm{hh}}$ | daily duration of a household contact event | $[0, 24]$ | hours per day | `household_contact_event_hours_per_day` |
+| $\bar d_{\mathrm{nh}}$ | daily duration of a non-household contact event | $[0, 24]$ | hours per day | `non_household_contact_event_hours_per_day` |
+| $c$ | non-household contact events per person per day | $[0, \infty)$ | per day | `non_household_contact_events_per_person_per_day` |
 | $\sigma_\nu$ | sdlog of the viral load level | $[0, \infty)$ | | `viral_load_level_sdlog` |
 | $\mu_V$ | meanlog of the viral load profile | $\mathbb{R}$ | log days | `viral_load_profile_meanlog` |
 | $\sigma_V$ | sdlog of the viral load profile | $(0, \infty)$ | | `viral_load_profile_sdlog` |
@@ -353,7 +353,7 @@ Ages are in years and elapsed times in days.
 | $d_k$ | duration | hours | `duration` |
 | $\beta_k$ | hazard of transmission | per hour | `hazard` |
 | $p_k$ | probability of transmission | | `transmission_probability()` |
-| $M$ | number of non-household contact events in a timestep | | `number_of_non_household_contacts` |
+| $M$ | number of non-household contact events in a timestep | | `number_of_non_household_contact_events` |
 
 **Time and operators**
 

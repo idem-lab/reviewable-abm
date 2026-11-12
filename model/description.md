@@ -23,7 +23,7 @@ infected, and no one has any immunity.
 The simulation advances in timesteps of fixed length, measured in days. In
 each timestep, in this order:
 
-1. contacts occur, and may transmit infection;
+1. contact events occur, and may transmit infection;
 2. infections that have lasted the infectious duration end;
 3. each individual's age, and the times since their most recent infection
    and immunity boost, increase by the length of the timestep, and their
@@ -31,29 +31,30 @@ each timestep, in this order:
 
 <a id="sec-contacts"></a>
 
-## Contacts
+## Contact events
 
 In each timestep, every pair of individuals in the same household has one
-contact. In addition, a random number of contacts occurs between pairs
-chosen uniformly from the whole population, with a mean set by the number
-of contacts per person per day (each contact counts for both people in
-it). These pairs can, by chance, live in the same household; their contact
-is still a non-household contact. Household and non-household contacts
-have different durations. Contact durations are expressed in hours per
-day, so the duration of a contact is its daily duration multiplied by the
-length of the timestep. Contacts are resolved one at a time, in random order.
+contact event. In addition, a random number of contact events occur
+between pairs chosen uniformly from the whole population, with a mean set
+by the number of contact events per person per day (each contact event
+counts for both people in it). These pairs can, by chance, live in the
+same household; their contact event is still a non-household contact
+event. Household and non-household contact events have different
+durations, expressed in hours per day, so the duration of a contact event
+is its daily duration multiplied by the length of the timestep. Contact
+events are resolved one at a time, in random order.
 
 <a id="sec-transmission"></a>
 
 ## Transmission
 
-A contact can transmit infection only if exactly one of the pair is
+A contact event can transmit infection only if exactly one of the pair is
 infected. Transmission occurs at a constant hazard over the duration of the
-contact. The log of this hazard is the sum of the log of a baseline hazard
-and three effects: the infectiousness of the infected individual (from their viral
-load and age group), the susceptibility of the uninfected individual (from
-their immunity and age group), and the location of the contact (household or
-elsewhere).
+contact event. The log of this hazard is the sum of the log of a baseline
+hazard and three effects: the infectiousness of the infected individual
+(from their viral load and age group), the susceptibility of the uninfected
+individual (from their immunity and age group), and the location of the
+contact event (household or elsewhere).
 
 <a id="sec-viral-load"></a>
 
@@ -62,10 +63,10 @@ elsewhere).
 Each infection has its own viral load level, drawn at infection. Viral load
 also changes with time since infection, following the shape of a lognormal
 density: zero at infection, rising to a peak after a few days, then
-declining. An infected individual's current immunity, left from earlier infections,
-reduces their viral load.
-Because viral load is zero at infection, an individual infected during a
-timestep cannot transmit until the next timestep.
+declining. An infected individual's current immunity, left from earlier
+infections, reduces their viral load. Because viral load is zero at
+infection, an individual infected during a timestep cannot transmit until
+the next timestep.
 
 <a id="sec-immunity"></a>
 
@@ -73,8 +74,9 @@ timestep cannot transmit until the next timestep.
 
 Infections last a fixed number of days. On recovery, an individual's
 immunity is boosted, reducing their log hazard of infection by a fixed
-amount, whatever immunity they had left. This reduction shrinks linearly with time since the boost until
-immunity is lost entirely. Because the reduction is on the log scale,
-susceptibility returns slowly at first and then quickly, reaching full
-susceptibility abruptly. Individuals who have never been infected have no
-immunity. Recovered individuals can be reinfected.
+amount, whatever immunity they had left. This reduction shrinks linearly
+with time since the boost until immunity is lost entirely. Because the
+reduction is on the log scale, susceptibility returns slowly at first and
+then quickly, reaching full susceptibility abruptly. Individuals who have
+never been infected have no immunity. Recovered individuals can be
+reinfected.

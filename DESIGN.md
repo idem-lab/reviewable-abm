@@ -139,7 +139,7 @@ population or fewer replicates; do not restructure the code.
 
 ### Names and comments
 
-1. Objects such as an individual or a contact are named lists, with the
+1. Objects such as an individual or a contact event are named lists, with the
    same element names everywhere they appear. The list of all individuals
    is called `population`, and one of its elements `individual`. An object
    that is updated keeps its name (`population <- ...`); a second name is

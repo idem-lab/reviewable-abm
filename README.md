@@ -35,21 +35,21 @@ in response to issues raised by researchers. Researchers then check that
 the three still agree.
 
 As an example, here is how one part of a model, the probability that a
-contact between two people transmits infection, might appear in each.
+contact event between two people transmits infection, might appear in each.
 
 **Written description**
 
-> A contact can transmit infection only if exactly one of the pair is
+> A contact event can transmit infection only if exactly one of the pair is
 > infected. Transmission occurs at a constant hazard over the duration of
-> the contact. The log of this hazard is the sum of the log of a baseline
-> hazard and three effects: the infectiousness of the infected person (from their viral
-> load and age group), the susceptibility of the uninfected person (from
-> their immunity and age group), and the location of the contact (household
-> or elsewhere).
+> the contact event. The log of this hazard is the sum of the log of a
+> baseline hazard and three effects: the infectiousness of the infected
+> person (from their viral load and age group), the susceptibility of the
+> uninfected person (from their immunity and age group), and the location of
+> the contact event (household or elsewhere).
 
 **Mathematical description**
 
-For a contact $k$ of duration $d_k$, between infected person $j$ and
+For a contact event $k$ of duration $d_k$, between infected person $j$ and
 uninfected person $i$:
 
 ```math
@@ -61,24 +61,24 @@ p_k = 1 - \exp\left(-\beta_k d_k\right)
 where $\beta_k$ is the hazard of transmission, $\beta_0$ is the baseline
 hazard, $\eta_j^{\mathrm{inf}}$ and $\eta_i^{\mathrm{sus}}$ are the
 infectiousness and susceptibility of the two people as log hazard ratios,
-$\ell_k$ is 1 if the contact is in a household and 0 otherwise,
-$\alpha_{\mathrm{hh}}$ is the log hazard ratio for a household contact,
+$\ell_k$ is 1 if the contact event is in a household and 0 otherwise,
+$\alpha_{\mathrm{hh}}$ is the log hazard ratio for a household contact event,
 and $p_k$ is the probability of transmission.
 
 **Reference implementation**
 
 ```r
-# probability of transmission during one contact, from a constant hazard
-# over the contact's duration
-transmission_probability <- function(infector, infectee, contact) {
+# probability of transmission during one contact event, from a constant
+# hazard over the contact event's duration
+transmission_probability <- function(infector, infectee, contact_event) {
 
   log_hazard <- log(parameter("baseline_transmission_hazard")) +
     infectiousness_score(infector) +
     susceptibility_score(infectee) +
-    location_score(contact)
+    location_score(contact_event)
 
   hazard <- exp(log_hazard)
-  probability <- 1 - exp(-hazard * contact$duration)
+  probability <- 1 - exp(-hazard * contact_event$duration)
 
   probability
 
@@ -86,7 +86,7 @@ transmission_probability <- function(infector, infectee, contact) {
 ```
 
 Alongside these, the reference implementation generates **behaviour
-figures**: for example, transmission probability against contact duration
+figures**: for example, transmission probability against contact event duration
 for several viral loads, or immunity against time since infection for
 several waning rates. These show researchers what the model's choices imply
 in practice, which is often not obvious from the equations alone.
