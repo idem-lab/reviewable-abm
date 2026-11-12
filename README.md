@@ -41,26 +41,28 @@ contact between two people transmits infection, might appear in each.
 
 > A contact can transmit infection only if exactly one of the pair is
 > infected. Transmission occurs at a constant hazard over the duration of
-> the contact. The log of this hazard is the sum of a baseline value and
-> three effects: the infectiousness of the infected person (from their viral
+> the contact. The log of this hazard is the sum of the log of a baseline
+> hazard and three effects: the infectiousness of the infected person (from their viral
 > load and age group), the susceptibility of the uninfected person (from
 > their immunity and age group), and the location of the contact (household
 > or elsewhere).
 
 **Mathematical description**
 
-For a contact $c$ of duration $d_c$ in location $\ell_c$, between infected
+For a contact $k$ of duration $d_k$ in location $\ell_k$, between infected
 person $j$ and uninfected person $i$:
 
 $$
-\eta_c = \beta + I_j + S_i + \gamma_{\ell_c}, \qquad
-p_c = 1 - \exp\left(-d_c\, e^{\eta_c}\right)
+\log \lambda_k = \log \beta + \eta^{\mathrm{inf}}_j + \eta^{\mathrm{sus}}_i
+  + \alpha_{\ell_k}, \qquad
+p_k = 1 - \exp\left(-\lambda_k d_k\right)
 $$
 
-where $\beta$ is the baseline log hazard, $I_j$ and $S_i$ are the
-infectiousness and susceptibility of the two people on the log hazard
-scale, $\gamma_{\ell}$ is the effect of location $\ell$, and $p_c$ is the
-probability of transmission.
+where $\lambda_k$ is the hazard of transmission, $\beta$ is the baseline
+hazard, $\eta^{\mathrm{inf}}_j$ and $\eta^{\mathrm{sus}}_i$ are the
+infectiousness and susceptibility of the two people as log hazard ratios,
+$\alpha_{\ell}$ is the log hazard ratio for location $\ell$, and $p_k$ is
+the probability of transmission.
 
 **Reference implementation**
 
@@ -69,7 +71,7 @@ probability of transmission.
 # over the contact's duration
 transmission_probability <- function(infector, infectee, contact) {
 
-  log_hazard <- parameter("per_contact_log_hazard") +
+  log_hazard <- log(parameter("baseline_transmission_hazard")) +
     infectiousness_score(infector) +
     susceptibility_score(infectee) +
     location_score(contact$location)
