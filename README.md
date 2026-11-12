@@ -52,14 +52,14 @@ contact between two people transmits infection, might appear in each.
 For a contact $k$ of duration $d_k$ in location $\ell_k$, between infected
 person $j$ and uninfected person $i$:
 
-$$
-\log \lambda_k = \log \beta + \eta^{\mathrm{inf}}_j + \eta^{\mathrm{sus}}_i
+```math
+\log \lambda_k = \log \beta + \eta_j^{\mathrm{inf}} + \eta_i^{\mathrm{sus}}
   + \alpha_{\ell_k}, \qquad
 p_k = 1 - \exp\left(-\lambda_k d_k\right)
-$$
+```
 
 where $\lambda_k$ is the hazard of transmission, $\beta$ is the baseline
-hazard, $\eta^{\mathrm{inf}}_j$ and $\eta^{\mathrm{sus}}_i$ are the
+hazard, $\eta_j^{\mathrm{inf}}$ and $\eta_i^{\mathrm{sus}}$ are the
 infectiousness and susceptibility of the two people as log hazard ratios,
 $\alpha_{\ell}$ is the log hazard ratio for location $\ell$, and $p_k$ is
 the probability of transmission.
