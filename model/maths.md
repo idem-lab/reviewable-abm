@@ -90,12 +90,12 @@ individuals in the same household:
 
 ```math
 \mathcal C_{\mathrm{hh}} = \{(i, j) : i < j,\ h_i = h_j\}, \qquad
-\ell_k = \text{household}, \qquad d_k = \bar d_{\mathrm{hh}} \Delta t
+\ell_k = 1, \qquad d_k = \bar d_{\mathrm{hh}} \Delta t
 ```
 
 where $\mathcal C_{\mathrm{hh}}$ is the set of pairs with a household
-contact, and each of these contacts $k$ has location $\ell_k$ and a
-duration $d_k$ in hours. $\bar d_{\mathrm{hh}}$ is the daily duration of a
+contact. For each contact $k$, $\ell_k$ is 1 if it is a household contact
+and 0 otherwise, and $d_k$ is its duration in hours. $\bar d_{\mathrm{hh}}$ is the daily duration of a
 household contact, in hours per day.
 
 The number of non-household contacts is Poisson. Each contact involves two
@@ -118,7 +118,7 @@ same household:
 <a id="eq-non-household-contacts"></a>
 
 ```math
-\ell_k = \text{non-household}, \qquad d_k = \bar d_{\mathrm{nh}} \Delta t
+\ell_k = 0, \qquad d_k = \bar d_{\mathrm{nh}} \Delta t
 ```
 
 where $\bar d_{\mathrm{nh}}$ is the daily duration of a non-household
@@ -143,7 +143,7 @@ the contact's location:
 
 ```math
 \log \lambda_k = \log \beta + \eta_j^{\mathrm{inf}} + \eta_i^{\mathrm{sus}}
-  + \alpha_{\mathrm{hh}}\, \mathbb{1}[\ell_k = \text{household}]
+  + \alpha_{\mathrm{hh}}\, \ell_k
 ```
 
 where $\lambda_k$ is the hazard of transmission during contact $k$, per
@@ -348,7 +348,7 @@ Ages are in years and elapsed times in days.
 | Symbol | Meaning | Units | Code name |
 |---|---|---|---|
 | $\mathcal C_{\mathrm{hh}}$ | set of pairs of individuals with a household contact in a timestep | | |
-| $\ell_k$ | location: household or non-household | | `location` |
+| $\ell_k$ | location: 1 if a household contact, 0 otherwise | | `in_household` |
 | $d_k$ | duration | hours | `duration` |
 | $\lambda_k$ | hazard of transmission | per hour | `hazard` |
 | $p_k$ | probability of transmission | | `transmission_probability()` |

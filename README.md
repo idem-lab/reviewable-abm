@@ -49,20 +49,21 @@ contact between two people transmits infection, might appear in each.
 
 **Mathematical description**
 
-For a contact $k$ of duration $d_k$ in location $\ell_k$, between infected
-person $j$ and uninfected person $i$:
+For a contact $k$ of duration $d_k$, between infected person $j$ and
+uninfected person $i$:
 
 ```math
 \log \lambda_k = \log \beta + \eta_j^{\mathrm{inf}} + \eta_i^{\mathrm{sus}}
-  + \alpha_{\ell_k}, \qquad
+  + \alpha_{\mathrm{hh}}\, \ell_k, \qquad
 p_k = 1 - \exp\left(-\lambda_k d_k\right)
 ```
 
 where $\lambda_k$ is the hazard of transmission, $\beta$ is the baseline
 hazard, $\eta_j^{\mathrm{inf}}$ and $\eta_i^{\mathrm{sus}}$ are the
 infectiousness and susceptibility of the two people as log hazard ratios,
-$\alpha_{\ell}$ is the log hazard ratio for location $\ell$, and $p_k$ is
-the probability of transmission.
+$\ell_k$ is 1 if the contact is in a household and 0 otherwise,
+$\alpha_{\mathrm{hh}}$ is the log hazard ratio for a household contact,
+and $p_k$ is the probability of transmission.
 
 **Reference implementation**
 
@@ -74,7 +75,7 @@ transmission_probability <- function(infector, infectee, contact) {
   log_hazard <- log(parameter("baseline_transmission_hazard")) +
     infectiousness_score(infector) +
     susceptibility_score(infectee) +
-    location_score(contact$location)
+    location_score(contact)
 
   hazard <- exp(log_hazard)
   probability <- 1 - exp(-hazard * contact$duration)
