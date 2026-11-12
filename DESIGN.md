@@ -93,7 +93,10 @@ population or fewer replicates; do not restructure the code.
 ### Language
 
 1. Base R only: no packages beyond those R loads by default (`base`,
-   `stats`, `graphics`, `grDevices`, `utils`), and no classes.
+   `stats`, `graphics`, `grDevices`, `utils`), and no classes. The one
+   exception is a distribution these lack, drawn from a recommended
+   package that ships with R and called with `::`, such as
+   `MASS::mvrnorm()` for a multivariate normal.
 2. Functions take values and return new values. No environments, `<<-`,
    `assign()` or `get()`, except for the simulation clock (rule 5).
 3. No non-standard evaluation, such as `with()`, `subset()` or formulas.
@@ -119,8 +122,10 @@ population or fewer replicates; do not restructure the code.
    least as clearly as a loop, as `sum()` does.
 9. Draw random numbers with R's named distribution functions (`rlnorm`,
    `rpois`, `runif`) rather than writing sampling out by hand, so the code
-   and the equations name the same distribution. Use `sample.int()` rather than
-   `sample()` on a number.
+   and the equations name the same distribution. Draw jointly distributed
+   quantities from their joint distribution, as the equations write it,
+   rather than building them from independent draws. Use `sample.int()`
+   rather than `sample()` on a number.
 10. Use `&&` and `||` in `if` conditions.
 
 ### Individual state

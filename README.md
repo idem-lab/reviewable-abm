@@ -190,7 +190,7 @@ The reference implementation is written for researchers who read R but
 may not use it daily. The detailed rules are in [DESIGN.md](DESIGN.md). In
 summary:
 
-- plain R with no packages and no classes;
+- plain R with no add-on packages and no classes;
 - `for` loops over individuals, rather than vectorised or functional code;
 - one version of the model only, with no options to switch between
   alternative structures;

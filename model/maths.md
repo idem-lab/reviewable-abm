@@ -246,16 +246,7 @@ their logs are correlated:
 
 where $\sigma_\nu$ is the standard deviation of $\log \nu_i$, $\mu_z$ and
 $\sigma_z$ are the mean and standard deviation of $\log z_i^{\mathrm{boost}}$,
-and $\rho$ is the correlation between the two logs. Equivalently, from two
-independent standard normal draws $\epsilon_i^{\nu}$ and $\epsilon_i^{z}$:
-
-<a id="eq-infection-draws-construction"></a>
-
-```math
-\nu_i = \exp\left(\sigma_\nu \epsilon_i^{\nu}\right), \qquad
-z_i^{\mathrm{boost}} = \exp\left(\mu_z + \sigma_z \left(\rho\, \epsilon_i^{\nu}
-  + \sqrt{1 - \rho^2}\, \epsilon_i^{z}\right)\right)
-```
+and $\rho$ is the correlation between the two logs.
 
 The new boost changes the immunity level at step 3
 ([Advancing individuals](#sec-advance)); it does not affect the viral load
@@ -454,7 +445,6 @@ Ages are in years and elapsed times in days.
 | $\tau_i^{\mathrm{inf}}$ | time since most recent infection | days | `time_since_infection` |
 | $\tau_i^{\mathrm{boost}}$ | time since most recent immunity boost, which is at infection; $\infty$ if never boosted | days | `time_since_boost` |
 | $z_i^{\mathrm{boost}}$ | size of the most recent immunity boost: the immunity level immediately after it | log hazard ratio | `immunity_boost` |
-| $\epsilon_i^{\nu}$, $\epsilon_i^{z}$ | independent standard normal draws, made at infection, that generate $\nu_i$ and $z_i^{\mathrm{boost}}$ | | `viral_load_draw`, `boost_draw` |
 | $\nu_i$ | viral load level of the current or most recent infection | | `viral_load_level` |
 | $V_i$ | viral load | | `viral_load` |
 | $z_i$ | immunity level: the reduction in log hazard of infection | log hazard ratio | `immunity_level` |
