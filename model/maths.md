@@ -1,7 +1,7 @@
 # Mathematical description
 
 This document states the model in the [written description](description.md)
-as equations. Sections with the same name and label as a section of the
+as equations. Sections with the same label as a section of the
 written description state the same part of the model. Each symbol is
 defined briefly where it is first used, and in full, with its units and its
 name in the reference implementation, in the [notation](#sec-notation)
@@ -73,7 +73,7 @@ level is $z_i = 0$ ([Recovery and immunity](#sec-immunity)).
 Timestep $n = 0, 1, 2, \dots$ starts at time $t_n = n \Delta t$, where
 $\Delta t$ is the timestep length in days. Within each timestep:
 
-1. contacts are generated and resolved ([Contacts](#sec-contacts),
+1. contact events are generated and resolved ([Contact events](#sec-contacts),
    [Transmission](#sec-transmission));
 2. infections end ([Recovery and immunity](#sec-immunity));
 3. ages, elapsed times and levels are advanced
@@ -81,9 +81,9 @@ $\Delta t$ is the timestep length in days. Within each timestep:
 
 <a id="sec-contacts"></a>
 
-## Contacts
+## Contact events
 
-Each timestep has one household contact for each unordered pair of
+Each timestep has one household contact event for each unordered pair of
 individuals in the same household:
 
 <a id="eq-household-contacts"></a>
@@ -94,13 +94,14 @@ individuals in the same household:
 ```
 
 where $\mathcal C_{\mathrm{hh}}$ is the set of pairs with a household
-contact. For each contact $k$, $\ell_k$ is 1 if it is a household contact
-and 0 otherwise, and $d_k$ is its duration in hours. $\bar d_{\mathrm{hh}}$ is the daily duration of a
-household contact, in hours per day.
+contact event. For each contact event $k$, $\ell_k$ is 1 if it is a
+household contact event and 0 otherwise, and $d_k$ is its duration in hours.
+$\bar d_{\mathrm{hh}}$ is the daily duration of a household contact event,
+in hours per day.
 
-The number of non-household contacts is Poisson. Each contact involves two
-people, so a mean of $c$ non-household contacts per person per day gives a
-mean of $N c / 2$ contacts per day:
+The number of non-household contact events is Poisson. Each contact event
+involves two people, so a mean of $c$ non-household contact events per
+person per day gives a mean of $N c / 2$ contact events per day:
 
 <a id="eq-non-household-count"></a>
 
@@ -108,12 +109,12 @@ mean of $N c / 2$ contacts per day:
 M \sim \mathrm{Poisson}\left(\frac{N c \, \Delta t}{2}\right)
 ```
 
-where $M$ is the number of non-household contacts in the timestep.
+where $M$ is the number of non-household contact events in the timestep.
 
-Each of the $M$ contacts is between a pair $(i, j)$ drawn independently and
-uniformly from all unordered pairs of distinct individuals, so a pair can
-be drawn more than once in a timestep, and can by chance be members of the
-same household:
+Each of the $M$ contact events is between a pair $(i, j)$ drawn
+independently and uniformly from all unordered pairs of distinct
+individuals, so a pair can be drawn more than once in a timestep, and can by
+chance be members of the same household:
 
 <a id="eq-non-household-contacts"></a>
 
@@ -122,22 +123,22 @@ same household:
 ```
 
 where $\bar d_{\mathrm{nh}}$ is the daily duration of a non-household
-contact, in hours per day.
+contact event, in hours per day.
 
-All household and non-household contacts in the timestep are put in a
+All household and non-household contact events in the timestep are put in a
 uniformly random order and resolved one at a time
 ([Transmission](#sec-transmission)), so that infections caused by earlier
-contacts are part of the state seen by later ones.
+contact events are part of the state seen by later ones.
 
 <a id="sec-transmission"></a>
 
 ## Transmission
 
-When contact $k$ is resolved, if exactly one of its pair is infected, call
-the infected individual $j$ and the uninfected individual $i$. The log of
-the hazard of transmission is the sum of the log of the baseline hazard,
+When contact event $k$ is resolved, if exactly one of its pair is infected,
+call the infected individual $j$ and the uninfected individual $i$. The log
+of the hazard of transmission is the sum of the log of the baseline hazard,
 the infectiousness and susceptibility scores of the pair, and the effect of
-the contact's location:
+the contact event's location:
 
 <a id="eq-hazard"></a>
 
@@ -146,12 +147,12 @@ the contact's location:
   + \alpha_{\mathrm{hh}}\, \ell_k
 ```
 
-where $\beta_k$ is the hazard of transmission during contact $k$, per
+where $\beta_k$ is the hazard of transmission during contact event $k$, per
 hour; $\beta_0$ is the baseline hazard of transmission;
 $\eta_j^{\mathrm{inf}}$ is the infectiousness score of the infected
 individual and $\eta_i^{\mathrm{sus}}$ the susceptibility score of the
 uninfected individual; and $\alpha_{\mathrm{hh}}$ is the log hazard ratio
-for a household contact.
+for a household contact event.
 
 The scores are log hazard ratios:
 
@@ -167,13 +168,13 @@ The scores are log hazard ratios:
 \eta_i^{\mathrm{sus}} = \alpha_{\mathrm{sus}}\, g_i - z_i
 ```
 
-where $V_j$ is the viral load of the infected individual
-([Viral load](#sec-viral-load)), and $\alpha_{\mathrm{inf}}$ and
+where $V_j$ is the viral load of the infected individual ([Viral
+load](#sec-viral-load)), and $\alpha_{\mathrm{inf}}$ and
 $\alpha_{\mathrm{sus}}$ are the log hazard ratios for an infected and an
-uninfected individual who is a child. Adults and non-household contacts are
-the reference categories, with log hazard ratios of zero.
+uninfected individual who is a child. Adults and non-household contact
+events are the reference categories, with log hazard ratios of zero.
 
-The hazard is constant over the contact, so the probability of
+The hazard is constant over the contact event, so the probability of
 transmission is
 
 <a id="eq-transmission-probability"></a>
@@ -195,8 +196,8 @@ nothing happens. When $V_j = 0$, $\beta_k = 0$ and $p_k = 0$.
 ### Infection
 
 When individual $i$ is infected, at the start of the simulation or by a
-contact, their viral load level is drawn and their time since infection is
-set to zero:
+contact event, their viral load level is drawn and their time since
+infection is set to zero:
 
 <a id="eq-infection"></a>
 
@@ -312,13 +313,13 @@ Ages are in years and elapsed times in days.
 
 | Symbol | Meaning | Support | Units | Code name |
 |---|---|---|---|---|
-| $\beta_0$ | baseline hazard of transmission: for an adult infected individual with unit viral load, an adult uninfected individual with no immunity, and a non-household contact | $(0, \infty)$ | per hour | `baseline_transmission_hazard` |
+| $\beta_0$ | baseline hazard of transmission: for an adult infected individual with unit viral load, an adult uninfected individual with no immunity, and a non-household contact event | $(0, \infty)$ | per hour | `baseline_transmission_hazard` |
 | $\alpha_{\mathrm{inf}}$ | log hazard ratio for an infected individual who is a child | $\mathbb{R}$ | | `child_infectiousness_score` |
 | $\alpha_{\mathrm{sus}}$ | log hazard ratio for an uninfected individual who is a child | $\mathbb{R}$ | | `child_susceptibility_score` |
-| $\alpha_{\mathrm{hh}}$ | log hazard ratio for a household contact | $\mathbb{R}$ | | `household_location_score` |
-| $\bar d_{\mathrm{hh}}$ | daily duration of a household contact | $[0, 24]$ | hours per day | `household_contact_hours_per_day` |
-| $\bar d_{\mathrm{nh}}$ | daily duration of a non-household contact | $[0, 24]$ | hours per day | `non_household_contact_hours_per_day` |
-| $c$ | non-household contacts per person per day | $[0, \infty)$ | per day | `non_household_contacts_per_person_per_day` |
+| $\alpha_{\mathrm{hh}}$ | log hazard ratio for a household contact event | $\mathbb{R}$ | | `household_location_score` |
+| $\bar d_{\mathrm{hh}}$ | daily duration of a household contact event | $[0, 24]$ | hours per day | `household_contact_hours_per_day` |
+| $\bar d_{\mathrm{nh}}$ | daily duration of a non-household contact event | $[0, 24]$ | hours per day | `non_household_contact_hours_per_day` |
+| $c$ | non-household contact events per person per day | $[0, \infty)$ | per day | `non_household_contacts_per_person_per_day` |
 | $\sigma_\nu$ | sdlog of the viral load level | $[0, \infty)$ | | `viral_load_level_sdlog` |
 | $\mu_V$ | meanlog of the viral load profile | $\mathbb{R}$ | log days | `viral_load_profile_meanlog` |
 | $\sigma_V$ | sdlog of the viral load profile | $(0, \infty)$ | | `viral_load_profile_sdlog` |
@@ -343,16 +344,16 @@ Ages are in years and elapsed times in days.
 | $\eta_i^{\mathrm{inf}}$ | infectiousness score | log hazard ratio | `infectiousness_score()` |
 | $\eta_i^{\mathrm{sus}}$ | susceptibility score | log hazard ratio | `susceptibility_score()` |
 
-**Contacts**, for contact $k$
+**Contact events**, for contact event $k$
 
 | Symbol | Meaning | Units | Code name |
 |---|---|---|---|
-| $\mathcal C_{\mathrm{hh}}$ | set of pairs of individuals with a household contact in a timestep | | |
-| $\ell_k$ | location: 1 if a household contact, 0 otherwise | | `in_household` |
+| $\mathcal C_{\mathrm{hh}}$ | set of pairs of individuals with a household contact event in a timestep | | |
+| $\ell_k$ | location: 1 if a household contact event, 0 otherwise | | `in_household` |
 | $d_k$ | duration | hours | `duration` |
 | $\beta_k$ | hazard of transmission | per hour | `hazard` |
 | $p_k$ | probability of transmission | | `transmission_probability()` |
-| $M$ | number of non-household contacts in a timestep | | `number_of_non_household_contacts` |
+| $M$ | number of non-household contact events in a timestep | | `number_of_non_household_contacts` |
 
 **Time and operators**
 
