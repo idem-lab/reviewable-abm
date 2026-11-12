@@ -53,12 +53,12 @@ For a contact $k$ of duration $d_k$, between infected person $j$ and
 uninfected person $i$:
 
 ```math
-\log \lambda_k = \log \beta + \eta_j^{\mathrm{inf}} + \eta_i^{\mathrm{sus}}
+\log \beta_k = \log \beta_0 + \eta_j^{\mathrm{inf}} + \eta_i^{\mathrm{sus}}
   + \alpha_{\mathrm{hh}}\, \ell_k, \qquad
-p_k = 1 - \exp\left(-\lambda_k d_k\right)
+p_k = 1 - \exp\left(-\beta_k d_k\right)
 ```
 
-where $\lambda_k$ is the hazard of transmission, $\beta$ is the baseline
+where $\beta_k$ is the hazard of transmission, $\beta_0$ is the baseline
 hazard, $\eta_j^{\mathrm{inf}}$ and $\eta_i^{\mathrm{sus}}$ are the
 infectiousness and susceptibility of the two people as log hazard ratios,
 $\ell_k$ is 1 if the contact is in a household and 0 otherwise,

@@ -9,9 +9,9 @@ tables at the end. Each symbol keeps one meaning throughout.
 
 The notation follows the usual conventions for epidemic models where they
 exist: $N$ for population size, $I_0$ for the number initially infected,
-$\beta$ for the transmission rate, $\lambda$ for the hazard of infection,
-$c$ for the contact rate, $\tau$ for time since infection, and $\mu$ and
-$\sigma$ for the parameters of a lognormal distribution. Because $S$, $I$
+$\beta$ for transmission rates, $c$ for the contact rate, $\tau$ for time
+since infection, and $\mu$ and $\sigma$ for the parameters of a lognormal
+distribution. Because $S$, $I$
 and $R$ conventionally name the compartments of an SIR model, they are not
 used for individual quantities.
 
@@ -142,12 +142,12 @@ the contact's location:
 <a id="eq-hazard"></a>
 
 ```math
-\log \lambda_k = \log \beta + \eta_j^{\mathrm{inf}} + \eta_i^{\mathrm{sus}}
+\log \beta_k = \log \beta_0 + \eta_j^{\mathrm{inf}} + \eta_i^{\mathrm{sus}}
   + \alpha_{\mathrm{hh}}\, \ell_k
 ```
 
-where $\lambda_k$ is the hazard of transmission during contact $k$, per
-hour; $\beta$ is the baseline hazard of transmission;
+where $\beta_k$ is the hazard of transmission during contact $k$, per
+hour; $\beta_0$ is the baseline hazard of transmission;
 $\eta_j^{\mathrm{inf}}$ is the infectiousness score of the infected
 individual and $\eta_i^{\mathrm{sus}}$ the susceptibility score of the
 uninfected individual; and $\alpha_{\mathrm{hh}}$ is the log hazard ratio
@@ -179,12 +179,12 @@ transmission is
 <a id="eq-transmission-probability"></a>
 
 ```math
-p_k = 1 - \exp\left(-\lambda_k d_k\right)
+p_k = 1 - \exp\left(-\beta_k d_k\right)
 ```
 
 and individual $i$ is infected with probability $p_k$
 ([Infection](#sec-infection)). If both or neither of the pair are infected,
-nothing happens. When $V_j = 0$, $\lambda_k = 0$ and $p_k = 0$.
+nothing happens. When $V_j = 0$, $\beta_k = 0$ and $p_k = 0$.
 
 <a id="sec-viral-load"></a>
 
@@ -207,7 +207,7 @@ X_i \leftarrow 1, \qquad \tau_i \leftarrow 0
 
 where $\nu_i$ is the viral load level of the infection, $\sigma_\nu$ is the
 standard deviation of its log, and $\tau_i$ is the time since infection in
-days. The mean of $\log \nu_i$ is fixed at 0 because $\beta$ sets the
+days. The mean of $\log \nu_i$ is fixed at 0 because $\beta_0$ sets the
 overall scale of infectiousness.
 
 ### Viral load over time
@@ -312,7 +312,7 @@ Ages are in years and elapsed times in days.
 
 | Symbol | Meaning | Support | Units | Code name |
 |---|---|---|---|---|
-| $\beta$ | baseline hazard of transmission: for an adult infected individual with unit viral load, an adult uninfected individual with no immunity, and a non-household contact | $(0, \infty)$ | per hour | `baseline_transmission_hazard` |
+| $\beta_0$ | baseline hazard of transmission: for an adult infected individual with unit viral load, an adult uninfected individual with no immunity, and a non-household contact | $(0, \infty)$ | per hour | `baseline_transmission_hazard` |
 | $\alpha_{\mathrm{inf}}$ | log hazard ratio for an infected individual who is a child | $\mathbb{R}$ | | `child_infectiousness_score` |
 | $\alpha_{\mathrm{sus}}$ | log hazard ratio for an uninfected individual who is a child | $\mathbb{R}$ | | `child_susceptibility_score` |
 | $\alpha_{\mathrm{hh}}$ | log hazard ratio for a household contact | $\mathbb{R}$ | | `household_location_score` |
@@ -350,7 +350,7 @@ Ages are in years and elapsed times in days.
 | $\mathcal C_{\mathrm{hh}}$ | set of pairs of individuals with a household contact in a timestep | | |
 | $\ell_k$ | location: 1 if a household contact, 0 otherwise | | `in_household` |
 | $d_k$ | duration | hours | `duration` |
-| $\lambda_k$ | hazard of transmission | per hour | `hazard` |
+| $\beta_k$ | hazard of transmission | per hour | `hazard` |
 | $p_k$ | probability of transmission | | `transmission_probability()` |
 | $M$ | number of non-household contacts in a timestep | | `number_of_non_household_contacts` |
 
