@@ -71,29 +71,38 @@ contact event (household or elsewhere).
 ## Viral load
 
 Each infection has its own viral load level, drawn at infection. Viral load
-also changes with time since infection, following the shape of a lognormal
-density: zero at infection, rising to a peak after a few days, then
-declining. The viral load level sets the height of the peak, and an
-infection with the typical level and no immunity peaks at the same height
-whatever the shape of the curve. An infected individual's current immunity,
-left from earlier infections, reduces their viral load. Because viral load
-is zero at infection, an individual infected during a timestep cannot
-transmit until the next timestep.
+also changes with time since infection: it is zero at infection, rises to a
+peak at a fixed time after infection, then declines, following a
+bell-shaped curve in the log of time since infection. The viral load level
+sets the height of the peak, and an infection with the typical level and no
+immunity peaks at the same height whatever the shape of the curve. The
+immunity an individual had when they were infected, left from earlier
+infections, reduces their viral load throughout that infection. Because
+viral load is zero at infection, an individual infected during a timestep
+cannot transmit until the next timestep.
+
+Because infectiousness is proportional to viral load, the time from
+infection to onward transmission (the generation interval) follows a
+lognormal distribution, apart from the effects of recovery and of
+timesteps.
 
 <a id="sec-immunity"></a>
 
 ## Recovery and immunity
 
-An infection ends once its viral load has passed its peak and fallen
-below a recovery threshold, which is the same for all infections. The
-duration of infection therefore depends on the viral load: infections with
-a higher viral load level last longer, immunity shortens infections, and
-an infection whose viral load never reaches the threshold ends just after
-its peak. On recovery, an individual's
-immunity is boosted, reducing their log hazard of infection by a fixed
-amount, whatever immunity they had left. This reduction shrinks linearly
-with time since the boost until immunity is lost entirely. Because the
-reduction is on the log scale, susceptibility returns slowly at first and
-then quickly, reaching full susceptibility abruptly. Individuals who have
-never been infected have no immunity. Recovered individuals can be
-reinfected.
+An infection ends once its viral load has passed its peak and fallen below
+a low recovery threshold, which is fixed and the same for all infections.
+Very little transmission happens after this. The duration of infection
+therefore depends on the viral load: infections with a higher viral load
+level last longer, immunity shortens infections, and an infection whose
+viral load never reaches the threshold ends just after its peak. Recovered
+individuals can be reinfected.
+
+Each infection boosts the individual's immunity at the time of infection,
+reducing their log hazard of infection by a fixed amount, whatever immunity
+they had left. The boost does not affect the viral load of the infection
+that caused it. The reduction shrinks linearly with time since the boost
+until immunity is lost entirely. Because the reduction is on the log scale,
+susceptibility returns slowly at first and then quickly, reaching full
+susceptibility abruptly. Individuals who have never been infected have no
+immunity.

@@ -112,9 +112,9 @@ population or fewer replicates; do not restructure the code.
 8. Loop over individuals with `for`. Use `seq_len()` or `seq_along()`
    rather than `1:n`. Use a vectorised base function only when it reads at
    least as clearly as a loop, as `sum()` does.
-9. Use R's named distribution functions (`dlnorm`, `rpois`, `runif`) rather
-   than writing densities or sampling out by hand, so the code and the
-   equations name the same distribution. Use `sample.int()` rather than
+9. Draw random numbers with R's named distribution functions (`rlnorm`,
+   `rpois`, `runif`) rather than writing sampling out by hand, so the code
+   and the equations name the same distribution. Use `sample.int()` rather than
    `sample()` on a number.
 10. Use `&&` and `||` in `if` conditions.
 
