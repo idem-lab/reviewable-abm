@@ -10,10 +10,9 @@ tables at the end. Each symbol keeps one meaning throughout.
 The notation follows the usual conventions for epidemic models where they
 exist: $N$ for population size, $I_0$ for the number initially infected,
 $\beta$ for transmission rates, $c$ for the contact rate, $\tau$ for time
-since infection, and $\mu$ and $\sigma$ for the parameters of a lognormal
-distribution. Because $S$, $I$
-and $R$ conventionally name the compartments of an SIR model, they are not
-used for individual quantities.
+since infection, and $\sigma$ for the standard deviation of the log of a
+lognormal random variable. Because $S$, $I$ and $R$ conventionally name the
+compartments of an SIR model, they are not used for individual quantities.
 
 Individual state changes only at discrete times. A quantity written as a
 function of time, such as $a_i(t)$, is its value during the timestep
@@ -259,11 +258,13 @@ days:
 <a id="eq-viral-load-profile"></a>
 
 ```math
-g(\tau) = \exp\left(-\frac{\left(\log (\tau / \tau_{\mathrm{peak}})\right)^2}{2 \sigma_V^2}\right),
+g(\tau) = \exp\left(-\frac{\left(\log (\tau / \tau_{\mathrm{peak}})\right)^2}{2 w^2}\right),
 \qquad g(0) = 0
 ```
 
-where $\sigma_V$ is the width of the profile on the log time scale.
+where $w$ is the width of the profile on the log time scale. The profile
+is not a probability density, and $w$ is not a standard deviation of a
+random variable.
 
 Because $g(0) = 0$, an individual has $V_i = 0$ during the timestep in
 which they are infected, so cannot transmit until the next timestep.
@@ -284,10 +285,10 @@ proportional to $g$, which is a lognormal density:
 
 ```math
 \text{generation interval} \sim
-  \mathrm{LogNormal}\left(\log \tau_{\mathrm{peak}} + \sigma_V^2,\ \sigma_V\right)
+  \mathrm{LogNormal}\left(\log \tau_{\mathrm{peak}} + w^2,\ w\right)
 ```
 
-The meanlog is $\log \tau_{\mathrm{peak}} + \sigma_V^2$, not
+The meanlog is $\log \tau_{\mathrm{peak}} + w^2$, not
 $\log \tau_{\mathrm{peak}}$, because a lognormal density is $g(\tau)$
 divided by $\tau$, up to a constant. This holds apart from the truncation at
 recovery ([Duration of infection](#sec-duration)) and the discrete
@@ -345,7 +346,7 @@ which viral load falls below $\theta$:
 
 ```math
 \tau_{\mathrm{end}} = \tau_{\mathrm{peak}}
-  \exp\left(\sigma_V \sqrt{2 \log \frac{\nu_i e^{-\kappa z_i^{\mathrm{inf}}}}{\theta}}\right)
+  \exp\left(w \sqrt{2 \log \frac{\nu_i e^{-\kappa z_i^{\mathrm{inf}}}}{\theta}}\right)
   \quad \text{if } \nu_i e^{-\kappa z_i^{\mathrm{inf}}} > \theta,
   \qquad \text{otherwise } \tau_{\mathrm{end}} = \tau_{\mathrm{peak}}
 ```
@@ -353,7 +354,7 @@ which viral load falls below $\theta$:
 and the infection ends at the first step 2 at which
 $\tau_i \ge \tau_{\mathrm{end}}$. A typical infection, with
 $\nu_i e^{-\kappa z_i^{\mathrm{inf}}} = 1$, lasts about
-$\tau_{\mathrm{peak}} \exp\left(\sigma_V \sqrt{-2 \log \theta}\right)$
+$\tau_{\mathrm{peak}} \exp\left(w \sqrt{-2 \log \theta}\right)$
 days. Infections with a higher viral load level last longer, and immunity
 at infection shortens infections.
 
@@ -404,7 +405,7 @@ Ages are in years and elapsed times in days.
 | $c$ | non-household contact events per person per day | $[0, \infty)$ | per day | `non_household_contact_events_per_person_per_day` |
 | $\sigma_\nu$ | sdlog of the viral load level | $[0, \infty)$ | | `viral_load_level_sdlog` |
 | $\tau_{\mathrm{peak}}$ | time since infection at which viral load peaks | $(0, \infty)$ | days | `viral_load_peak_time` |
-| $\sigma_V$ | width of the viral load profile on the log time scale; also the sdlog of the intrinsic generation interval | $(0, \infty)$ | | `viral_load_profile_sdlog` |
+| $w$ | width of the viral load profile on the log time scale; also the sdlog of the intrinsic generation interval | $(0, \infty)$ | | `viral_load_profile_width` |
 | $\kappa$ | reduction in log viral load per unit of immunity level at infection | $[0, \infty)$ | | `viral_load_immunity_effect` |
 | $z_{\max}$ | immunity level immediately after a boost | $[0, \infty)$ | log hazard ratio | `immunity_boost_level` |
 | $D_{\mathrm{imm}}$ | time from a boost (at infection) until immunity is lost | $(0, \infty)$ | days | `immunity_duration` |
