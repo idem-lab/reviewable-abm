@@ -44,22 +44,22 @@ contact between two people transmits infection, might appear in each.
 > the contact. The log of this hazard is the sum of a baseline value and
 > three effects: the infectiousness of the infected person (from their viral
 > load and age group), the susceptibility of the uninfected person (from
-> their immunity and age group), and the setting of the contact (household
+> their immunity and age group), and the location of the contact (household
 > or elsewhere).
 
 **Mathematical description**
 
-For a contact $c$ of duration $d_c$ in setting $e_c$, between infected
+For a contact $c$ of duration $d_c$ in location $\ell_c$, between infected
 person $j$ and uninfected person $i$:
 
 $$
-\eta_c = \beta + I_j + S_i + \gamma_{e_c}, \qquad
+\eta_c = \beta + I_j + S_i + \gamma_{\ell_c}, \qquad
 p_c = 1 - \exp\left(-d_c\, e^{\eta_c}\right)
 $$
 
 where $\beta$ is the baseline log hazard, $I_j$ and $S_i$ are the
 infectiousness and susceptibility of the two people on the log hazard
-scale, $\gamma_{e}$ is the effect of setting $e$, and $p_c$ is the
+scale, $\gamma_{\ell}$ is the effect of location $\ell$, and $p_c$ is the
 probability of transmission.
 
 **Reference implementation**
@@ -72,7 +72,7 @@ transmission_probability <- function(infector, infectee, contact) {
   log_hazard <- parameter("per_contact_log_hazard") +
     infectiousness_score(infector) +
     susceptibility_score(infectee) +
-    setting_score(contact$setting)
+    location_score(contact$location)
 
   hazard <- exp(log_hazard)
   probability <- 1 - exp(-hazard * contact$duration)

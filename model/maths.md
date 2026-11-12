@@ -30,7 +30,7 @@ starting at time $t$, and $x \leftarrow y$ means that $x$ is set to $y$.
 | $\beta$ | baseline log hazard of transmission | log per hour | `per_contact_log_hazard` |
 | $\psi$ | effect of the infected individual being a child | log hazard | `child_infectiousness_score` |
 | $\phi$ | effect of the uninfected individual being a child | log hazard | `child_susceptibility_score` |
-| $\gamma$ | effect of the contact being in a household | log hazard | `household_setting_score` |
+| $\gamma$ | effect of the contact being in a household | log hazard | `household_location_score` |
 | $\bar d_{\mathrm{h}}$ | daily duration of a household contact | hours per day | `household_contact_hours_per_day` |
 | $\bar d_{\mathrm{o}}$ | daily duration of a non-household contact | hours per day | `non_household_contact_hours_per_day` |
 | $m$ | non-household contacts per person per day | per day | `non_household_contacts_per_person_per_day` |
@@ -62,7 +62,7 @@ starting at time $t$, and $x \leftarrow y$ means that $x$ is set to $y$.
 
 | Symbol | Meaning | Units | Code name |
 |---|---|---|---|
-| $e_c$ | setting: household or non-household | | `setting` |
+| $\ell_c$ | location: household or non-household | | `location` |
 | $d_c$ | duration | hours | `duration` |
 | $\eta_c$ | log hazard of transmission | log per hour | `log_hazard` |
 | $p_c$ | probability of transmission | | `transmission_probability()` |
@@ -114,7 +114,7 @@ individuals in the same household:
 
 $$
 \mathcal{C}_{\mathrm{h}} = \{(i, j) : i < j,\ h_i = h_j\}, \qquad
-e_c = \text{household}, \qquad d_c = \bar d_{\mathrm{h}} \Delta
+\ell_c = \text{household}, \qquad d_c = \bar d_{\mathrm{h}} \Delta
 $$ {#eq-household-contacts}
 
 The number of non-household contacts is Poisson. Each contact involves two
@@ -131,7 +131,7 @@ be drawn more than once in a timestep, and can by chance be members of the
 same household:
 
 $$
-e_c = \text{non-household}, \qquad d_c = \bar d_{\mathrm{o}} \Delta
+\ell_c = \text{non-household}, \qquad d_c = \bar d_{\mathrm{o}} \Delta
 $$ {#eq-non-household-contacts}
 
 All household and non-household contacts in the timestep are put in a
@@ -146,7 +146,7 @@ the infected individual $j$ and the uninfected individual $i$. The log
 hazard of transmission is
 
 $$
-\eta_c = \beta + I_j + S_i + \gamma\, \mathbb{1}[e_c = \text{household}]
+\eta_c = \beta + I_j + S_i + \gamma\, \mathbb{1}[\ell_c = \text{household}]
 $$ {#eq-log-hazard}
 
 with infectiousness and susceptibility scores

@@ -44,7 +44,7 @@ infected. Transmission occurs at a constant hazard over the duration of the
 contact. The log of this hazard is the sum of a baseline value and three
 effects: the infectiousness of the infected individual (from their viral
 load and age group), the susceptibility of the uninfected individual (from
-their immunity and age group), and the setting of the contact (household or
+their immunity and age group), and the location of the contact (household or
 elsewhere).
 
 ## Viral load {#sec-viral-load}
