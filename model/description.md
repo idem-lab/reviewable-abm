@@ -33,7 +33,8 @@ The simulation advances in timesteps of fixed length, measured in days. In
 each timestep, in this order:
 
 1. contact events occur, and may transmit infection;
-2. infections that have lasted the infectious duration end;
+2. infections whose viral load has passed its peak and fallen below the
+   recovery threshold end;
 3. each individual's age, and the times since their most recent infection
    and immunity boost, increase by the length of the timestep, and their
    viral load and immunity are recalculated from these times.
@@ -72,16 +73,23 @@ contact event (household or elsewhere).
 Each infection has its own viral load level, drawn at infection. Viral load
 also changes with time since infection, following the shape of a lognormal
 density: zero at infection, rising to a peak after a few days, then
-declining. An infected individual's current immunity, left from earlier
-infections, reduces their viral load. Because viral load is zero at
-infection, an individual infected during a timestep cannot transmit until
-the next timestep.
+declining. The viral load level sets the height of the peak, and an
+infection with the typical level and no immunity peaks at the same height
+whatever the shape of the curve. An infected individual's current immunity,
+left from earlier infections, reduces their viral load. Because viral load
+is zero at infection, an individual infected during a timestep cannot
+transmit until the next timestep.
 
 <a id="sec-immunity"></a>
 
 ## Recovery and immunity
 
-Infections last a fixed number of days. On recovery, an individual's
+An infection ends once its viral load has passed its peak and fallen
+below a recovery threshold, which is the same for all infections. The
+duration of infection therefore depends on the viral load: infections with
+a higher viral load level last longer, immunity shortens infections, and
+an infection whose viral load never reaches the threshold ends just after
+its peak. On recovery, an individual's
 immunity is boosted, reducing their log hazard of infection by a fixed
 amount, whatever immunity they had left. This reduction shrinks linearly
 with time since the boost until immunity is lost entirely. Because the

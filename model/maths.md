@@ -29,6 +29,7 @@ starting at time $t$, and $x \leftarrow y$ means that $x$ is set to $y$.
   - [Infection](#sec-infection)
   - [Viral load over time](#sec-viral-load-over-time)
 - [Recovery and immunity](#sec-immunity)
+  - [Duration of infection](#sec-duration)
 - [Advancing individuals](#sec-advance)
 - [Notation](#sec-notation)
 
@@ -221,53 +222,75 @@ X_i \leftarrow 1, \qquad \tau_i \leftarrow 0
 
 where $\nu_i$ is the viral load level of the infection, $\sigma_\nu$ is the
 standard deviation of its log, and $\tau_i$ is the time since infection in
-days. The mean of $\log \nu_i$ is fixed at 0 because $\beta_0$ sets the
-overall scale of infectiousness.
+days. The mean of $\log \nu_i$ is fixed at 0, so that the viral load of a
+typical infection (with the median level, $\nu_i = 1$, and no immunity)
+peaks at 1. Viral load is on a relative scale: $\beta_0$ converts it into a
+hazard of transmission.
 
 <a id="sec-viral-load-over-time"></a>
 
 ### Viral load over time
 
 An infected individual's viral load is their viral load level, multiplied
-by a lognormal density in time since infection, and reduced by their
+by a viral load profile in time since infection, and reduced by their
 current immunity:
 
 <a id="eq-viral-load"></a>
 
 ```math
-V_i(t) = X_i \, \nu_i \, f\left(\tau_i(t)\right) \exp\left(-\kappa z_i(t)\right)
+V_i(t) = X_i \, \nu_i \, g\left(\tau_i(t)\right) \exp\left(-\kappa z_i(t)\right)
 ```
+
+where $g$ is the viral load profile and $\kappa$ is the reduction in log
+viral load per unit of immunity level. The profile has the shape of a
+lognormal density, scaled so that its peak is 1:
 
 <a id="eq-viral-load-profile"></a>
 
 ```math
+g(\tau) = \frac{f(\tau)}{f(\tau_{\mathrm{peak}})}, \qquad
 f(\tau) = \frac{1}{\tau \sigma_V \sqrt{2\pi}}
-  \exp\left(-\frac{(\log \tau - \mu_V)^2}{2 \sigma_V^2}\right), \qquad f(0) = 0
+  \exp\left(-\frac{(\log \tau - \mu_V)^2}{2 \sigma_V^2}\right), \qquad
+\tau_{\mathrm{peak}} = \exp\left(\mu_V - \sigma_V^2\right)
 ```
 
-where $f$ is the viral load profile, a lognormal density with meanlog
-$\mu_V$ and sdlog $\sigma_V$, and $\kappa$ is the reduction in log viral
-load per unit of immunity level.
+where $f$ is the lognormal density with meanlog $\mu_V$ and sdlog
+$\sigma_V$, $f(0) = 0$, and $\tau_{\mathrm{peak}}$ is the time since
+infection, in days, at which it peaks.
 
-The profile peaks at $\tau = \exp(\mu_V - \sigma_V^2)$ days. Because
-$f(0) = 0$, an individual has $V_i = 0$ during the timestep in which they
-are infected, so cannot transmit until the next timestep. Individuals who
-are not infected have $V_i = 0$.
+Because $g(0) = 0$, an individual has $V_i = 0$ during the timestep in
+which they are infected, so cannot transmit until the next timestep.
+Individuals who are not infected have $V_i = 0$.
+
+Equivalently, the profile is a Gaussian curve in log time since infection,
+centred on the log of the peak time, with standard deviation $\sigma_V$:
+
+<a id="eq-viral-load-profile-log-time"></a>
+
+```math
+g(\tau) = \exp\left(-\frac{(\log \tau - \log \tau_{\mathrm{peak}})^2}{2 \sigma_V^2}\right)
+```
 
 <a id="sec-immunity"></a>
 
 ## Recovery and immunity
 
-At step 2 of each timestep, every infected individual whose infection has
-lasted at least $D_{\mathrm{inf}}$ days, the duration of infection,
-recovers and has their immunity boosted:
+At step 2 of each timestep, every infected individual whose viral load has
+passed its peak and is below a threshold recovers, and has their immunity
+boosted:
 
 <a id="eq-recovery"></a>
 
 ```math
-\text{if } X_i = 1 \text{ and } \tau_i \ge D_{\mathrm{inf}}: \qquad
+\text{if } X_i = 1, \ \tau_i \ge \tau_{\mathrm{peak}} \text{ and } V_i < \theta: \qquad
 X_i \leftarrow 0, \qquad \tau_i^{\mathrm{b}} \leftarrow 0
 ```
+
+where $\theta$ is the recovery threshold: a fraction of the peak viral load
+of a typical infection. The viral load is the one calculated at step 3 of
+the previous timestep ([Advancing individuals](#sec-advance)). An infection
+whose viral load never reaches $\theta$ ends at the first step 2 after its
+peak.
 
 A boost restores immunity to its maximum whatever immunity remained.
 Immunity then declines linearly with time since the boost, and is lost
@@ -287,9 +310,32 @@ The hazard of infection is proportional to $\exp(-z_i)$
 slowly at first after a boost and reaches its full value abruptly when the
 time since the boost reaches $D_{\mathrm{imm}}$.
 
-An infection that starts in timestep $n$ has $\tau_i = 0$ at step 2 of that
-timestep, so it ends at step 2 of timestep
-$n + \lceil D_{\mathrm{inf}} / \Delta t \rceil$.
+<a id="sec-duration"></a>
+
+### Duration of infection
+
+The duration of infection is not a parameter, but follows from the viral
+load. If an individual's immunity stays constant during an infection (for
+example, if they have none), the
+[log-time form of the profile](#eq-viral-load-profile-log-time) gives the
+time since infection at which their viral load falls below $\theta$:
+
+<a id="eq-duration"></a>
+
+```math
+\tau_{\mathrm{end}} = \tau_{\mathrm{peak}}
+  \exp\left(\sigma_V \sqrt{2 \log \frac{\nu_i e^{-\kappa z_i}}{\theta}}\right)
+  \quad \text{if } \nu_i e^{-\kappa z_i} > \theta,
+  \qquad \text{otherwise } \tau_{\mathrm{end}} = \tau_{\mathrm{peak}}
+```
+
+and the infection ends at the first step 2 at which
+$\tau_i \ge \tau_{\mathrm{end}}$. A typical infection, with
+$\nu_i e^{-\kappa z_i} = 1$, lasts about
+$\tau_{\mathrm{peak}} \exp\left(\sigma_V \sqrt{-2 \log \theta}\right)$
+days. Infections with a higher viral load level last longer, and immunity
+shortens infections. If immunity wanes during an infection, the viral load
+rises slightly over time and the infection lasts a little longer than this.
 
 <a id="sec-advance"></a>
 
@@ -328,7 +374,7 @@ Ages are in years and elapsed times in days.
 
 | Symbol | Meaning | Support | Units | Code name |
 |---|---|---|---|---|
-| $\beta_0$ | baseline hazard of transmission: for an adult infected individual with unit viral load, an adult uninfected individual with no immunity, and a non-household contact event | $(0, \infty)$ | per hour | `baseline_transmission_hazard` |
+| $\beta_0$ | baseline hazard of transmission: for an adult infected individual with viral load 1 (the peak of a typical infection), an adult uninfected individual with no immunity, and a non-household contact event | $(0, \infty)$ | per hour | `baseline_transmission_hazard` |
 | $\alpha_{\mathrm{inf}}$ | log hazard ratio for an infected individual who is a child | $\mathbb{R}$ | | `child_infectiousness_score` |
 | $\alpha_{\mathrm{sus}}$ | log hazard ratio for an uninfected individual who is a child | $\mathbb{R}$ | | `child_susceptibility_score` |
 | $\alpha_{\mathrm{hh}}$ | log hazard ratio for a household contact event | $\mathbb{R}$ | | `household_location_score` |
@@ -339,7 +385,7 @@ Ages are in years and elapsed times in days.
 | $\mu_V$ | meanlog of the viral load profile | $\mathbb{R}$ | log days | `viral_load_profile_meanlog` |
 | $\sigma_V$ | sdlog of the viral load profile | $(0, \infty)$ | | `viral_load_profile_sdlog` |
 | $\kappa$ | reduction in log viral load per unit of immunity level | $[0, \infty)$ | | `viral_load_immunity_effect` |
-| $D_{\mathrm{inf}}$ | duration of infection | $(0, \infty)$ | days | `infectious_duration` |
+| $\theta$ | recovery threshold: viral load, after the peak, below which an infection ends, as a fraction of the peak viral load of a typical infection | $(0, 1)$ | | `recovery_viral_load_threshold` |
 | $z_{\max}$ | immunity level immediately after a boost | $[0, \infty)$ | log hazard ratio | `immunity_boost_level` |
 | $D_{\mathrm{imm}}$ | time from a boost until immunity is lost | $(0, \infty)$ | days | `immunity_duration` |
 
@@ -370,12 +416,15 @@ Ages are in years and elapsed times in days.
 | $p_k$ | probability of transmission | | `transmission_probability()` |
 | $M$ | number of non-household contact events in a timestep | | `number_of_non_household_contact_events` |
 
-**Time and operators**
+**Functions, derived quantities and operators**
 
 | Symbol | Meaning |
 |---|---|
 | $n$, $t_n$ | timestep index, and the time at which timestep $n$ starts |
-| $f(\tau)$ | viral load profile: lognormal density in time since infection |
+| $g(\tau)$ | viral load profile: lognormal density in time since infection, scaled to peak at 1 |
+| $f(\tau)$ | lognormal density with meanlog $\mu_V$ and sdlog $\sigma_V$ |
+| $\tau_{\mathrm{peak}}$ | time since infection at which viral load peaks, in days |
+| $\tau_{\mathrm{end}}$ | time since infection at which viral load falls below $\theta$, in days, if immunity is constant |
 | $\mathbb{1}[\cdot]$ | 1 when the condition in brackets holds, 0 otherwise |
 | $\lceil x \rceil$ | smallest integer greater than or equal to $x$ |
 | $x \leftarrow y$ | $x$ is set to $y$ |
