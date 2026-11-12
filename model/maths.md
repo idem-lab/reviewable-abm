@@ -299,33 +299,33 @@ Ages are in years and elapsed times in days.
 
 **Settings**
 
-| Symbol | Meaning | Units | Code name |
-|---|---|---|---|
-| $N$ | population size, a multiple of $H$ | individuals | `population_size` |
-| $H$ | household size | individuals | `household_size` |
-| $I_0$ | number of individuals infected at the start | individuals | `initial_infections` |
-| $\Delta t$ | timestep length | days | `timestep_length` |
-| $A_{\max}$ | upper limit of initial ages (80) | years | `maximum_initial_age` |
-| $A$ | age at which individuals become adults (18) | years | `adult_age` |
+| Symbol | Meaning | Support | Units | Code name |
+|---|---|---|---|---|
+| $N$ | population size | positive multiple of $H$ | individuals | `population_size` |
+| $H$ | household size | $\lbrace 1, 2, \dots \rbrace$ | individuals | `household_size` |
+| $I_0$ | number of individuals infected at the start | $\lbrace 1, \dots, N \rbrace$ | individuals | `initial_infections` |
+| $\Delta t$ | timestep length | $(0, \infty)$ | days | `timestep_length` |
+| $A_{\max}$ | upper limit of initial ages (80) | $(0, \infty)$ | years | `maximum_initial_age` |
+| $A$ | age at which individuals become adults (18) | $(0, A_{\max})$ | years | `adult_age` |
 
 **Parameters**
 
-| Symbol | Meaning | Units | Code name |
-|---|---|---|---|
-| $\beta$ | baseline hazard of transmission: for an adult infected individual with unit viral load, an adult uninfected individual with no immunity, and a non-household contact | per hour | `baseline_transmission_hazard` |
-| $\alpha_{\mathrm{inf}}$ | log hazard ratio for an infected individual who is a child | | `child_infectiousness_score` |
-| $\alpha_{\mathrm{sus}}$ | log hazard ratio for an uninfected individual who is a child | | `child_susceptibility_score` |
-| $\alpha_{\mathrm{hh}}$ | log hazard ratio for a household contact | | `household_location_score` |
-| $\bar d_{\mathrm{hh}}$ | daily duration of a household contact | hours per day | `household_contact_hours_per_day` |
-| $\bar d_{\mathrm{nh}}$ | daily duration of a non-household contact | hours per day | `non_household_contact_hours_per_day` |
-| $c$ | non-household contacts per person per day | per day | `non_household_contacts_per_person_per_day` |
-| $\sigma_\nu$ | sdlog of the viral load level | | `viral_load_level_sdlog` |
-| $\mu_V$ | meanlog of the viral load profile | log days | `viral_load_profile_meanlog` |
-| $\sigma_V$ | sdlog of the viral load profile | | `viral_load_profile_sdlog` |
-| $\kappa$ | reduction in log viral load per unit of immunity level | | `viral_load_immunity_effect` |
-| $D_{\mathrm{inf}}$ | duration of infection | days | `infectious_duration` |
-| $z_{\max}$ | immunity level immediately after a boost | log hazard ratio | `immunity_boost_level` |
-| $D_{\mathrm{imm}}$ | time from a boost until immunity is lost | days | `immunity_duration` |
+| Symbol | Meaning | Support | Units | Code name |
+|---|---|---|---|---|
+| $\beta$ | baseline hazard of transmission: for an adult infected individual with unit viral load, an adult uninfected individual with no immunity, and a non-household contact | $(0, \infty)$ | per hour | `baseline_transmission_hazard` |
+| $\alpha_{\mathrm{inf}}$ | log hazard ratio for an infected individual who is a child | $\mathbb{R}$ | | `child_infectiousness_score` |
+| $\alpha_{\mathrm{sus}}$ | log hazard ratio for an uninfected individual who is a child | $\mathbb{R}$ | | `child_susceptibility_score` |
+| $\alpha_{\mathrm{hh}}$ | log hazard ratio for a household contact | $\mathbb{R}$ | | `household_location_score` |
+| $\bar d_{\mathrm{hh}}$ | daily duration of a household contact | $[0, 24]$ | hours per day | `household_contact_hours_per_day` |
+| $\bar d_{\mathrm{nh}}$ | daily duration of a non-household contact | $[0, 24]$ | hours per day | `non_household_contact_hours_per_day` |
+| $c$ | non-household contacts per person per day | $[0, \infty)$ | per day | `non_household_contacts_per_person_per_day` |
+| $\sigma_\nu$ | sdlog of the viral load level | $[0, \infty)$ | | `viral_load_level_sdlog` |
+| $\mu_V$ | meanlog of the viral load profile | $\mathbb{R}$ | log days | `viral_load_profile_meanlog` |
+| $\sigma_V$ | sdlog of the viral load profile | $(0, \infty)$ | | `viral_load_profile_sdlog` |
+| $\kappa$ | reduction in log viral load per unit of immunity level | $[0, \infty)$ | | `viral_load_immunity_effect` |
+| $D_{\mathrm{inf}}$ | duration of infection | $(0, \infty)$ | days | `infectious_duration` |
+| $z_{\max}$ | immunity level immediately after a boost | $[0, \infty)$ | log hazard ratio | `immunity_boost_level` |
+| $D_{\mathrm{imm}}$ | time from a boost until immunity is lost | $(0, \infty)$ | days | `immunity_duration` |
 
 **Individual state**, for individual $i$
 
