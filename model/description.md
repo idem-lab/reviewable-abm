@@ -5,6 +5,15 @@ household structure, variable infectiousness, and waning immunity. It
 demonstrates the procedure in the README; its structure and parameter values
 are not calibrated to any pathogen.
 
+## Contents
+
+- [Population](#sec-population)
+- [Time](#sec-time)
+- [Contact events](#sec-contacts)
+- [Transmission](#sec-transmission)
+- [Viral load](#sec-viral-load)
+- [Recovery and immunity](#sec-immunity)
+
 <a id="sec-population"></a>
 
 ## Population

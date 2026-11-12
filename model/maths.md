@@ -19,6 +19,19 @@ Individual state changes only at discrete times. A quantity written as a
 function of time, such as $a_i(t)$, is its value during the timestep
 starting at time $t$, and $x \leftarrow y$ means that $x$ is set to $y$.
 
+## Contents
+
+- [Population](#sec-population)
+- [Time](#sec-time)
+- [Contact events](#sec-contacts)
+- [Transmission](#sec-transmission)
+- [Viral load](#sec-viral-load)
+  - [Infection](#sec-infection)
+  - [Viral load over time](#sec-viral-load-over-time)
+- [Recovery and immunity](#sec-immunity)
+- [Advancing individuals](#sec-advance)
+- [Notation](#sec-notation)
+
 <a id="sec-population"></a>
 
 ## Population
@@ -210,6 +223,8 @@ where $\nu_i$ is the viral load level of the infection, $\sigma_\nu$ is the
 standard deviation of its log, and $\tau_i$ is the time since infection in
 days. The mean of $\log \nu_i$ is fixed at 0 because $\beta_0$ sets the
 overall scale of infectiousness.
+
+<a id="sec-viral-load-over-time"></a>
 
 ### Viral load over time
 
