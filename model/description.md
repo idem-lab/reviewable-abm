@@ -11,6 +11,8 @@ A fixed population of individuals lives in households of equal size. Each
 individual's age is drawn at the start of the simulation, uniformly between
 0 and 80 years. Individuals under 18 are children and the rest are adults.
 Ages increase as time passes. There are no births, deaths, or migration.
+At the start, a fixed number of individuals, chosen at random, are newly
+infected, and no one has any immunity.
 
 ## Time {#sec-time}
 
@@ -28,10 +30,12 @@ each timestep, in this order:
 In each timestep, every pair of individuals in the same household has one
 contact. In addition, a random number of contacts occurs between pairs
 chosen uniformly from the whole population, with a mean set by the number
-of contacts per person per day. Household and non-household contacts have
-different durations. Contact durations are expressed per day, so the
-duration of a contact is its daily duration multiplied by the length of
-the timestep. Contacts are resolved one at a time, in random order.
+of contacts per person per day (each contact counts for both people in
+it). These pairs can, by chance, live in the same household; their contact
+is still a non-household contact. Household and non-household contacts
+have different durations. Contact durations are expressed in hours per
+day, so the duration of a contact is its daily duration multiplied by the
+length of the timestep. Contacts are resolved one at a time, in random order.
 
 ## Transmission {#sec-transmission}
 
@@ -48,7 +52,8 @@ elsewhere).
 Each infection has its own viral load level, drawn at infection. Viral load
 also changes with time since infection, following the shape of a lognormal
 density: zero at infection, rising to a peak after a few days, then
-declining. An infected individual's own immunity reduces their viral load.
+declining. An infected individual's current immunity, left from earlier infections,
+reduces their viral load.
 Because viral load is zero at infection, an individual infected during a
 timestep cannot transmit until the next timestep.
 
@@ -56,7 +61,7 @@ timestep cannot transmit until the next timestep.
 
 Infections last a fixed number of days. On recovery, an individual's
 immunity is boosted, reducing their log hazard of infection by a fixed
-amount. This reduction shrinks linearly with time since the boost until
+amount, whatever immunity they had left. This reduction shrinks linearly with time since the boost until
 immunity is lost entirely. Because the reduction is on the log scale,
 susceptibility returns slowly at first and then quickly, reaching full
 susceptibility abruptly. Individuals who have never been infected have no
