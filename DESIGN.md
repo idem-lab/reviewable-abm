@@ -46,11 +46,23 @@ reference implementation is wrong.
 **Written description.** Plain scientific prose. Where it helps, follow
 the ODD (Overview, Design concepts, Details) protocol for describing
 agent-based models (Grimm et al. 2020). Each section has a label, such as
-`{#sec-immunity}`, so other documents can refer to it.
+`sec-immunity`, so other documents can refer to it.
 
-**Mathematical description.** Every symbol is defined in a table that also
-gives its name in the code. A symbol keeps one meaning throughout the
-document. Each equation has a label, such as `{#eq-immunity}`.
+**Mathematical description.** Each symbol is defined briefly in the text
+where it is first used, and in full in tables at the end of the document,
+which also give its units and its name in the code. A symbol keeps one
+meaning throughout the document. Each equation has a label, such as
+`eq-immunity`.
+
+**Labels and equations.** Both descriptions must render on GitHub, where
+researchers review them. A label is an HTML anchor on the line before its
+heading or equation, such as `<a id="eq-immunity"></a>`, and is referred to
+with an ordinary link, such as `[immunity equation](#eq-immunity)`. Display
+equations go in fenced `math` code blocks, not between `$$`. In inline
+maths (`$...$`), write subscripts before superscripts (`\tau_i^{b}`, not
+`\tau^{b}_i`), and never put an underscore straight after a closing brace,
+because GitHub can read it as the start of italics. Agents check the
+rendering with GitHub's Markdown API before pushing.
 
 **Links file.** The three descriptions do not divide the model in the same
 way, so they are linked by a list of model features in
