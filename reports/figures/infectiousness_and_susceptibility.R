@@ -20,6 +20,7 @@ by_viral_load <- ggplot(infectiousness,
                         aes(viral_load, relative_infectiousness,
                             colour = age_group)) +
   geom_line() +
+  scale_colour_age_group() +
   labs(x = "viral load", y = "relative infectiousness", colour = NULL,
        title = "Infectiousness by viral load")
 
@@ -28,6 +29,7 @@ by_age <- ggplot(susceptibility[susceptibility$immunity_level %in%
                  aes(age, relative_susceptibility,
                      colour = factor(immunity_level))) +
   geom_step() +
+  scale_colour_immunity() +
   scale_y_continuous(limits = c(0, 1)) +
   labs(x = "age (years)", y = "relative susceptibility",
        colour = "immunity level", title = "Susceptibility by age")
@@ -37,6 +39,7 @@ by_immunity <- ggplot(susceptibility[susceptibility$age %in% c(10, 30), ],
                           colour = ifelse(age < 18, "child (age 10)",
                                           "adult (age 30)"))) +
   geom_line() +
+  scale_colour_age_group() +
   scale_y_continuous(limits = c(0, 1)) +
   labs(x = "immunity level", y = "relative susceptibility", colour = NULL,
        title = "Susceptibility by immunity")

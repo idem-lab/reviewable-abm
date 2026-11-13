@@ -17,14 +17,14 @@ draws$infection <- ifelse(draws$day < 120, "first", "second")
 viral_load_figure <- ggplot(draws[draws$infected & draws$viral_load > 0, ],
                             aes(day, viral_load, colour = person,
                                 group = interaction(person, infection))) +
-  geom_line() +
+  geom_line(linewidth = 0.5) +
   scale_y_log10(labels = scales::label_number()) +
   coord_cartesian(xlim = c(0, 300)) +
   labs(x = "day", y = "viral load (log scale)", title = "Viral load")
 
 immunity_figure <- ggplot(draws, aes(day, immunity_level,
                                      colour = person)) +
-  geom_line() +
+  geom_line(linewidth = 0.5) +
   coord_cartesian(xlim = c(0, 300)) +
   labs(x = "day", y = "immunity level", title = "Immunity")
 

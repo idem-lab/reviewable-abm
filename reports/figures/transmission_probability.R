@@ -30,6 +30,7 @@ by_duration <- ggplot(adult_no_immunity[shown_loads, ],
                           colour = factor(signif(viral_load, 2)),
                           linetype = location)) +
   geom_line() +
+  scale_colour_viral_load() +
   scale_y_continuous(limits = c(0, 1)) +
   labs(x = "contact event duration (hours)", y = "probability",
        colour = "viral load", linetype = NULL,
@@ -40,6 +41,7 @@ by_viral_load <- ggplot(typical[typical$age_group == "adult" &
                                   typical$on_grid, ],
                         aes(viral_load, probability, colour = location)) +
   geom_line() +
+  scale_colour_location() +
   scale_x_log10(labels = scales::label_number()) +
   labs(x = "infector viral load (log scale)", y = "probability",
        colour = NULL, title = "By viral load, for a day's contact")
@@ -49,6 +51,7 @@ by_immunity <- ggplot(typical[typical$in_household &
                       aes(immunity_level, probability,
                           colour = age_group)) +
   geom_line() +
+  scale_colour_age_group() +
   labs(x = "infectee immunity level", y = "probability",
        colour = "infector and infectee",
        title = "By immunity, household, viral load 1")

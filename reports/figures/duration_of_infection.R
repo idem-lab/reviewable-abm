@@ -12,7 +12,8 @@ draws <- read_draws("duration_of_infection")
 figure <- ggplot(draws, aes(viral_load_level,
                             colour = factor(immunity_at_infection))) +
   geom_line(aes(y = equation_duration)) +
-  geom_point(aes(y = simulated_duration), size = 1) +
+  geom_point(aes(y = simulated_duration), size = 1.2) +
+  scale_colour_immunity() +
   scale_x_log10(labels = scales::label_number()) +
   labs(x = "viral load level (log scale)",
        y = "duration of infection (days)",

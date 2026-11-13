@@ -22,6 +22,7 @@ by_level_and_width <- ggplot(draws[draws$immunity_at_infection == 0, ],
   geom_hline(aes(yintercept = recovery_threshold), linetype = "dashed",
              colour = "grey50") +
   geom_line() +
+  scale_colour_viral_load() +
   facet_wrap(~ paste("profile width", profile_width)) +
   scale_y_log10(limits = c(1e-4, 10), labels = scales::label_number()) +
   labs(x = "time since infection (days)", y = "viral load (log scale)",
@@ -35,6 +36,7 @@ by_immunity <- ggplot(draws[draws$viral_load_level == 1 &
   geom_hline(aes(yintercept = recovery_threshold), linetype = "dashed",
              colour = "grey50") +
   geom_line() +
+  scale_colour_immunity() +
   scale_y_log10(limits = c(1e-4, 10), labels = scales::label_number()) +
   labs(x = "time since infection (days)", y = "viral load (log scale)",
        colour = "immunity at infection",

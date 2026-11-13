@@ -350,8 +350,11 @@ the same name in `reports/figures/` that reads only that file and saves the
 figure. The expected behaviour is stated at the top of the figure script.
 Replicate simulations run in parallel, each with its own random number
 stream from a fixed seed, so results do not depend on the number of cores.
-The shared theme is in `reports/theme.R`, and `reports/make_all.R` remakes
-everything. Each figure is listed under its features in the links file.
+The shared theme is in `reports/theme.R`. It gives each quantity that
+figures vary its own colour scale (for example oranges for viral load and
+blues for immunity), so a colour means the same quantity in every figure,
+and draws figures of individual simulations with thinner lines.
+`reports/make_all.R` remakes everything. Each figure is listed under its features in the links file.
 
 ## 6. The exact simulator
 

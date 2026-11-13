@@ -14,7 +14,7 @@ draws$waning <- ifelse(draws$immunity_waning_rate == 0,
                        "no waning", "waning at 0.02 per day")
 
 figure <- ggplot(draws, aes(time, prevalence, group = replicate)) +
-  geom_line(alpha = 0.3, colour = figure_colours[1]) +
+  geom_line(alpha = 0.3, linewidth = 0.4, colour = figure_colours[1]) +
   facet_wrap(~ waning, ncol = 1) +
   scale_y_continuous(labels = scales::label_percent()) +
   labs(x = "day", y = "prevalence (proportion infected)",
