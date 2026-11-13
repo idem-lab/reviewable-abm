@@ -21,3 +21,10 @@ random_bernoulli <- function(probability) {
   rbinom(1, size = 1, prob = probability) == 1
 
 }
+
+# a value drawn uniformly between lower and upper
+random_uniform <- function(lower, upper) {
+
+  runif(1, min = lower, max = upper)
+
+}

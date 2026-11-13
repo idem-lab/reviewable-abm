@@ -2,14 +2,14 @@
 
 # individuals in households of equal size, with random ages, some of whom
 # are infected at random
-random_initial_population <- function() {
+simulate_initial_population <- function() {
 
   population_size <- setting("population_size")
   stopifnot(population_size %% setting("household_size") == 0)
 
   population <- list()
   for (i in seq_len(population_size)) {
-    population[[i]] <- random_uninfected_individual(i)
+    population[[i]] <- simulate_new_individual(i)
   }
 
   initially_infected_indices <- random_individual_indices(
@@ -25,22 +25,14 @@ random_initial_population <- function() {
 
 }
 
-# a new individual with a random age, who has never been infected
-random_uninfected_individual <- function(individual_index) {
+# a new individual with a random age, who has never been infected and has no
+# immunity; the quantities describing infections and boosts are undefined
+# (NA) until the first infection
+simulate_new_individual <- function(individual_index) {
 
-  age <- runif(1, min = 0, max = setting("maximum_initial_age"))
-  uninfected_individual(individual_index, age)
-
-}
-
-# a new individual who has never been infected and has no immunity; the
-# quantities describing infections and boosts are undefined (NA) until the
-# first infection
-uninfected_individual <- function(individual_index, age) {
-
-  list(
+  new_individual <- list(
     household_index = household_index(individual_index),
-    age = age, # years
+    age = random_uniform(0, setting("maximum_initial_age")), # years
     infected = FALSE,
     time_since_infection = NA, # days
     time_since_boost = NA, # days
@@ -51,6 +43,8 @@ uninfected_individual <- function(individual_index, age) {
     immunity_at_infection = NA,
     boost_size = NA
   )
+
+  new_individual
 
 }
 

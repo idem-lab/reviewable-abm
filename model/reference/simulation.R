@@ -2,11 +2,11 @@
 
 # simulate the model for a number of timesteps, returning the number of new
 # infections and the number infected in each timestep
-random_simulation <- function(number_of_timesteps) {
+simulate_epidemic <- function(number_of_timesteps) {
 
-  population <- random_initial_population()
+  population <- simulate_initial_population()
 
-  simulation <- data.frame(
+  epidemic <- data.frame(
     time = rep(NA, number_of_timesteps),
     new_infections = rep(NA, number_of_timesteps),
     infected = rep(NA, number_of_timesteps)
@@ -17,8 +17,8 @@ random_simulation <- function(number_of_timesteps) {
     set_clock_to_timestep(timestep)
 
     # 1. contact events, which may transmit infection
-    contact_events <- random_contact_events(population)
-    population <- random_transmissions(population, contact_events)
+    contact_events <- simulate_contact_events(population)
+    population <- simulate_transmissions(population, contact_events)
     new_infections <- number_newly_infected(population)
 
     # 2. recovery
@@ -27,13 +27,13 @@ random_simulation <- function(number_of_timesteps) {
     # 3. ages, elapsed times and levels
     population <- advance_individuals_one_timestep(population)
 
-    simulation$time[timestep] <- current_time()
-    simulation$new_infections[timestep] <- new_infections
-    simulation$infected[timestep] <- number_infected(population)
+    epidemic$time[timestep] <- current_time()
+    epidemic$new_infections[timestep] <- new_infections
+    epidemic$infected[timestep] <- number_infected(population)
 
   }
 
-  simulation
+  epidemic
 
 }
 

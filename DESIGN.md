@@ -164,20 +164,33 @@ population or fewer replicates; do not restructure the code.
 1. Objects such as an individual, a household or a contact event are
    named lists, with the same element names everywhere they appear. The
    list of all individuals is called `population`, and one of its
-   elements `individual`. An object
-   that is updated keeps its name (`population <- ...`); a second name is
-   used only where a function needs the old and new versions together.
-   Function names say what the function returns or does. A function
-   named for the value it returns builds that value in a variable of the
-   same name, without any `random_` prefix: for example `viral_load`
-   inside `viral_load()`, and `non_household_contact_events` inside
-   `random_non_household_contact_events()`. Other variables take the name
+   elements `individual`. An object that is updated keeps its name
+   (`population <- ...`); a second name is used only where a function
+   needs the old and new versions together. Function names say what the
+   function returns or does. A function named for the value it returns
+   builds that value in a variable of the same name, without its
+   `random_` or `simulate_` prefix: for example `viral_load` inside
+   `viral_load()`, and `non_household_contact_events` inside
+   `simulate_non_household_contact_events()`. Other variables take the name
    of what they hold, without generic words such as `result`, `value` or
    `count`.
-2. A function that draws random numbers, directly or through the functions
-   it calls, has a name starting `random_`. All other functions give the
-   same output for the same input. Random values are drawn in the `random_`
-   function and passed to the others.
+2. Functions that use random numbers have one of two prefixes, so that
+   reviewers can see where chance enters the model:
+   - `random_` for a function that only draws a value from a
+     distribution, given what it needs, like R's own `r*` functions: for
+     example `random_bernoulli()` or `random_infection_characteristics()`.
+     It contains no model process, and never calls a `simulate_` function.
+   - `simulate_` for a model process that uses random draws, directly or
+     through the functions it calls: for example
+     `simulate_transmissions()`.
+
+   All other functions give the same output for the same input; random
+   values are drawn by the prefixed functions and passed to them. An
+   automated check confirms that every function that calls an R random
+   number function (such as `runif()`, `sample.int()` or
+   `MASS::mvrnorm()`) or a prefixed function has a prefix itself, and that
+   no `random_` function calls a `simulate_` function, so that names
+   cannot drift from what the functions do.
 3. Each recurring term has one meaning, defined once. For example, *score*
    means an additive term on the log hazard scale throughout, and no other
    word is used for the same idea.
@@ -195,7 +208,7 @@ population or fewer replicates; do not restructure the code.
    A loop over something that is not a list, such as timesteps, uses a
    word: `timestep`.
 6. When a function takes two or more arguments of the same kind, name them
-   at the call, for example `random_transmission_outcome(infector =
+   at the call, for example `transmission_probability(infector =
    infector, infectee = infectee, contact_event = contact_event)`.
 7. Comments explain what the names do not, such as units, scales and the
    reason for a step, in as few words as possible.

@@ -3,7 +3,7 @@
 # resolve contact events one at a time, in the order given, so that
 # individuals infected by earlier contact events can infect, and cannot be
 # infected, in later ones
-random_transmissions <- function(population, contact_events) {
+simulate_transmissions <- function(population, contact_events) {
 
   for (k in seq_along(contact_events)) {
 
@@ -27,11 +27,12 @@ random_transmissions <- function(population, contact_events) {
       infector <- population[[a]]
       infectee <- population[[b]]
 
-      transmitted <- random_transmission_outcome(
+      transmission_probability <- transmission_probability(
         infector = infector,
         infectee = infectee,
         contact_event = contact_event
       )
+      transmitted <- random_bernoulli(transmission_probability)
 
       if (transmitted) {
         infection_characteristics <- random_infection_characteristics()
@@ -43,19 +44,6 @@ random_transmissions <- function(population, contact_events) {
   }
 
   population
-
-}
-
-# whether a contact event transmits infection
-random_transmission_outcome <- function(infector, infectee, contact_event) {
-
-  transmission_probability <- transmission_probability(
-    infector = infector,
-    infectee = infectee,
-    contact_event = contact_event
-  )
-
-  random_bernoulli(transmission_probability)
 
 }
 

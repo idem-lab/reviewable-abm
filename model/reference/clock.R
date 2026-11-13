@@ -1,6 +1,6 @@
 # the simulation clock: the time at the start of the current timestep, in
 # days. It is the only value that changes during a simulation without being
-# passed as an argument, and only random_simulation() sets it, with
+# passed as an argument, and only simulate_epidemic() sets it, with
 # set_clock_to_timestep().
 
 simulation_clock <- new.env()
