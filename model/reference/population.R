@@ -15,7 +15,8 @@ random_initial_population <- function() {
   initially_infected <- random_individuals(population,
                                            setting("initial_infections"))
   for (i in initially_infected) {
-    population[[i]] <- random_infection(population[[i]])
+    individual <- population[[i]]
+    population[[i]] <- random_infection(individual)
   }
 
   population

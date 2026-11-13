@@ -174,11 +174,15 @@ population or fewer replicates; do not restructure the code.
    word is used for the same idea.
 4. Parameter names state what they are and on what scale, for example
    `infectiousness_profile_meanlog`.
-5. Name a loop variable for what it holds, for example `household` or
-   `timestep`. The exceptions are positions in the population and in the
-   list of contact events, which are `i` and `k`, as in the mathematical
-   description; `individual` and `contact_event` are the objects
-   themselves.
+5. A loop over a list runs over positions, with the letters of the
+   mathematical description: `i` and `j` for individuals, `h` for
+   households and `k` for contact events. The first line of the loop
+   names the element at that position, such as
+   `individual <- population[[i]]` or `household <- households[[h]]`, so
+   that a word always names an object and a letter always a position. A
+   changed element is written back with `population[[i]] <- individual`.
+   A loop over something that is not a list, such as timesteps, uses a
+   word: `timestep`.
 6. When a function takes two or more arguments of the same kind, name them
    at the call, for example
    `random_transmission_outcome(infector = individual_a, infectee = individual_b)`.

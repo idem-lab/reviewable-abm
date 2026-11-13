@@ -59,7 +59,8 @@ number_infected <- function(population) {
 
   number_infected <- 0
   for (i in seq_along(population)) {
-    if (population[[i]]$infected) {
+    individual <- population[[i]]
+    if (individual$infected) {
       number_infected <- number_infected + 1
     }
   }

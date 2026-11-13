@@ -14,23 +14,25 @@ random_transmissions <- function(population, contact_events) {
     # transmission is possible only if exactly one of the pair is infected
     if (population[[a]]$infected != population[[b]]$infected) {
 
+      # j is the infected individual and i the uninfected one
       if (population[[a]]$infected) {
-        infector_index <- a
-        infectee_index <- b
+        j <- a
+        i <- b
       } else {
-        infector_index <- b
-        infectee_index <- a
+        j <- b
+        i <- a
       }
+      infector <- population[[j]]
+      infectee <- population[[i]]
 
       transmitted <- random_transmission_outcome(
-        infector = population[[infector_index]],
-        infectee = population[[infectee_index]],
+        infector = infector,
+        infectee = infectee,
         contact_event = contact_event
       )
 
       if (transmitted) {
-        population[[infectee_index]] <-
-          random_infection(population[[infectee_index]])
+        population[[i]] <- random_infection(infectee)
       }
 
     }

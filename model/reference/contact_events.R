@@ -17,11 +17,10 @@ household_contact_events <- function(population) {
   households <- households(population)
 
   household_contact_events <- list()
-  for (household in seq_along(households)) {
-    household_contact_events <- c(
-      household_contact_events,
-      contact_events_in_household(households[[household]])
-    )
+  for (h in seq_along(households)) {
+    household <- households[[h]]
+    household_contact_events <- c(household_contact_events,
+                                  contact_events_in_household(household))
   }
 
   household_contact_events
@@ -29,35 +28,38 @@ household_contact_events <- function(population) {
 }
 
 # the households, each given by the positions in the population of its
-# members; an individual's household is its position in this list
+# members; an individual's household is the position of their household in
+# this list
 households <- function(population) {
 
   number_of_households <- length(population) / setting("household_size")
   households <- rep(list(NULL), number_of_households)
 
   for (i in seq_along(population)) {
-    household <- population[[i]]$household
-    households[[household]] <- c(households[[household]], i)
+    individual <- population[[i]]
+    h <- individual$household
+    households[[h]] <- c(households[[h]], i)
   }
 
   households
 
 }
 
-# one contact event for every pair of members of a household
-contact_events_in_household <- function(members) {
+# one contact event for every pair of members of a household, given by their
+# positions in the population
+contact_events_in_household <- function(household) {
 
   duration <- parameter("household_contact_event_hours_per_day") *
     setting("timestep_length")
 
   contact_events_in_household <- list()
-  for (member_a in seq_along(members)) {
-    for (member_b in seq_along(members)) {
-      if (member_a < member_b) {
+  for (i in household) {
+    for (j in household) {
+      if (i < j) {
         k <- length(contact_events_in_household) + 1
         contact_events_in_household[[k]] <- contact_event(
-          individual_a = members[member_a],
-          individual_b = members[member_b],
+          individual_a = i,
+          individual_b = j,
           in_household = TRUE,
           duration = duration
         )

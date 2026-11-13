@@ -5,8 +5,9 @@
 recover_individuals <- function(population) {
 
   for (i in seq_along(population)) {
-    if (ready_to_recover(population[[i]])) {
-      population[[i]] <- recovery(population[[i]])
+    individual <- population[[i]]
+    if (ready_to_recover(individual)) {
+      population[[i]] <- recovery(individual)
     }
   }
 
