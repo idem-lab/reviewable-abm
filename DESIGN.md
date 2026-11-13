@@ -15,6 +15,7 @@ follow it.
 | Infrastructure for running the reference implementation | `model/infrastructure/` | agents | researchers, when it changes |
 | Links between the three | `model/mapping.yaml` | agents | researchers |
 | Unit tests | `model/tests/` | agents | researchers |
+| Linter for the rules in Section 4 | `lint/` | agents | researchers, when it changes |
 | Behaviour figures, and the scripts that make them | `reports/` | agents | researchers |
 | Acceptable divergence of the approximate simulator | `validation/tolerances.md` | agreed with researchers | researchers |
 | Exact simulator | `impl/exact/` | agents | tests only |
@@ -135,8 +136,8 @@ results with the full settings and parameters used.
    clock with `set_clock_to_timestep()` where needed, before calling the
    function.
 
-   The linter (Section 12) will check that these calls come first, that
-   loaded names do not clash with a function's arguments, and that loaded
+   The linter (Section 5) checks that these calls come first, that loaded
+   names do not clash with a function's arguments, and that loaded
    variables are not assigned to.
 6. One version of the model. No options or flags that switch between
    alternative structures. A proposed alternative is kept on a separate
@@ -222,8 +223,8 @@ results with the full settings and parameters used.
      `simulate_transmissions()`.
 
    All other functions give the same output for the same input; random
-   values are drawn by the prefixed functions and passed to them. An
-   automated check confirms that every function that calls an R random
+   values are drawn by the prefixed functions and passed to them. The
+   linter (Section 5) checks that every function that calls an R random
    number function (such as `runif()`, `sample.int()` or
    `MASS::mvrnorm()`) or a prefixed function has a prefix itself, and that
    no `random_` function calls a `simulate_` function, so that names
@@ -280,7 +281,7 @@ they describe different processes. Do not pass functions as arguments.
 Order functions so that each appears above the functions it calls. Keep
 each file to one group of related processes.
 
-## 5. Unit tests and behaviour figures
+## 5. Unit tests, linter and behaviour figures
 
 These are not part of the model, so need not follow the rules in Section 4.
 
@@ -290,9 +291,25 @@ the model code. Add a check to the model code (with `stopifnot()`) only
 where a test cannot easily catch the error. Tests that draw random numbers
 set a seed, and statistical tests state the tolerance and why it is
 enough. Run them from the root of the repository with
-`testthat::test_dir("model/tests")`. `model/tests/test-code-rules.R` holds
-the rules of Section 4 that can be checked automatically, and the checks
-of the links file, until the linter (Section 12) takes them over.
+`testthat::test_dir("model/tests")`. They include the checks of the links
+file (`test-mapping.R`), and a test that the linter finds nothing
+(`test-lint.R`).
+
+**The linter**, in `lint/`, checks the rules of Section 4 that can be
+checked automatically, using the lintr package. It applies lintr's default
+style linters, except those that conflict with this design (the limit on
+name length, and the check for undefined variables, which does not know
+about `load_parameters()`), lintr linters that match rules in Section 4
+(such as `seq_linter()` and `sample_int_linter()`), and this procedure's
+own linters, in `lint/model_linters.R`: the `random_` and `simulate_`
+prefixes, R's random functions only inside `random_` functions, the rules
+for `load_settings()` and `load_parameters()`, no default arguments, no
+more than two levels of nested loops and `if`s, and functions under about
+40 lines. The full set applies to `model/reference/`, and the style
+linters alone to the infrastructure, tests and linters. Run it from the
+root of the repository with `source("lint/lint_model.R")` and then
+`lint_model()`. A rule is not relaxed to make code pass; the code is
+changed, or the rule is changed by researchers.
 
 **Behaviour figures** use ggplot2 with a theme shared by all repositories
 in this lineage and copied with them. Each figure script starts with a
@@ -433,7 +450,6 @@ trained further on simulations from the exact simulator (Krouglova et al.
 
 ## 12. Decisions still open
 
-- The design of the project's own linter, which will enforce these rules.
 - The design of the shared ggplot2 theme.
 
 ## References

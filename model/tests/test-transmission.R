@@ -57,7 +57,7 @@ test_that("only household contact events have a location score", {
   expect_equal(location_score(make_contact_event(in_household = FALSE)), 0)
 })
 
-test_that("a contact event between two infected individuals transmits nothing", {
+test_that("a contact event between two infected people transmits nothing", {
   use_values(parameters = list(baseline_transmission_hazard = 1e6))
   population <- list(make_infected_individual(), make_infected_individual())
   population[[1]]$viral_load <- 1
@@ -65,14 +65,16 @@ test_that("a contact event between two infected individuals transmits nothing", 
   expect_identical(after, population)
 })
 
-test_that("a contact event between two uninfected individuals transmits nothing", {
+test_that("a contact event between two uninfected people transmits nothing", {
   use_values(parameters = list(baseline_transmission_hazard = 1e6))
   population <- list(make_individual(), make_individual())
   after <- simulate_transmissions(population, list(make_contact_event()))
   expect_identical(after, population)
 })
 
-test_that("a certain transmission infects the uninfected individual, whichever is listed first", {
+description <- paste("a certain transmission infects the uninfected",
+                     "individual, whichever is listed first")
+test_that(description, {
   use_values(parameters = list(baseline_transmission_hazard = 1e6))
   for (infected_first in c(TRUE, FALSE)) {
     infector <- make_individual(infected = TRUE, viral_load = 1)

@@ -16,7 +16,7 @@ test_that("a household of one member has no contact events", {
   expect_length(contact_events_in_household(household), 0)
 })
 
-test_that("household contact events last their daily hours times the timestep", {
+test_that("household contact events last daily hours times the timestep", {
   use_values(settings = list(timestep_length = 0.5),
              parameters = list(household_contact_event_hours_per_day = 6))
   household <- list(member_indices = c(1, 2))
@@ -33,7 +33,7 @@ test_that("household contact events cover every household", {
   expect_length(household_contact_events(households), 3 + 0 + 1)
 })
 
-test_that("non-household contact events are between two different individuals", {
+test_that("non-household contact events are between two different people", {
   use_values()
   set.seed(1)
   population <- simulate_initial_population(simulate_households())
@@ -46,7 +46,7 @@ test_that("non-household contact events are between two different individuals", 
   }
 })
 
-test_that("non-household contact events last their daily hours times the timestep", {
+test_that("non-household contact events last daily hours times the timestep", {
   use_values(settings = list(timestep_length = 2),
              parameters = list(non_household_contact_event_hours_per_day = 0.5))
   set.seed(1)
@@ -69,7 +69,7 @@ test_that("the mean number of non-household contact events is N c dt / 2", {
   expect_equal(mean(counts), 100, tolerance = 0.01)
 })
 
-test_that("the contact events of a timestep include every household contact event", {
+test_that("a timestep's contact events include all household contact events", {
   use_values(settings = list(population_size = 50))
   set.seed(1)
   households <- simulate_households()

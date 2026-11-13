@@ -1,6 +1,8 @@
 # maths.md: Recovery and immunity, and Advancing individuals
 
-test_that("an infection does not end before its peak, however low its viral load", {
+description <- paste("an infection never ends before its peak, however low its",
+                     "viral load")
+test_that(description, {
   use_values(parameters = list(viral_load_peak_time = 4))
   individual <- make_infected_individual(viral_load_level = 1e-6)
   individual$time_since_infection <- 3
@@ -8,7 +10,9 @@ test_that("an infection does not end before its peak, however low its viral load
   expect_false(ready_to_recover(individual))
 })
 
-test_that("an infection ends after its peak once viral load is below the threshold", {
+description <- paste("an infection ends after its peak once viral load is",
+                     "below the threshold")
+test_that(description, {
   use_values(settings = list(recovery_viral_load_threshold = 0.001),
              parameters = list(viral_load_peak_time = 4))
   individual <- make_infected_individual()

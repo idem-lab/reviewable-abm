@@ -67,7 +67,9 @@ test_that("an uninfected individual has zero viral load", {
   expect_equal(viral_load(individual), 0)
 })
 
-test_that("viral load levels and boost sizes have the set lognormal distributions", {
+description <- paste("viral load levels and boost sizes have the set lognormal",
+                     "distributions")
+test_that(description, {
   use_values(parameters = list(viral_load_level_sdlog = 0.8,
                                immunity_boost_meanlog = 0.3,
                                immunity_boost_sdlog = 0.5,

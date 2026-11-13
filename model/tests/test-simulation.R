@@ -8,7 +8,7 @@ test_that("a simulation records every timestep, from time 0", {
   expect_equal(epidemic$time, c(0, 0.5, 1, 1.5, 2))
 })
 
-test_that("the first timestep's new infections include the initial infections", {
+test_that("new infections in the first timestep include the initial ones", {
   use_values(settings = list(population_size = 60, number_of_timesteps = 2,
                              initial_infections = 4))
   set.seed(1)
