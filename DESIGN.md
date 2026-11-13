@@ -174,11 +174,14 @@ population or fewer replicates; do not restructure the code.
    elements `individual`. An object that is updated keeps its name
    (`population <- ...`); a second name is used only where a function
    needs the old and new versions together. Function names say what the
-   function returns or does. A function named for the value it returns
-   builds that value in a variable of the same name, without its
-   `random_` or `simulate_` prefix: for example `viral_load` inside
+   function returns or does. Where the returned value is set inside loops
+   or `if`s, the function builds it in a variable with the function's
+   name, without its `random_` or `simulate_` prefix, so the control flow
+   shows how the value is set: for example `viral_load` inside
    `viral_load()`, and `non_household_contact_events` inside
-   `simulate_non_household_contact_events()`. Other variables take the name
+   `simulate_non_household_contact_events()`. Otherwise the last line is
+   the final calculation itself, with no variable to name it, so there is
+   less code to read. Other variables take the name
    of what they hold, without generic words such as `result`, `value` or
    `count`.
 2. Functions that use random numbers have one of two prefixes, so that

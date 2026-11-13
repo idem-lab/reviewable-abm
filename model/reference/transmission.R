@@ -60,9 +60,7 @@ transmission_probability <- function(infector, infectee, contact_event) {
 
   # per hour
   hazard <- exp(log_hazard)
-  transmission_probability <- 1 - exp(-hazard * contact_event$duration)
-
-  transmission_probability
+  1 - exp(-hazard * contact_event$duration)
 
 }
 
@@ -80,9 +78,7 @@ infectiousness_age_score <- function(age) {
 
   child_infectiousness_score <- parameter("child_infectiousness_score")
 
-  infectiousness_age_score <- child_infectiousness_score * is_child(age)
-
-  infectiousness_age_score
+  child_infectiousness_score * is_child(age)
 
 }
 
@@ -99,9 +95,7 @@ susceptibility_age_score <- function(age) {
 
   child_susceptibility_score <- parameter("child_susceptibility_score")
 
-  susceptibility_age_score <- child_susceptibility_score * is_child(age)
-
-  susceptibility_age_score
+  child_susceptibility_score * is_child(age)
 
 }
 

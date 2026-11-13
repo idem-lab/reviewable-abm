@@ -45,9 +45,7 @@ simulate_household_indices <- function(population_size) {
 
   # keep only the first population_size individuals, which cuts the final
   # household short if it would overfill the population
-  household_indices <- household_indices[seq_len(population_size)]
-
-  household_indices
+  household_indices[seq_len(population_size)]
 
 }
 
@@ -58,7 +56,7 @@ simulate_new_individual <- function(household_index) {
 
   maximum_initial_age <- setting("maximum_initial_age")
 
-  new_individual <- list(
+  list(
     household_index = household_index,
     age = random_uniform(0, maximum_initial_age), # years
     infected = FALSE,
@@ -71,8 +69,6 @@ simulate_new_individual <- function(household_index) {
     immunity_at_infection = NA,
     boost_size = NA
   )
-
-  new_individual
 
 }
 

@@ -24,12 +24,10 @@ random_infection_characteristics <- function() {
   # size, in the order of meanlogs
   logs <- random_multivariate_normal(meanlogs, covariance)
 
-  infection_characteristics <- list(
+  list(
     viral_load_level = exp(logs[1]),
     boost_size = exp(logs[2])
   )
-
-  infection_characteristics
 
 }
 
@@ -96,9 +94,6 @@ viral_load_immunity_multiplier <- function(immunity_at_infection) {
 
   viral_load_immunity_effect <- parameter("viral_load_immunity_effect")
 
-  viral_load_immunity_multiplier <- exp(-viral_load_immunity_effect *
-                                          immunity_at_infection)
-
-  viral_load_immunity_multiplier
+  exp(-viral_load_immunity_effect * immunity_at_infection)
 
 }
