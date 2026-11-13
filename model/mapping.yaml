@@ -40,7 +40,7 @@ features:
     code: [simulate_epidemic, number_newly_infected, number_infected]
     figures:
       - reports/figures/epidemics.png
-      - reports/figures/extinction.png
+      - reports/figures/resurgence.png
       - reports/figures/sensitivity.png
 
   - name: Household contact events
@@ -64,6 +64,7 @@ features:
       - contact_event
     figures:
       - reports/figures/contacts.png
+      - reports/figures/offspring.png
 
   - name: Order of contact events
     description: [sec-contacts]
@@ -82,19 +83,22 @@ features:
       - random_bernoulli
     figures:
       - reports/figures/transmission_probability.png
-      - reports/figures/extinction.png
+      - reports/figures/generation_intervals.png
+      - reports/figures/offspring.png
 
   - name: Infectiousness
     description: [sec-transmission, sec-viral-load]
     maths: [sec-transmission, eq-infectiousness-score]
     code: [infectiousness_score, infectiousness_age_score, is_child]
-    figures: []
+    figures:
+      - reports/figures/infectiousness_and_susceptibility.png
 
   - name: Susceptibility
     description: [sec-transmission, sec-immunity]
     maths: [sec-transmission, eq-susceptibility-score]
     code: [susceptibility_score, susceptibility_age_score, is_child]
-    figures: []
+    figures:
+      - reports/figures/infectiousness_and_susceptibility.png
 
   - name: Infection and its characteristics
     description: [sec-viral-load, sec-immunity]
@@ -109,6 +113,7 @@ features:
       - random_multivariate_normal
     figures:
       - reports/figures/infection_characteristics.png
+      - reports/figures/individual_trajectories.png
 
   - name: Viral load over time
     description: [sec-viral-load]
@@ -116,13 +121,14 @@ features:
     code: [viral_load, viral_load_profile, viral_load_immunity_multiplier]
     figures:
       - reports/figures/viral_load.png
+      - reports/figures/individual_trajectories.png
 
   - name: Generation interval
     description: [sec-viral-load]
     maths: [sec-generation-interval, eq-generation-interval]
     code: []
     figures:
-      - reports/figures/generation_interval.png
+      - reports/figures/generation_intervals.png
 
   - name: Recovery
     description: [sec-immunity]
@@ -144,10 +150,12 @@ features:
     code: [immunity_level]
     figures:
       - reports/figures/immunity.png
-      - reports/figures/sensitivity.png
+      - reports/figures/individual_trajectories.png
+      - reports/figures/resurgence.png
 
   - name: Advancing individuals
     description: [sec-time]
     maths: [sec-advance, eq-advance]
     code: [advance_individuals_one_timestep]
-    figures: []
+    figures:
+      - reports/figures/individual_trajectories.png

@@ -6,7 +6,7 @@ library(ggplot2)
 # colour-blind-safe colours (Okabe and Ito 2008), in the order used for
 # groups
 figure_colours <- c("#0072B2", "#D55E00", "#009E73", "#CC79A7", "#E69F00",
-                    "#56B4E9", "#000000")
+                    "#56B4E9", "#000000", "#999999")
 
 theme_set(
   theme_minimal(base_size = 11) +

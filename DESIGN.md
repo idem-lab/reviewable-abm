@@ -314,11 +314,32 @@ changed, or the rule is changed by researchers.
 **Behaviour figures** use ggplot2 with a theme shared by all repositories
 in this lineage and copied with them. Each figure script starts with a
 comment stating what behaviour is expected and why, so reviewers can
-compare the figure with the expectation. Component figures show one
-process in isolation as its parameters vary. Whole-model figures show
-epidemics under perturbations and interventions, with replicate
-simulations, including extinction frequencies and other outcomes near
-unstable states. Figures use fixed random seeds, and are committed so that
+compare the figure with the expectation. The expectation is written
+before the figure is seen, and is not changed to match it afterwards; a
+figure that disagrees with its expectation is reported to researchers.
+Figures use epidemiological terms where they exist, such as incidence,
+prevalence, final attack rate and generation interval. There are three
+kinds of figure:
+
+- Component figures show the main output of each section of the
+  descriptions, such as relative infectiousness, relative susceptibility,
+  transmission probability, viral load and immunity, against every
+  quantity it depends on, holding the others at stated values, in several
+  panels, with interactions shown where they are of interest. They are
+  calculated with the model's own functions, and show the quantities on
+  the scales where they act in the model.
+- Emergent behaviour figures show behaviour that is not written into any
+  one equation but follows from several processes together, found by
+  simulating parts of the model under controlled conditions. For example,
+  the generation intervals and offspring distribution of transmission
+  pairs, from infectors who meet a constant rate of contacts who are never
+  depleted. Their draws are also targets for testing the faster
+  simulators.
+- Whole-model figures show epidemics under perturbations and
+  interventions, with replicate simulations, including extinction
+  frequencies and other outcomes near unstable states, over periods long
+  enough for the behaviour to show, such as a second wave after immunity
+  wanes. Figures use fixed random seeds, and are committed so that
 changes to them show in pull requests.
 
 Simulating and plotting are kept apart, so that how a figure looks can be

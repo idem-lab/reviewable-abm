@@ -1,31 +1,39 @@
-# transmission probability from the model's transmission_probability(),
-# against contact event duration, for several infector viral loads, in and
-# out of the household, between two adults with no immunity
+# the probability of transmission during one contact event, from the
+# model's transmission_probability(), over contact event duration and
+# location, infector viral load and age, and infectee immunity and age
 
 source("reports/helpers.R")
 
 set_values(settings = list(), parameters = list())
-viral_loads <- c(0.1, 0.5, 1)
-durations <- seq(0, 24, by = 0.25)
 
 rows <- list()
-for (load in viral_loads) {
-  infector <- simulate_new_individual(1)
-  infector$age <- 30
-  infector$infected <- TRUE
-  infector$viral_load <- load
-  infectee <- simulate_new_individual(1)
-  infectee$age <- 30
-  for (in_household in c(TRUE, FALSE)) {
-    for (duration in durations) {
-      event <- contact_event(c(1, 2), in_household, duration)
-      rows[[length(rows) + 1]] <- data.frame(
-        viral_load = load, in_household = in_household,
-        duration = duration,
-        probability = transmission_probability(infector, infectee, event)
-      )
+for (in_household in c(TRUE, FALSE)) {
+  for (duration in seq(0, 24, by = 0.5)) {
+    for (viral_load in 10 ^ seq(-2, 1, by = 0.1)) {
+      for (immunity_level in seq(0, 4, by = 0.25)) {
+        for (age_group in c("adult", "child")) {
+          age <- if (age_group == "adult") 30 else 10
+          infector <- individual_with(age = age, infected = TRUE,
+                                      viral_load = viral_load)
+          infectee <- individual_with(age = age,
+                                      immunity_level = immunity_level)
+          event <- contact_event(c(1, 2), in_household, duration)
+          rows[[length(rows) + 1]] <- data.frame(
+            in_household = in_household, duration = duration,
+            viral_load = viral_load, immunity_level = immunity_level,
+            age_group = age_group,
+            probability = transmission_probability(infector, infectee,
+                                                   event)
+          )
+        }
+      }
     }
   }
 }
 
-write_draws(do.call(rbind, rows), "transmission_probability")
+draws <- do.call(rbind, rows)
+draws$household_hours <-
+  default_parameters$household_contact_event_hours_per_day
+draws$non_household_hours <-
+  default_parameters$non_household_contact_event_hours_per_day
+write_draws(draws, "transmission_probability")

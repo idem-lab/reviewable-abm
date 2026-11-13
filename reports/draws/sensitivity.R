@@ -1,11 +1,11 @@
-# whole-model sensitivity: infections per person and the time of the peak
-# number infected, in replicate simulations as one parameter at a time
-# changes from its default, in a population of 300
+# whole-model sensitivity: the final attack rate (infections per person,
+# including reinfections) and the time of peak prevalence, in replicate
+# simulations over 150 days as one parameter at a time changes from its
+# default, in a population of 300
 
 source("reports/helpers.R")
 
 changes <- list(
-  immunity_waning_rate = c(0.005, 0.01, 0.02, 0.04),
   household_location_score = c(0, 0.7, 1.4),
   viral_load_profile_width = c(0.3, 0.4, 0.55),
   viral_load_boost_correlation = c(0, 0.5, 0.9)
@@ -30,9 +30,8 @@ for (parameter_name in names(changes)) {
         value = value,
         is_default = value == default_parameters[[parameter_name]],
         replicate = replicate,
-        infections_per_person =
-          sum(epidemic$new_infections) / population_size,
-        peak_time = epidemic$time[which.max(epidemic$infected)]
+        final_attack_rate = sum(epidemic$new_infections) / population_size,
+        time_of_peak_prevalence = epidemic$time[which.max(epidemic$infected)]
       )
     }
   }

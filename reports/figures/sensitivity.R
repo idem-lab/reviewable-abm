@@ -1,20 +1,23 @@
-# Expected: faster waning gives more infections per person, because
-# immunity is lost sooner and people are reinfected. A larger household
-# location score gives more infections. A wider viral load profile spreads
-# transmission over more days and gives longer infections. The correlation
-# between viral load level and boost size has little effect on infections
-# over 150 days. Replicates that die out early sit near zero throughout.
+# Expected: a larger household location score raises the hazard of
+# household contact events, so the final attack rate rises and the peak
+# comes earlier. A wider viral load profile means more total viral load,
+# and so more transmission, over each infection, so the final attack rate
+# rises; it also spreads transmission over more days, which slows growth
+# and can make the peak later. The correlation between viral load level
+# and boost size changes who is best protected afterwards, but over 150
+# days, mostly a single wave, it should have little effect. Replicates
+# that die out early sit near zero.
 
 source("reports/theme.R")
 
 draws <- read_draws("sensitivity")
 long <- rbind(
   data.frame(draws[, c("parameter", "value", "is_default")],
-             outcome = "infections per person",
-             result = draws$infections_per_person),
+             outcome = "final attack rate",
+             result = draws$final_attack_rate),
   data.frame(draws[, c("parameter", "value", "is_default")],
-             outcome = "day of peak number infected",
-             result = draws$peak_time)
+             outcome = "day of peak prevalence",
+             result = draws$time_of_peak_prevalence)
 )
 long$parameter <- gsub("_", " ", long$parameter)
 
