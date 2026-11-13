@@ -41,7 +41,9 @@ households <- function(population) {
   for (i in seq_along(population)) {
     individual <- population[[i]]
     h <- individual$household_index
-    households[[h]]$member_indices <- c(households[[h]]$member_indices, i)
+    household <- households[[h]]
+    household$member_indices <- c(household$member_indices, i)
+    households[[h]] <- household
   }
 
   households
