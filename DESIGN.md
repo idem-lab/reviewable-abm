@@ -321,6 +321,17 @@ simulations, including extinction frequencies and other outcomes near
 unstable states. Figures use fixed random seeds, and are committed so that
 changes to them show in pull requests.
 
+Simulating and plotting are kept apart, so that how a figure looks can be
+changed without simulating again. Each figure has a script in
+`reports/draws/` that runs the model, using the model's own functions or
+`run_model()`, and saves the results as a CSV file there, and a script of
+the same name in `reports/figures/` that reads only that file and saves the
+figure. The expected behaviour is stated at the top of the figure script.
+Replicate simulations run in parallel, each with its own random number
+stream from a fixed seed, so results do not depend on the number of cores.
+The shared theme is in `reports/theme.R`, and `reports/make_all.R` remakes
+everything. Each figure is listed under its features in the links file.
+
 ## 6. The exact simulator
 
 The exact simulator implements the same model in a fast language. It is
@@ -450,7 +461,8 @@ trained further on simulations from the exact simulator (Krouglova et al.
 
 ## 12. Decisions still open
 
-- The design of the shared ggplot2 theme.
+- The design of the shared ggplot2 theme; a first version is in
+  `reports/theme.R`.
 
 ## References
 

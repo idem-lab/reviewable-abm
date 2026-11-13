@@ -6,7 +6,7 @@
 #   description: section labels in description.md
 #   maths: section and equation labels in maths.md
 #   code: functions in reference/
-#   figures: behaviour figures in reports/
+#   figures: behaviour figures in reports/figures/
 #
 # A label or function may appear under several features. Automated checks
 # confirm that everything named here exists, and that every equation in
@@ -20,7 +20,8 @@ features:
     description: [sec-population]
     maths: [sec-population, eq-household]
     code: [simulate_households, random_poisson]
-    figures: []
+    figures:
+      - reports/figures/contacts.png
 
   - name: Initial population
     description: [sec-population]
@@ -37,7 +38,10 @@ features:
     description: [sec-time]
     maths: [sec-time]
     code: [simulate_epidemic, number_newly_infected, number_infected]
-    figures: []
+    figures:
+      - reports/figures/epidemics.png
+      - reports/figures/extinction.png
+      - reports/figures/sensitivity.png
 
   - name: Household contact events
     description: [sec-contacts]
@@ -47,7 +51,8 @@ features:
       - contact_events_in_household
       - paired_member_indices
       - contact_event
-    figures: []
+    figures:
+      - reports/figures/contacts.png
 
   - name: Non-household contact events
     description: [sec-contacts]
@@ -57,7 +62,8 @@ features:
       - random_poisson
       - random_individual_indices
       - contact_event
-    figures: []
+    figures:
+      - reports/figures/contacts.png
 
   - name: Order of contact events
     description: [sec-contacts]
@@ -74,7 +80,9 @@ features:
       - transmission_probability
       - location_score
       - random_bernoulli
-    figures: []
+    figures:
+      - reports/figures/transmission_probability.png
+      - reports/figures/extinction.png
 
   - name: Infectiousness
     description: [sec-transmission, sec-viral-load]
@@ -99,37 +107,44 @@ features:
       - infection
       - random_infection_characteristics
       - random_multivariate_normal
-    figures: []
+    figures:
+      - reports/figures/infection_characteristics.png
 
   - name: Viral load over time
     description: [sec-viral-load]
     maths: [sec-viral-load-over-time, eq-viral-load, eq-viral-load-profile]
     code: [viral_load, viral_load_profile, viral_load_immunity_multiplier]
-    figures: []
+    figures:
+      - reports/figures/viral_load.png
 
   - name: Generation interval
     description: [sec-viral-load]
     maths: [sec-generation-interval, eq-generation-interval]
     code: []
-    figures: []
+    figures:
+      - reports/figures/generation_interval.png
 
   - name: Recovery
     description: [sec-immunity]
     maths: [sec-immunity, eq-recovery]
     code: [recover_individuals, ready_to_recover, recovery]
-    figures: []
+    figures:
+      - reports/figures/duration_of_infection.png
 
   - name: Duration of infection
     description: [sec-immunity]
     maths: [sec-duration, eq-duration]
     code: []
-    figures: []
+    figures:
+      - reports/figures/duration_of_infection.png
 
   - name: Waning immunity
     description: [sec-immunity]
     maths: [sec-immunity, eq-immunity]
     code: [immunity_level]
-    figures: []
+    figures:
+      - reports/figures/immunity.png
+      - reports/figures/sensitivity.png
 
   - name: Advancing individuals
     description: [sec-time]

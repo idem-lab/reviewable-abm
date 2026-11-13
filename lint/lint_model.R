@@ -80,14 +80,15 @@ reference_linters <- function() {
 }
 
 # lint the reference implementation with all the rules, and the
-# infrastructure, tests and linters with the style linters only; prints the
-# lints for each folder and returns the number found
+# infrastructure, tests, linters and reports with the style linters only;
+# prints the lints for each folder and returns the number found
 lint_model <- function() {
   folders <- list(
     "model/reference" = reference_linters(),
     "model/infrastructure" = style_linters(),
     "model/tests" = style_linters(),
-    "lint" = style_linters()
+    "lint" = style_linters(),
+    "reports" = style_linters()
   )
   number_of_lints <- 0
   for (folder in names(folders)) {
