@@ -76,11 +76,11 @@ simulate_new_individual <- function(household_index) {
 
 }
 
-# whether an individual is a child
-is_child <- function(individual) {
+# whether an individual of this age, in years, is a child
+is_child <- function(age) {
 
   adult_age <- setting("adult_age")
 
-  individual$age < adult_age
+  age < adult_age
 
 }

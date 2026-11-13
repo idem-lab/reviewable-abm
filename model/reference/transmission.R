@@ -70,20 +70,38 @@ transmission_probability <- function(infector, infectee, contact_event) {
 # score of minus infinity, and so no transmission
 infectiousness_score <- function(individual) {
 
+  log(individual$viral_load) + infectiousness_age_score(individual$age)
+
+}
+
+# log hazard ratio for the age of the infected individual; adults are the
+# reference
+infectiousness_age_score <- function(age) {
+
   child_infectiousness_score <- parameter("child_infectiousness_score")
 
-  log(individual$viral_load) +
-    child_infectiousness_score * is_child(individual)
+  infectiousness_age_score <- child_infectiousness_score * is_child(age)
+
+  infectiousness_age_score
 
 }
 
 # log hazard ratio for the uninfected individual
 susceptibility_score <- function(individual) {
 
+  susceptibility_age_score(individual$age) - individual$immunity_level
+
+}
+
+# log hazard ratio for the age of the uninfected individual; adults are the
+# reference
+susceptibility_age_score <- function(age) {
+
   child_susceptibility_score <- parameter("child_susceptibility_score")
 
-  child_susceptibility_score * is_child(individual) -
-    individual$immunity_level
+  susceptibility_age_score <- child_susceptibility_score * is_child(age)
+
+  susceptibility_age_score
 
 }
 
