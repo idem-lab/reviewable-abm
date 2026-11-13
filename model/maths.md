@@ -330,12 +330,13 @@ passed its peak and is below a threshold recovers:
 <a id="eq-recovery"></a>
 
 ```math
-\text{if } X_i = 1, \ \tau_i^{\mathrm{inf}} \ge \tau_{\mathrm{peak}} \text{ and } V_i < \theta: \qquad
+\text{if } X_i = 1, \ \tau_i^{\mathrm{inf}} \ge \tau_{\mathrm{peak}} \text{ and } V_i < V_{\mathrm{rec}}: \qquad
 X_i \leftarrow 0
 ```
 
-where $\theta$ is the recovery threshold, a fixed fraction of the peak
-viral load of a typical infection. The viral load is the one calculated at
+where $V_{\mathrm{rec}}$ is the recovery threshold: the viral load at
+recovery, as a fraction of the peak viral load of a typical infection. The
+viral load is the one calculated at
 step 3 of the previous timestep ([Advancing individuals](#sec-advance)).
 Recovery ends transmission and allows reinfection.
 
@@ -364,22 +365,23 @@ immunity is lost.
 ### Duration of infection
 
 The duration of infection follows from the viral load. Setting
-$V_i = \theta$ in the [viral load equation](#eq-viral-load) gives the time since infection at
-which viral load falls below $\theta$:
+$V_i = V_{\mathrm{rec}}$ in the [viral load equation](#eq-viral-load)
+gives the time since infection at which viral load falls below
+$V_{\mathrm{rec}}$:
 
 <a id="eq-duration"></a>
 
 ```math
 \tau_{\mathrm{end}} = \tau_{\mathrm{peak}}
-  \exp\left(w \sqrt{2 \log \frac{\nu_i e^{-\kappa z_i^{\mathrm{inf}}}}{\theta}}\right)
-  \quad \text{if } \nu_i e^{-\kappa z_i^{\mathrm{inf}}} > \theta,
+  \exp\left(w \sqrt{2 \log \frac{\nu_i e^{-\kappa z_i^{\mathrm{inf}}}}{V_{\mathrm{rec}}}}\right)
+  \quad \text{if } \nu_i e^{-\kappa z_i^{\mathrm{inf}}} > V_{\mathrm{rec}},
   \qquad \text{otherwise } \tau_{\mathrm{end}} = \tau_{\mathrm{peak}}
 ```
 
 and the infection ends at the first step 2 at which
 $\tau_i^{\mathrm{inf}} \ge \tau_{\mathrm{end}}$. A typical infection, with
 $\nu_i e^{-\kappa z_i^{\mathrm{inf}}} = 1$, lasts about
-$\tau_{\mathrm{peak}} \exp\left(w \sqrt{-2 \log \theta}\right)$
+$\tau_{\mathrm{peak}} \exp\left(w \sqrt{-2 \log V_{\mathrm{rec}}}\right)$
 days. Infections with a higher viral load level last longer, and immunity
 at infection shortens infections.
 
@@ -415,7 +417,7 @@ Ages are in years and elapsed times in days.
 | $\Delta t$ | timestep length | $(0, \infty)$ | days | `timestep_length` |
 | $A_{\max}$ | upper limit of initial ages (80) | $(0, \infty)$ | years | `maximum_initial_age` |
 | $A$ | age at which individuals become adults (18) | $(0, A_{\max})$ | years | `adult_age` |
-| $\theta$ | recovery threshold (0.001): viral load, after the peak, below which an infection ends, as a fraction of the peak viral load of a typical infection | $(0, 1)$ | | `recovery_viral_load_threshold` |
+| $V_{\mathrm{rec}}$ | recovery threshold (0.001): viral load, after the peak, below which an infection ends, as a fraction of the peak viral load of a typical infection | $(0, 1)$ | | `recovery_viral_load_threshold` |
 
 **Parameters**
 
@@ -473,7 +475,7 @@ Ages are in years and elapsed times in days.
 |---|---|
 | $n$, $t_n$ | timestep index, and the time at which timestep $n$ starts |
 | $g(\tau)$ | viral load profile: a Gaussian curve in log time since infection, peaking at 1 |
-| $\tau_{\mathrm{end}}$ | time since infection at which viral load falls below $\theta$, in days |
+| $\tau_{\mathrm{end}}$ | time since infection at which viral load falls below $V_{\mathrm{rec}}$, in days |
 | $\mathbb{1}[\cdot]$ | 1 when the condition in brackets holds, 0 otherwise |
 | $\lceil x \rceil$ | smallest integer greater than or equal to $x$ |
 | $x \leftarrow y$ | $x$ is set to $y$ |
