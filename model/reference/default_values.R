@@ -21,7 +21,7 @@ default_parameters <- list(
   child_susceptibility_score = -0.4,
   household_location_score = 0.7,
   household_contact_event_hours_per_day = 6,
-  non_household_contact_event_hours_per_day = 0.5,
+  non_household_contact_event_hours = 0.5,
   non_household_contact_events_per_person_per_day = 10,
   viral_load_level_sdlog = 1,
   viral_load_peak_time = 4, # days

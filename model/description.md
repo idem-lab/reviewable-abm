@@ -52,9 +52,10 @@ between pairs chosen uniformly from the whole population, with a mean set
 by the number of contact events per person per day (each contact event
 counts for both people in it). These pairs can, by chance, live in the
 same household; their contact event is still a non-household contact
-event. Household and non-household contact events have different
-durations, expressed in hours per day, so the duration of a contact event
-is its daily duration multiplied by the length of the timestep. Contact
+event. Household contact events recur in every timestep, so their
+duration is set in hours per day and multiplied by the length of the
+timestep. Each non-household contact event is a single encounter, with a
+fixed duration in hours whatever the length of the timestep. Contact
 events are resolved one at a time, in random order.
 
 <a id="sec-transmission"></a>

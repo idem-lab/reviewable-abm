@@ -139,11 +139,14 @@ chance be members of the same household:
 <a id="eq-non-household-contacts"></a>
 
 ```math
-\ell_k = 0, \qquad d_k = \bar d_{\mathrm{nh}} \Delta t
+\ell_k = 0, \qquad d_k = d_{\mathrm{nh}}
 ```
 
-where $\bar d_{\mathrm{nh}}$ is the daily duration of a non-household
-contact event, in hours per day.
+where $d_{\mathrm{nh}}$ is the duration of a non-household contact event,
+in hours. Each is a single encounter, so unlike a household contact event
+its duration does not depend on the timestep length; the expected
+non-household contact time per person per day is $c \, d_{\mathrm{nh}}$
+hours.
 
 All household and non-household contact events in the timestep are put in a
 uniformly random order and resolved one at a time
@@ -436,7 +439,7 @@ Ages are in years and elapsed times in days.
 | $\alpha_{\mathrm{sus}}$ | log hazard ratio for an uninfected individual who is a child | $\mathbb{R}$ | | `child_susceptibility_score` |
 | $\alpha_{\mathrm{hh}}$ | log hazard ratio for a household contact event | $\mathbb{R}$ | | `household_location_score` |
 | $\bar d_{\mathrm{hh}}$ | daily duration of a household contact event | $[0, 24]$ | hours per day | `household_contact_event_hours_per_day` |
-| $\bar d_{\mathrm{nh}}$ | daily duration of a non-household contact event | $[0, 24]$ | hours per day | `non_household_contact_event_hours_per_day` |
+| $d_{\mathrm{nh}}$ | duration of a non-household contact event | $[0, \infty)$ | hours | `non_household_contact_event_hours` |
 | $c$ | non-household contact events per person per day | $[0, \infty)$ | per day | `non_household_contact_events_per_person_per_day` |
 | $\sigma_\nu$ | sdlog of the viral load level | $[0, \infty)$ | | `viral_load_level_sdlog` |
 | $\tau_{\mathrm{peak}}$ | time since infection at which viral load peaks | $(0, \infty)$ | days | `viral_load_peak_time` |

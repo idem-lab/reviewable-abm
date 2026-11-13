@@ -46,13 +46,15 @@ test_that("non-household contact events are between two different people", {
   }
 })
 
-test_that("non-household contact events last daily hours times the timestep", {
-  use_values(settings = list(timestep_length = 2),
-             parameters = list(non_household_contact_event_hours_per_day = 0.5))
-  set.seed(1)
-  population <- simulate_initial_population(simulate_households())
-  contact_event <- simulate_non_household_contact_events(population)[[1]]
-  expect_equal(contact_event$duration, 1)
+test_that("non-household contact events last the same whatever the timestep", {
+  for (timestep_length in c(0.1, 1, 2)) {
+    use_values(settings = list(timestep_length = timestep_length),
+               parameters = list(non_household_contact_event_hours = 0.5))
+    set.seed(1)
+    population <- simulate_initial_population(simulate_households())
+    contact_event <- simulate_non_household_contact_events(population)[[1]]
+    expect_equal(contact_event$duration, 0.5)
+  }
 })
 
 test_that("the mean number of non-household contact events is N c dt / 2", {

@@ -71,7 +71,7 @@ paired_member_indices <- function(household) {
 simulate_non_household_contact_events <- function(population) {
 
   load_parameters("non_household_contact_events_per_person_per_day",
-                  "non_household_contact_event_hours_per_day")
+                  "non_household_contact_event_hours")
   load_settings("timestep_length")
 
   # each contact event counts for both individuals in it
@@ -81,7 +81,9 @@ simulate_non_household_contact_events <- function(population) {
     mean_number_of_non_household_contact_events
   )
 
-  duration <- non_household_contact_event_hours_per_day * timestep_length
+  # each is a single encounter, so its duration does not depend on the
+  # timestep length
+  duration <- non_household_contact_event_hours
 
   non_household_contact_events <- list()
   for (k in seq_len(number_of_non_household_contact_events)) {
