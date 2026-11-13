@@ -4,7 +4,8 @@
 # infections and the number infected in each timestep
 simulate_epidemic <- function(number_of_timesteps) {
 
-  population <- simulate_initial_population()
+  households <- simulate_households()
+  population <- simulate_initial_population(households)
 
   epidemic <- data.frame(
     time = rep(NA, number_of_timesteps),
@@ -17,7 +18,7 @@ simulate_epidemic <- function(number_of_timesteps) {
     set_clock_to_timestep(timestep)
 
     # 1. contact events, which may transmit infection
-    contact_events <- simulate_contact_events(population)
+    contact_events <- simulate_contact_events(population, households)
     population <- simulate_transmissions(population, contact_events)
     new_infections <- number_newly_infected(population)
 

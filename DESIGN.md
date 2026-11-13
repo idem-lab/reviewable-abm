@@ -181,7 +181,11 @@ population or fewer replicates; do not restructure the code.
 1. Objects such as an individual, a household or a contact event are
    named lists, with the same element names everywhere they appear. The
    list of all individuals is called `population`, and one of its
-   elements `individual`. An object that is updated keeps its name
+   elements `individual`; the list of all households is `households`, and
+   one of its elements `household`. Objects that refer to each other store
+   each other's indices, such as `individual$household_index` and
+   `household$member_indices`, set once when the objects are made, rather
+   than one being worked out from the other when needed. An object that is updated keeps its name
    (`population <- ...`); a second name is used only where a function
    needs the old and new versions together. Function names say what the
    function returns or does. Where the returned value is set inside loops

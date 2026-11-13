@@ -2,9 +2,9 @@
 
 # all household and non-household contact events in a timestep, in random
 # order
-simulate_contact_events <- function(population) {
+simulate_contact_events <- function(population, households) {
 
-  contact_events <- c(household_contact_events(population),
+  contact_events <- c(household_contact_events(households),
                       simulate_non_household_contact_events(population))
 
   random_order(contact_events)
@@ -12,9 +12,7 @@ simulate_contact_events <- function(population) {
 }
 
 # one contact event for every pair of individuals in the same household
-household_contact_events <- function(population) {
-
-  households <- households(population)
+household_contact_events <- function(households) {
 
   household_contact_events <- list()
   for (h in seq_along(households)) {
@@ -24,35 +22,6 @@ household_contact_events <- function(population) {
   }
 
   household_contact_events
-
-}
-
-# the households, each listing the indices of its members in the
-# population; an individual's household index is the index of their
-# household in this list
-households <- function(population) {
-
-  number_of_households <- 0
-  for (i in seq_along(population)) {
-    individual <- population[[i]]
-    number_of_households <- max(number_of_households,
-                                individual$household_index)
-  }
-
-  households <- list()
-  for (h in seq_len(number_of_households)) {
-    households[[h]] <- list(member_indices = c())
-  }
-
-  for (i in seq_along(population)) {
-    individual <- population[[i]]
-    h <- individual$household_index
-    household <- households[[h]]
-    household$member_indices <- c(household$member_indices, i)
-    households[[h]] <- household
-  }
-
-  households
 
 }
 
