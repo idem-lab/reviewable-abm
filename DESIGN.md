@@ -121,8 +121,9 @@ population or fewer replicates; do not restructure the code.
    rather than `1:n` or `1:length(x)`: when `n` is zero, `1:n` is `c(1, 0)`
    and the loop runs twice instead of not at all, so a reviewer would have
    to check every loop for that case. This happens in practice, for
-   example when a Poisson number of contact events is zero. Use a vectorised base function only when it reads at
-   least as clearly as a loop, as `sum()` does.
+   example when a Poisson number of contact events is zero. Use a
+   vectorised base function only when it reads at least as clearly as a
+   loop, as `sum()` does.
 9. Draw random numbers with R's named distribution functions (`rlnorm`,
    `rpois`, `runif`) rather than writing sampling out by hand, so the code
    and the equations name the same distribution. Draw jointly distributed
