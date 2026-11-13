@@ -7,12 +7,12 @@ random_contact_events <- function(population) {
   contact_events <- c(household_contact_events(population),
                       random_non_household_contact_events(population))
 
-  shuffle(contact_events)
+  random_order(contact_events)
 
 }
 
 # the same elements in a random order
-shuffle <- function(elements) {
+random_order <- function(elements) {
 
   elements[sample.int(length(elements))]
 
