@@ -1,7 +1,7 @@
 # the main simulation loop (maths.md: Time)
 
-# simulate the model for the set number of timesteps, returning the number of new
-# infections and the number infected in each timestep
+# simulate the model for the set number of timesteps, returning the number
+# of new infections and the number infected in each timestep
 simulate_epidemic <- function() {
 
   load_settings("number_of_timesteps")

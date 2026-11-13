@@ -12,6 +12,7 @@ follow it.
 | Written description | `model/description.md` | agents | researchers, in detail |
 | Mathematical description | `model/maths.md` | agents | researchers, in detail |
 | Reference implementation (R) | `model/reference/` | agents | researchers, in detail |
+| Infrastructure for running the reference implementation | `model/infrastructure/` | agents | researchers, when it changes |
 | Links between the three | `model/mapping.yaml` | agents | researchers |
 | Unit tests | `model/tests/` | agents | researchers |
 | Behaviour figures, and the scripts that make them | `reports/` | agents | researchers |
@@ -90,6 +91,16 @@ modellers who read R but may not use it daily. Speed is not a
 consideration. If a figure takes too long to produce, use a smaller
 population or fewer replicates; do not restructure the code.
 
+The code that is not part of the model, such as holding the settings and
+parameters of a run and the simulation clock, is kept apart in
+`model/infrastructure/`, so that `model/reference/` contains only the
+model. Infrastructure is short, rarely changes, and is reviewed when it
+does; the rules below are for `model/reference/`, and infrastructure
+follows them where it can. Scripts run the model with `run_model(settings
+= list(...), parameters = list(...))`, which uses the default values in
+`model/reference/default_values.R` except those given, and returns the
+results with the full settings and parameters used.
+
 ### Language
 
 1. Base R only: no packages beyond those R loads by default (`base`,
@@ -98,29 +109,31 @@ population or fewer replicates; do not restructure the code.
    package that ships with R and called with `::`, such as
    `MASS::mvrnorm()` for a multivariate normal.
 2. Functions take values and return new values. No environments, `<<-`,
-   `assign()` or `get()`, except in the two files that hold the shared
-   values in rule 5.
+   `assign()` or `get()`; these appear only in `model/infrastructure/`.
 3. No non-standard evaluation, such as `with()`, `subset()` or formulas.
 4. No lexical scoping: everything a function uses is passed to it as an
    argument, apart from the shared values in rule 5. No default argument
    values.
-5. Shared values are held in environments, one file each, and functions
+5. Shared values are held by the infrastructure, and model functions
    reach them only through small functions, never directly:
-   - Settings and parameters are held in two locked environments,
-     `settings` and `parameters`, defined in `globals.R`, so that nothing
-     can change them while the model runs. A function that uses any of
-     them starts with `load_settings("name", ...)` and
+   - Settings and parameters are held in locked environments, set for
+     each run from the defaults and any changes, so that nothing can
+     change them while the model runs. A function that uses any of them
+     starts with `load_settings("name", ...)` and
      `load_parameters("name", ...)`, before any other code. These make
      each named value available as a variable of the same name, and stop
      with an error if a name does not exist, so the top of each function
      lists what it depends on and its calculations read like the
      equations. The loaded variables are never assigned to.
-   - The current simulation time is held in the simulation clock, in
-     `clock.R`, and read with `current_time()`. It is the only value that
-     changes during a simulation without being passed as an argument, and
-     only the main simulation loop sets it, with
-     `set_clock_to_timestep()`. Tests of functions that read it set it
-     first.
+   - The current simulation time is held in the simulation clock and
+     read with `current_time()`. It is the only value that changes during
+     a simulation without being passed as an argument, and only the main
+     simulation loop sets it, with `set_clock_to_timestep()`.
+
+   Tests of single functions set the values with
+   `set_values(settings = list(...), parameters = list(...))`, and the
+   clock with `set_clock_to_timestep()` where needed, before calling the
+   function.
 
    The linter (Section 12) will check that these calls come first, that
    loaded names do not clash with a function's arguments, and that loaded
@@ -214,7 +227,9 @@ population or fewer replicates; do not restructure the code.
    number function (such as `runif()`, `sample.int()` or
    `MASS::mvrnorm()`) or a prefixed function has a prefix itself, and that
    no `random_` function calls a `simulate_` function, so that names
-   cannot drift from what the functions do.
+   cannot drift from what the functions do. The prefixes apply to the
+   model in `model/reference/`; infrastructure functions, such as
+   `run_model()`, are named for what they do.
 3. Each recurring term has one meaning, defined once. For example, *score*
    means an additive term on the log hazard scale throughout, and no other
    word is used for the same idea.
