@@ -50,11 +50,11 @@ individual_with <- function(...) {
   individual
 }
 
-# the 2.5%, 50% and 97.5% quantiles of the viral load level at the default
-# parameter values, used wherever a figure shows a few viral load levels
-typical_viral_load_levels <- function() {
+# the 2.5%, 50% and 97.5% quantiles of the potential peak viral load at the
+# default parameter values, used wherever a figure shows a few of them
+typical_potential_peak_viral_loads <- function() {
   signif(qlnorm(c(0.025, 0.5, 0.975), meanlog = 0,
-                sdlog = default_parameters$viral_load_level_sdlog), 2)
+                sdlog = default_parameters$potential_peak_viral_load_sdlog), 2)
 }
 
 # save results for a figure as reports/draws/<name>.csv

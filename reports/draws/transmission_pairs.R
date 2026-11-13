@@ -15,8 +15,8 @@ simulate_infector <- function(width, timestep_length) {
              parameters = list(viral_load_profile_width = width))
   contacts_per_day <-
     default_parameters$non_household_contact_events_per_person_per_day
-  hours_per_day <-
-    default_parameters$non_household_contact_event_hours_per_day
+  hours_per_contact_event <-
+    default_parameters$non_household_contact_event_hours
   infector <- infection(individual_with(age = 30),
                         random_infection_characteristics())
   contact <- individual_with(age = 30)
@@ -26,7 +26,7 @@ simulate_infector <- function(width, timestep_length) {
     number_of_contact_events <- random_poisson(contacts_per_day *
                                                  timestep_length)
     for (k in seq_len(number_of_contact_events)) {
-      event <- contact_event(c(1, 2), FALSE, hours_per_day * timestep_length)
+      event <- contact_event(c(1, 2), FALSE, hours_per_contact_event)
       probability <- transmission_probability(infector, contact, event)
       if (random_bernoulli(probability)) {
         generation_intervals <- c(generation_intervals,
@@ -40,7 +40,7 @@ simulate_infector <- function(width, timestep_length) {
     # 3. advance
     infector <- advance_individuals_one_timestep(list(infector))[[1]]
   }
-  list(viral_load_level = infector$viral_load_level,
+  list(potential_peak_viral_load = infector$potential_peak_viral_load,
        duration = infector$time_since_infection,
        generation_intervals = generation_intervals)
 }
@@ -60,7 +60,8 @@ for (condition in seq_len(nrow(conditions))) {
   offspring[[condition]] <- data.frame(
     profile_width = width, timestep_length = timestep_length,
     infector = seq_along(results),
-    viral_load_level = vapply(results, `[[`, numeric(1), "viral_load_level"),
+    potential_peak_viral_load = vapply(results, `[[`, numeric(1),
+                                       "potential_peak_viral_load"),
     duration = vapply(results, `[[`, numeric(1), "duration"),
     secondary_infections = vapply(results, function(result) {
       length(result$generation_intervals)

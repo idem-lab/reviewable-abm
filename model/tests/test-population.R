@@ -81,8 +81,8 @@ test_that("a new individual's infection and boost quantities are undefined", {
   use_values()
   individual <- simulate_new_individual(household_index = 1)
   undefined <- c("time_since_infection", "time_since_boost",
-                 "viral_load_level", "boost_size", "immunity_at_infection",
-                 "immunity_after_boost")
+                 "potential_peak_viral_load", "boost_size",
+                 "immunity_at_infection", "immunity_after_boost")
   for (name in undefined) {
     expect_true(is.na(individual[[name]]), label = name)
   }

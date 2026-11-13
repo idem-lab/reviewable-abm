@@ -13,13 +13,13 @@ draws <- read_draws("epidemics")
 
 incidence_figure <- ggplot(draws, aes(time, new_infections,
                                       group = replicate)) +
-  geom_line(alpha = 0.3, linewidth = 0.4, colour = figure_colours[2]) +
+  geom_line(alpha = 0.4, linewidth = 0.5, colour = data_colour) +
   labs(x = "day", y = "incidence (new infections per day)",
        title = "Incidence")
 
 prevalence_figure <- ggplot(draws, aes(time, prevalence,
                                        group = replicate)) +
-  geom_line(alpha = 0.3, linewidth = 0.4, colour = figure_colours[1]) +
+  geom_line(alpha = 0.4, linewidth = 0.5, colour = data_colour) +
   scale_y_continuous(labels = scales::label_percent()) +
   labs(x = "day", y = "prevalence (proportion infected)",
        title = "Prevalence")

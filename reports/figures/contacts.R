@@ -16,7 +16,7 @@ long <- rbind(
 )
 
 sizes_figure <- ggplot(household_sizes, aes(household_size)) +
-  geom_bar(fill = figure_colours[1]) +
+  geom_bar(fill = data_colour) +
   scale_x_continuous(breaks = function(limits) seq(1, limits[2], by = 1)) +
   labs(x = "household size", y = "households",
        title = "Household sizes",
@@ -24,7 +24,7 @@ sizes_figure <- ggplot(household_sizes, aes(household_size)) +
                                      2)))
 
 contacts_figure <- ggplot(long, aes(contact_events)) +
-  geom_bar(fill = figure_colours[2]) +
+  geom_bar(fill = data_colour) +
   facet_wrap(~ location, scales = "free_x") +
   labs(x = "contact events per person in one day", y = "people",
        title = "Contact events per person")

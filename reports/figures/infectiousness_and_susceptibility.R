@@ -18,10 +18,10 @@ susceptibility <- read_draws("susceptibility")
 
 by_viral_load <- ggplot(infectiousness,
                         aes(viral_load, relative_infectiousness,
-                            colour = age_group)) +
-  geom_line() +
-  scale_colour_age_group() +
-  labs(x = "viral load", y = "relative infectiousness", colour = NULL,
+                            linetype = age_group)) +
+  geom_line(colour = expectation_colour) +
+  scale_linetype_age_group() +
+  labs(x = "viral load", y = "relative infectiousness", linetype = NULL,
        title = "Infectiousness by viral load")
 
 by_age <- ggplot(susceptibility[susceptibility$immunity_level %in%
@@ -36,19 +36,20 @@ by_age <- ggplot(susceptibility[susceptibility$immunity_level %in%
 
 by_immunity <- ggplot(susceptibility[susceptibility$age %in% c(10, 30), ],
                       aes(immunity_level, relative_susceptibility,
-                          colour = ifelse(age < 18, "child (age 10)",
-                                          "adult (age 30)"))) +
-  geom_line() +
-  scale_colour_age_group() +
+                          linetype = ifelse(age < 18, "child (age 10)",
+                                            "adult (age 30)"))) +
+  geom_line(colour = expectation_colour) +
+  scale_linetype_age_group() +
   scale_y_continuous(limits = c(0, 1)) +
-  labs(x = "immunity level", y = "relative susceptibility", colour = NULL,
+  labs(x = "immunity level", y = "relative susceptibility",
+       linetype = NULL,
        title = "Susceptibility by immunity")
 
 by_age_and_immunity <- ggplot(susceptibility,
                               aes(age, immunity_level,
                                   fill = relative_susceptibility)) +
   geom_raster() +
-  scale_fill_viridis_c(limits = c(0, 1)) +
+  scale_fill_relative_susceptibility() +
   labs(x = "age (years)", y = "immunity level",
        fill = "relative\nsusceptibility",
        title = "Susceptibility by age and immunity") +

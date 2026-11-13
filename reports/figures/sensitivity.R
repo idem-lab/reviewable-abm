@@ -3,7 +3,7 @@
 # comes earlier. A wider viral load profile means more total viral load,
 # and so more transmission, over each infection, so the final attack rate
 # rises; it also spreads transmission over more days, which slows growth
-# and can make the peak later. The correlation between viral load level
+# and can make the peak later. The correlation between potential peak viral load
 # and boost size changes who is best protected afterwards, but over 150
 # days, mostly a single wave, it should have little effect. Replicates
 # that die out early sit near zero.
@@ -26,8 +26,8 @@ figure <- ggplot(long, aes(factor(value), result, colour = is_default)) +
   stat_summary(fun = median, geom = "crossbar", width = 0.5,
                colour = "black", linewidth = 0.3) +
   facet_grid(outcome ~ parameter, scales = "free", switch = "y") +
-  scale_colour_manual(values = c(`TRUE` = figure_colours[2],
-                                 `FALSE` = figure_colours[1]),
+  scale_colour_manual(values = c(`TRUE` = "black",
+                                 `FALSE` = "grey60"),
                       labels = c(`TRUE` = "default value",
                                  `FALSE` = "changed value")) +
   labs(x = "parameter value", y = NULL, colour = NULL,

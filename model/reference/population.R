@@ -66,7 +66,7 @@ simulate_new_individual <- function(household_index) {
     infected = FALSE,
     time_since_infection = NA, # days
     time_since_boost = NA, # days
-    viral_load_level = NA,
+    potential_peak_viral_load = NA,
     viral_load = 0,
     immunity_level = 0,
     immunity_after_boost = NA,

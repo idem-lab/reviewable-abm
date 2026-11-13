@@ -1,4 +1,4 @@
-"immunity_at_infection","viral_load_level","simulated_duration","equation_duration"
+"immunity_at_infection","potential_peak_viral_load","simulated_duration","equation_duration"
 0,0.001,4.1,4.00000003371748
 0,0.00128908875626519,5.4,5.31936895788883
 0,0.00166174982152932,5.99999999999999,5.98604261967536

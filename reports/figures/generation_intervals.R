@@ -2,9 +2,9 @@
 # generation intervals of transmission pairs follow the intrinsic
 # generation interval, a lognormal with meanlog log(4) + width^2 and sdlog
 # equal to the width (maths.md, eq-generation-interval), whatever the
-# infectors' viral load levels, because the level scales the whole
-# profile. Truncation at recovery removes a negligible tail. With
-# timesteps of 0.1 days the distribution matches the lognormal closely.
+# infectors' peak viral loads, because the peak scales the whole profile.
+# Truncation at recovery removes a negligible tail. With timesteps of 0.1
+# days the distribution matches the lognormal closely.
 # With timesteps of 1 day, transmission can only happen at whole days of
 # time since infection, using the viral load at the start of each day, so
 # the generation intervals are the lognormal density evaluated at whole
@@ -42,16 +42,16 @@ coarse <- draws[draws$timestep_length == 1, ]
 figure <- ggplot() +
   geom_histogram(data = fine, aes(generation_interval,
                                   y = after_stat(density)),
-                 binwidth = 0.5, boundary = 0, fill = figure_colours[1],
+                 binwidth = 0.5, boundary = 0, fill = data_colour,
                  alpha = 0.6) +
   geom_histogram(data = coarse, aes(generation_interval,
                                     y = after_stat(density)),
-                 binwidth = 1, center = 0, fill = figure_colours[1],
+                 binwidth = 1, center = 0, fill = data_colour,
                  alpha = 0.6) +
   geom_line(data = continuous, aes(time, density),
-            colour = figure_colours[2]) +
+            colour = expectation_colour) +
   geom_point(data = whole_days, aes(time, density),
-             colour = figure_colours[2]) +
+             colour = expectation_colour) +
   facet_grid(timestep ~ width) +
   coord_cartesian(xlim = c(0, 20)) +
   labs(x = "generation interval (days)", y = "density",
@@ -59,7 +59,7 @@ figure <- ggplot() +
        caption = paste(
          "Bars: transmission pairs from 6000 infectors per panel, with",
          "constant contacts who are never depleted.",
-         "\nOrange: the intrinsic generation interval in maths.md;",
+         "\nBlack: the intrinsic generation interval in maths.md;",
          "points are its density at whole days, normalised."
        ))
 save_figure(figure, "generation_intervals", width = 10, height = 6)

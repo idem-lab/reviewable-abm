@@ -350,10 +350,14 @@ the same name in `reports/figures/` that reads only that file and saves the
 figure. The expected behaviour is stated at the top of the figure script.
 Replicate simulations run in parallel, each with its own random number
 stream from a fixed seed, so results do not depend on the number of cores.
-The shared theme is in `reports/theme.R`. It gives each quantity that
-figures vary its own colour scale (for example oranges for viral load and
-blues for immunity), so a colour means the same quantity in every figure,
-and draws figures of individual simulations with thinner lines.
+The shared theme is in `reports/theme.R`. Colour only ever shows a
+quantity that a figure varies, and each such quantity has its own scale,
+used in every figure: bright colours from one family of hues, running from
+light for low values to dark for high values, with the palest and darkest
+ends left out, and readable with red-green colour-blindness. Groups of
+two, such as adults and children, are shown by line type. Simulated
+values are in IDEM dark teal (from the idpalette package) and values from
+the equations in near-black. Lines are heavy, except in figures of individual simulations.
 `reports/make_all.R` remakes everything. Each figure is listed under its features in the links file.
 
 ## 6. The exact simulator

@@ -11,7 +11,8 @@ for (rate in c(0.005, 0.01, 0.02)) {
              parameters = list(immunity_waning_rate = rate))
   for (boost in c(0.5, 1, 2, 4)) {
     individual <- infection(individual_with(age = 30),
-                            list(viral_load_level = 1, boost_size = boost))
+                            list(potential_peak_viral_load = 1,
+                                 boost_size = boost))
     for (day in 0:600) {
       individual$time_since_boost <- day
       individual$immunity_level <- immunity_level(individual)
@@ -37,7 +38,8 @@ for (rate in c(0.005, 0.01, 0.02)) {
     if (day %in% infection_days) {
       boost <- boost_sizes[match(day, infection_days)]
       individual <- infection(recovery(individual),
-                              list(viral_load_level = 1, boost_size = boost))
+                              list(potential_peak_viral_load = 1,
+                                   boost_size = boost))
     }
     repeated[[length(repeated) + 1]] <- data.frame(
       waning_rate = rate, day = day,

@@ -6,9 +6,10 @@ source("reports/helpers.R")
 
 set_values(settings = list(), parameters = list())
 
-# a grid of viral loads from 0.1 to 10, plus the typical viral load levels
+# a grid of viral loads from 0.1 to 10, plus the typical potential peak
+# viral loads
 viral_load_grid <- 10 ^ seq(-1, 1, by = 0.1)
-viral_loads <- unique(c(viral_load_grid, typical_viral_load_levels()))
+viral_loads <- unique(c(viral_load_grid, typical_potential_peak_viral_loads()))
 
 rows <- list()
 for (in_household in c(TRUE, FALSE)) {
@@ -39,7 +40,8 @@ draws <- do.call(rbind, rows)
 draws$household_hours <-
   default_parameters$household_contact_event_hours_per_day
 draws$non_household_hours <-
-  default_parameters$non_household_contact_event_hours_per_day
-draws$typical_level <- draws$viral_load %in% typical_viral_load_levels()
+  default_parameters$non_household_contact_event_hours
+typical_loads <- typical_potential_peak_viral_loads()
+draws$typical_level <- draws$viral_load %in% typical_loads
 draws$on_grid <- draws$viral_load %in% viral_load_grid
 write_draws(draws, "transmission_probability")

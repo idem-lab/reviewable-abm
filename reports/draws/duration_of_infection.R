@@ -1,12 +1,12 @@
 # duration of infection: individuals are infected and advanced one timestep
 # at a time with the model's functions until they recover, for a range of
-# viral load levels and immunity at infection, alongside the duration from
-# the equation in maths.md
+# potential peak viral loads and immunity at infection, alongside the
+# duration from the equation in maths.md
 
 source("reports/helpers.R")
 
 set_values(settings = list(timestep_length = 0.1), parameters = list())
-viral_load_levels <- exp(seq(log(0.001), log(20), length.out = 40))
+potential_peak_viral_loads <- exp(seq(log(0.001), log(20), length.out = 40))
 immunity_levels <- c(0, 2, 5, 10)
 
 peak_time <- default_parameters$viral_load_peak_time
@@ -16,10 +16,10 @@ threshold <- default_settings$recovery_viral_load_threshold
 
 rows <- list()
 for (immunity in immunity_levels) {
-  for (level in viral_load_levels) {
+  for (level in potential_peak_viral_loads) {
     individual <- simulate_new_individual(1)
     individual$immunity_level <- immunity
-    individual <- infection(individual, list(viral_load_level = level,
+    individual <- infection(individual, list(potential_peak_viral_load = level,
                                              boost_size = 1))
     individual <- advance_individuals_one_timestep(list(individual))[[1]]
     while (!ready_to_recover(individual)) {
@@ -33,7 +33,7 @@ for (immunity in immunity_levels) {
     }
     rows[[length(rows) + 1]] <- data.frame(
       immunity_at_infection = immunity,
-      viral_load_level = level,
+      potential_peak_viral_load = level,
       simulated_duration = individual$time_since_infection,
       equation_duration = equation
     )

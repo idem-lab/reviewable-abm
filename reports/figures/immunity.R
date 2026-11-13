@@ -16,7 +16,7 @@ over_time$waning <- paste("waning rate", over_time$waning_rate)
 immunity_figure <- ggplot(over_time, aes(time_since_boost, immunity_level,
                                          colour = factor(boost_size))) +
   geom_line() +
-  scale_colour_boost_size() +
+  scale_colour_immunity() +
   facet_wrap(~ waning) +
   labs(x = "time since boost (days)", y = "immunity level",
        colour = "boost size", title = "Immunity after one boost")
@@ -26,7 +26,7 @@ susceptibility_figure <- ggplot(over_time,
                                     relative_susceptibility,
                                     colour = factor(boost_size))) +
   geom_line() +
-  scale_colour_boost_size() +
+  scale_colour_immunity() +
   facet_wrap(~ waning) +
   scale_y_continuous(limits = c(0, 1)) +
   labs(x = "time since boost (days)", y = "relative susceptibility",

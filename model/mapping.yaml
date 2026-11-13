@@ -53,6 +53,7 @@ features:
       - contact_event
     figures:
       - reports/figures/contacts.png
+      - reports/figures/household_transmission.png
 
   - name: Non-household contact events
     description: [sec-contacts]
@@ -85,6 +86,7 @@ features:
       - reports/figures/transmission_probability.png
       - reports/figures/generation_intervals.png
       - reports/figures/offspring.png
+      - reports/figures/household_transmission.png
 
   - name: Infectiousness
     description: [sec-transmission, sec-viral-load]
@@ -117,8 +119,16 @@ features:
 
   - name: Viral load over time
     description: [sec-viral-load]
-    maths: [sec-viral-load-over-time, eq-viral-load, eq-viral-load-profile]
-    code: [viral_load, viral_load_profile, viral_load_immunity_multiplier]
+    maths:
+      - sec-viral-load-over-time
+      - eq-viral-load
+      - eq-peak-viral-load
+      - eq-viral-load-profile
+    code:
+      - viral_load
+      - peak_viral_load
+      - viral_load_profile
+      - viral_load_immunity_multiplier
     figures:
       - reports/figures/viral_load.png
       - reports/figures/individual_trajectories.png

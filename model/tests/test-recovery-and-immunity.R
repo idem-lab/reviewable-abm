@@ -4,7 +4,7 @@ description <- paste("an infection never ends before its peak, however low its",
                      "viral load")
 test_that(description, {
   use_values(parameters = list(viral_load_peak_time = 4))
-  individual <- make_infected_individual(viral_load_level = 1e-6)
+  individual <- make_infected_individual(potential_peak_viral_load = 1e-6)
   individual$time_since_infection <- 3
   individual$viral_load <- 1e-9
   expect_false(ready_to_recover(individual))
@@ -60,7 +60,7 @@ test_that("immunity is lost, not negative, once it has waned", {
 test_that("a boost adds to the immunity that remains", {
   use_values()
   individual <- make_individual(immunity_level = 1.2)
-  boosted <- infection(individual, list(viral_load_level = 1,
+  boosted <- infection(individual, list(potential_peak_viral_load = 1,
                                         boost_size = 0.1))
   expect_gt(boosted$immunity_level, individual$immunity_level)
 })

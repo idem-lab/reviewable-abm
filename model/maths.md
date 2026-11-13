@@ -238,8 +238,9 @@ $\tau_i^{\mathrm{boost}}$ the time since the most recent immunity boost, both
 in days.
 
 At the same time, the characteristics of the infection are drawn: its
-viral load level $\nu_i$ and the size of its immunity boost $\Delta z_i$.
-Both are lognormal, and their logs are correlated:
+potential peak viral load $\nu_i$, the peak its viral load would reach with
+no immunity, and the size of its immunity boost $\Delta z_i$. Both are
+lognormal, and their logs are correlated:
 
 <a id="eq-infection-characteristics"></a>
 
@@ -255,7 +256,8 @@ Both are lognormal, and their logs are correlated:
 where $\sigma_\nu$ is the standard deviation of $\log \nu_i$, $\mu_z$ and
 $\sigma_z$ are the mean and standard deviation of $\log \Delta z_i$, and
 $\rho \ge 0$ is the correlation between the two logs, so that infections
-with a higher viral load level tend to give larger boosts. The boost is
+with a higher potential peak viral load tend to give larger boosts. The
+boost is
 added to the individual's current immunity:
 
 <a id="eq-boost"></a>
@@ -268,7 +270,8 @@ where $z_i^{\mathrm{boost}}$ is the immunity level just after the boost
 ([Recovery and immunity](#sec-immunity)).
 
 The mean of $\log \nu_i$ is fixed at 0, so that the viral load of a typical
-infection (with the median level, $\nu_i = 1$, and no immunity) peaks at 1.
+infection (with the median potential peak, $\nu_i = 1$, and no immunity)
+peaks at 1.
 Viral load is on a relative scale: $\beta_0$ converts it into a hazard of
 transmission.
 
@@ -276,18 +279,26 @@ transmission.
 
 ### Viral load over time
 
-An infected individual's viral load is their viral load level, multiplied
-by a viral load profile in time since infection, and reduced by the
-immunity they had when infected:
+An infected individual's viral load is the peak viral load of their
+infection multiplied by a viral load profile in time since infection:
 
 <a id="eq-viral-load"></a>
 
 ```math
-V_i(t) = X_i \, \nu_i \, g\left(\tau_i^{\mathrm{inf}}(t)\right) \exp\left(-\kappa z_i^{\mathrm{inf}}\right)
+V_i(t) = X_i \, V_i^{\mathrm{peak}} \, g\left(\tau_i^{\mathrm{inf}}(t)\right)
 ```
 
-where $g$ is the viral load profile and $\kappa$ is the reduction in log
-viral load per unit of immunity level. The profile is a Gaussian curve in
+where $g$ is the viral load profile. The peak viral load is the potential
+peak, reduced by the immunity the individual had when infected:
+
+<a id="eq-peak-viral-load"></a>
+
+```math
+V_i^{\mathrm{peak}} = \nu_i \exp\left(-\kappa z_i^{\mathrm{inf}}\right)
+```
+
+where $\kappa$ is the reduction in log viral load per unit of immunity
+level. The profile is a Gaussian curve in
 log time since infection, with its peak of 1 at $\tau_{\mathrm{peak}}$
 days:
 
@@ -308,10 +319,10 @@ Individuals who are not infected have $V_i = 0$.
 
 ### Generation interval
 
-Within an infection, viral load is a fixed scale,
-$\nu_i e^{-\kappa z_i^{\mathrm{inf}}}$, multiplied by $g$. The intrinsic
-generation interval (the time from infection to onward transmission, if
-the individual's contact events, and the susceptibility of the people they
+Within an infection, viral load is the peak viral load
+$V_i^{\mathrm{peak}}$, which is fixed, multiplied by $g$. The intrinsic
+generation interval (the time from infection to onward transmission, if the
+individual's contact events, and the susceptibility of the people they
 meet, do not change over the infection) therefore has a density
 proportional to $g$, which is a lognormal density:
 
@@ -380,20 +391,20 @@ $V_{\mathrm{rec}}$:
 
 ```math
 \tau_{\mathrm{end}} = \tau_{\mathrm{peak}}
-  \exp\left(w \sqrt{2 \log \frac{\nu_i e^{-\kappa z_i^{\mathrm{inf}}}}{V_{\mathrm{rec}}}}\right)
-  \quad \text{if } \nu_i e^{-\kappa z_i^{\mathrm{inf}}} > V_{\mathrm{rec}},
+  \exp\left(w \sqrt{2 \log \frac{V_i^{\mathrm{peak}}}{V_{\mathrm{rec}}}}\right)
+  \quad \text{if } V_i^{\mathrm{peak}} > V_{\mathrm{rec}},
   \qquad \text{otherwise } \tau_{\mathrm{end}} = \tau_{\mathrm{peak}}
 ```
 
 and the infection ends at the first step 2 at which
 $\tau_i^{\mathrm{inf}} \ge \tau_{\mathrm{end}}$. A typical infection, with
-$\nu_i e^{-\kappa z_i^{\mathrm{inf}}} = 1$, lasts about
+$V_i^{\mathrm{peak}} = 1$, lasts about
 $\tau_{\mathrm{peak}} \exp\left(w \sqrt{-2 \log V_{\mathrm{rec}}}\right)$
-days. Infections with a higher viral load level last longer, and immunity
-at infection shortens infections. In the rare infections with
-$\nu_i e^{-\kappa z_i^{\mathrm{inf}}} \le V_{\mathrm{rec}}$, the individual
-stays infected, so cannot be reinfected, until $\tau_{\mathrm{peak}}$, but
-transmits very little.
+days. Infections with a higher peak viral load last longer, so immunity at
+infection shortens infections. In the rare infections with
+$V_i^{\mathrm{peak}} \le V_{\mathrm{rec}}$, the individual stays infected,
+so cannot be reinfected, until $\tau_{\mathrm{peak}}$, but transmits very
+little.
 
 <a id="sec-advance"></a>
 
@@ -441,13 +452,13 @@ Ages are in years and elapsed times in days.
 | $\bar d_{\mathrm{hh}}$ | daily duration of a household contact event | $[0, 24]$ | hours per day | `household_contact_event_hours_per_day` |
 | $d_{\mathrm{nh}}$ | duration of a non-household contact event | $[0, \infty)$ | hours | `non_household_contact_event_hours` |
 | $c$ | non-household contact events per person per day | $[0, \infty)$ | per day | `non_household_contact_events_per_person_per_day` |
-| $\sigma_\nu$ | sdlog of the viral load level | $[0, \infty)$ | | `viral_load_level_sdlog` |
+| $\sigma_\nu$ | sdlog of the potential peak viral load | $[0, \infty)$ | | `potential_peak_viral_load_sdlog` |
 | $\tau_{\mathrm{peak}}$ | time since infection at which viral load peaks | $(0, \infty)$ | days | `viral_load_peak_time` |
 | $w$ | width of the viral load profile on the log time scale; also the sdlog of the intrinsic generation interval | $(0, \infty)$ | | `viral_load_profile_width` |
 | $\kappa$ | reduction in log viral load per unit of immunity level at infection | $[0, \infty)$ | | `viral_load_immunity_effect` |
 | $\mu_z$ | meanlog of the size of an immunity boost | $\mathbb{R}$ | | `immunity_boost_meanlog` |
 | $\sigma_z$ | sdlog of the size of an immunity boost | $[0, \infty)$ | | `immunity_boost_sdlog` |
-| $\rho$ | correlation between the log viral load level and the log size of the immunity boost of an infection | $[0, 1]$ | | `viral_load_boost_correlation` |
+| $\rho$ | correlation between the log potential peak viral load and the log size of the immunity boost of an infection | $[0, 1]$ | | `viral_load_boost_correlation` |
 | $\omega$ | rate at which immunity wanes | $[0, \infty)$ | log hazard ratio per day | `immunity_waning_rate` |
 
 **Households**, for household $h$
@@ -468,7 +479,7 @@ Ages are in years and elapsed times in days.
 | $\tau_i^{\mathrm{boost}}$ | time since most recent immunity boost, which is at infection | days | `time_since_boost` |
 | $\Delta z_i$ | size of the most recent immunity boost | log hazard ratio | `boost_size` |
 | $z_i^{\mathrm{boost}}$ | immunity level just after the most recent immunity boost | log hazard ratio | `immunity_after_boost` |
-| $\nu_i$ | viral load level of the current or most recent infection | | `viral_load_level` |
+| $\nu_i$ | potential peak viral load of the current or most recent infection: its peak viral load with no immunity | | `potential_peak_viral_load` |
 | $V_i$ | viral load | | `viral_load` |
 | $z_i$ | immunity level: the reduction in log hazard of infection | log hazard ratio | `immunity_level` |
 | $z_i^{\mathrm{inf}}$ | immunity level at the start of the current or most recent infection | log hazard ratio | `immunity_at_infection` |
@@ -494,6 +505,7 @@ Ages are in years and elapsed times in days.
 |---|---|
 | $n$, $t_n$ | timestep index, and the time at which timestep $n$ starts |
 | $g(\tau)$ | viral load profile: a Gaussian curve in log time since infection, peaking at 1 |
+| $V_i^{\mathrm{peak}}$ | peak viral load of the current or most recent infection (`peak_viral_load()`) |
 | $\tau_{\mathrm{end}}$ | time since infection at which viral load falls below $V_{\mathrm{rec}}$, in days |
 | $\mathbb{1}[\cdot]$ | 1 when the condition in brackets holds, 0 otherwise |
 | $x \leftarrow y$ | $x$ is set to $y$ |

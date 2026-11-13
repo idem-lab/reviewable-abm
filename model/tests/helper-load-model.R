@@ -26,11 +26,13 @@ make_individual <- function(...) {
 
 # an individual infected now, with the given characteristics of the
 # infection and immunity beforehand
-make_infected_individual <- function(viral_load_level = 1, boost_size = 1,
-                                     immunity_level = 0, age = 30) {
+make_infected_individual <- function(potential_peak_viral_load = 1,
+                                     boost_size = 1, immunity_level = 0,
+                                     age = 30) {
   individual <- make_individual(age = age, immunity_level = immunity_level)
-  infection(individual, list(viral_load_level = viral_load_level,
-                             boost_size = boost_size))
+  characteristics <- list(potential_peak_viral_load = potential_peak_viral_load,
+                          boost_size = boost_size)
+  infection(individual, characteristics)
 }
 
 # a contact event between individuals 1 and 2

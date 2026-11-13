@@ -23,7 +23,7 @@ typical_duration <- ifelse(draws$in_household, draws$household_hours,
                            draws$non_household_hours)
 typical <- draws[draws$duration == typical_duration, ]
 
-# the 2.5%, 50% and 97.5% quantiles of the viral load level
+# the 2.5%, 50% and 97.5% quantiles of the potential peak viral load
 shown_loads <- adult_no_immunity$typical_level
 by_duration <- ggplot(adult_no_immunity[shown_loads, ],
                       aes(duration, probability,
@@ -31,6 +31,7 @@ by_duration <- ggplot(adult_no_immunity[shown_loads, ],
                           linetype = location)) +
   geom_line() +
   scale_colour_viral_load() +
+  scale_linetype_location() +
   scale_y_continuous(limits = c(0, 1)) +
   labs(x = "contact event duration (hours)", y = "probability",
        colour = "viral load", linetype = NULL,
@@ -39,21 +40,22 @@ by_duration <- ggplot(adult_no_immunity[shown_loads, ],
 by_viral_load <- ggplot(typical[typical$age_group == "adult" &
                                   typical$immunity_level == 0 &
                                   typical$on_grid, ],
-                        aes(viral_load, probability, colour = location)) +
-  geom_line() +
-  scale_colour_location() +
+                        aes(viral_load, probability, linetype = location)) +
+  geom_line(colour = expectation_colour, show.legend = FALSE) +
+  scale_linetype_location() +
   scale_x_log10(labels = scales::label_number()) +
   labs(x = "infector viral load (log scale)", y = "probability",
-       colour = NULL, title = "By viral load, for a day's contact")
+       linetype = NULL,
+       title = "By viral load, for a day's household contact or one other")
 
 by_immunity <- ggplot(typical[typical$in_household &
                                 abs(typical$viral_load - 1) < 1e-9, ],
                       aes(immunity_level, probability,
-                          colour = age_group)) +
-  geom_line() +
-  scale_colour_age_group() +
+                          linetype = age_group)) +
+  geom_line(colour = expectation_colour) +
+  scale_linetype_age_group() +
   labs(x = "infectee immunity level", y = "probability",
-       colour = "infector and infectee",
+       linetype = "infector and infectee",
        title = "By immunity, household, viral load 1")
 
 by_viral_load_and_immunity <- ggplot(
@@ -63,7 +65,7 @@ by_viral_load_and_immunity <- ggplot(
 ) +
   geom_raster() +
   scale_x_log10(labels = scales::label_number()) +
-  scale_fill_viridis_c(limits = c(0, 1)) +
+  scale_fill_transmission_probability() +
   labs(x = "infector viral load (log scale)",
        y = "infectee immunity level", fill = "probability",
        title = "By viral load and immunity, household") +
@@ -74,10 +76,10 @@ figure <- (by_duration + by_viral_load) /
   plot_annotation(
     title = "Probability of transmission in one contact event",
     caption = paste(
-      "Adults with no infectee immunity unless shown. A day's contact:",
-      "6 hours in a household, 0.5 hours elsewhere.\nViral loads 0.14,",
-      "1 and 7.1 are the 2.5%, 50% and 97.5% quantiles of the viral load",
-      "level."
+      "Adults with no infectee immunity unless shown. A day's household",
+      "contact: 6 hours. A non-household contact event: 0.5 hours.",
+      "\nViral loads 0.14, 1 and 7.1 are the 2.5%, 50% and 97.5% quantiles",
+      "of the potential peak viral load."
     )
   )
 save_figure(figure, "transmission_probability", width = 10, height = 8)
