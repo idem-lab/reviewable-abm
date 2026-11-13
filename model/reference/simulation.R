@@ -14,8 +14,7 @@ random_simulation <- function(number_of_timesteps) {
 
   for (timestep in seq_len(number_of_timesteps)) {
 
-    # the time at the start of this timestep, in days
-    set_current_time((timestep - 1) * setting("timestep_length"))
+    set_clock_to_timestep(timestep)
 
     # 1. contact events, which may transmit infection
     contact_events <- random_contact_events(population)

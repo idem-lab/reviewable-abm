@@ -1,6 +1,7 @@
 # the simulation clock: the time at the start of the current timestep, in
 # days. It is the only value that changes during a simulation without being
-# passed as an argument, and only random_simulation() sets it.
+# passed as an argument, and only random_simulation() sets it, with
+# set_clock_to_timestep().
 
 simulation_clock <- new.env()
 
@@ -15,10 +16,11 @@ current_time <- function() {
 
 }
 
-# set the simulation clock; used only by the main simulation loop, and by
-# tests
-set_current_time <- function(time) {
+# set the simulation clock to the start of a timestep, counting from 1;
+# used only by the main simulation loop, and by tests
+set_clock_to_timestep <- function(timestep) {
 
+  time <- (timestep - 1) * setting("timestep_length")
   simulation_clock$time <- time
 
   time
