@@ -7,20 +7,27 @@ random_contact_events <- function(population) {
   contact_events <- c(household_contact_events(population),
                       random_non_household_contact_events(population))
 
-  contact_events[sample.int(length(contact_events))]
+  shuffle(contact_events)
+
+}
+
+# the same elements in a random order
+shuffle <- function(elements) {
+
+  elements[sample.int(length(elements))]
 
 }
 
 # one contact event for every pair of individuals in the same household
 household_contact_events <- function(population) {
 
-  household_members <- household_members(population)
+  households <- households(population)
 
   household_contact_events <- list()
-  for (h in seq_along(household_members)) {
+  for (h in seq_along(households)) {
     household_contact_events <- c(
       household_contact_events,
-      contact_events_in_household(household_members[[h]])
+      contact_events_in_household(households[[h]])
     )
   }
 
@@ -28,18 +35,19 @@ household_contact_events <- function(population) {
 
 }
 
-# the positions in the population of the members of each household
-household_members <- function(population) {
+# the households, each given by the positions in the population of its
+# members; an individual's household is its position in this list
+households <- function(population) {
 
   number_of_households <- length(population) / setting("household_size")
-  household_members <- rep(list(NULL), number_of_households)
+  households <- rep(list(NULL), number_of_households)
 
   for (i in seq_along(population)) {
     h <- population[[i]]$household
-    household_members[[h]] <- c(household_members[[h]], i)
+    households[[h]] <- c(households[[h]], i)
   }
 
-  household_members
+  households
 
 }
 
