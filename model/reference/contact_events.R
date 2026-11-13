@@ -29,10 +29,16 @@ household_contact_events <- function(population) {
 
 # the households, each listing the indices of its members in the
 # population; an individual's household index is the index of their
-# household in this list
+# household in this list. Households with no members are included.
 households <- function(population) {
 
-  number_of_households <- length(population) / setting("household_size")
+  number_of_households <- 0
+  for (i in seq_along(population)) {
+    individual <- population[[i]]
+    number_of_households <- max(number_of_households,
+                                individual$household_index)
+  }
+
   households <- list()
   for (h in seq_len(number_of_households)) {
     households[[h]] <- list(member_indices = c())
@@ -82,8 +88,8 @@ simulate_non_household_contact_events <- function(population) {
   mean_number_of_non_household_contact_events <- length(population) *
     parameter("non_household_contact_events_per_person_per_day") *
     setting("timestep_length") / 2
-  number_of_non_household_contact_events <- rpois(
-    1, mean_number_of_non_household_contact_events
+  number_of_non_household_contact_events <- random_poisson(
+    mean_number_of_non_household_contact_events
   )
 
   duration <- parameter("non_household_contact_event_hours_per_day") *

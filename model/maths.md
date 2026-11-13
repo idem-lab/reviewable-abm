@@ -38,17 +38,20 @@ starting at time $t$, and $x \leftarrow y$ means that $x$ is set to $y$.
 ## Population
 
 The population consists of $N$ individuals, $i = 1, \dots, N$, living in
-households of $H$ consecutive individuals:
+households $h = 1, 2, \dots$ of random sizes:
 
 <a id="eq-household"></a>
 
 ```math
-h_i = \lceil i / H \rceil
+H_h \sim \mathrm{Poisson}(\bar H)
 ```
 
-where $h_i$ is the household to which individual $i$ belongs, and
-$\lceil x \rceil$ is the smallest integer greater than or equal to $x$.
-$N$ is a multiple of $H$.
+where $H_h$ is the number of members of household $h$ and $\bar H$ is the
+average household size. Households are filled in turn: household 1 has
+individuals 1 to $H_1$, household 2 the next $H_2$ individuals, and so on,
+until every individual has a household. The last household is cut short to
+fit the population, and a household with $H_h = 0$ has no members. $h_i$ is
+the household to which individual $i$ belongs.
 
 Initial ages are independent and uniform:
 
@@ -414,8 +417,8 @@ Ages are in years and elapsed times in days.
 
 | Symbol | Meaning | Support | Units | Code name |
 |---|---|---|---|---|
-| $N$ | population size | positive multiple of $H$ | individuals | `population_size` |
-| $H$ | household size | $\lbrace 1, 2, \dots \rbrace$ | individuals | `household_size` |
+| $N$ | population size | $\lbrace 1, 2, \dots \rbrace$ | individuals | `population_size` |
+| $\bar H$ | average household size | $(0, \infty)$ | individuals | `average_household_size` |
 | $I_0$ | number of individuals infected at the start | $\lbrace 1, \dots, N \rbrace$ | individuals | `initial_infections` |
 | $\Delta t$ | timestep length | $(0, \infty)$ | days | `timestep_length` |
 | $A_{\max}$ | upper limit of initial ages (80) | $(0, \infty)$ | years | `maximum_initial_age` |
@@ -441,6 +444,12 @@ Ages are in years and elapsed times in days.
 | $\sigma_z$ | sdlog of the size of an immunity boost | $[0, \infty)$ | | `immunity_boost_sdlog` |
 | $\rho$ | correlation between the log viral load level and the log size of the immunity boost of an infection | $[0, 1]$ | | `viral_load_boost_correlation` |
 | $\omega$ | rate at which immunity wanes | $[0, \infty)$ | log hazard ratio per day | `immunity_waning_rate` |
+
+**Households**, for household $h$
+
+| Symbol | Meaning | Units | Code name |
+|---|---|---|---|
+| $H_h$ | number of members | individuals | `household_size` |
 
 **Individual state**, for individual $i$
 
@@ -482,5 +491,4 @@ Ages are in years and elapsed times in days.
 | $g(\tau)$ | viral load profile: a Gaussian curve in log time since infection, peaking at 1 |
 | $\tau_{\mathrm{end}}$ | time since infection at which viral load falls below $V_{\mathrm{rec}}$, in days |
 | $\mathbb{1}[\cdot]$ | 1 when the condition in brackets holds, 0 otherwise |
-| $\lceil x \rceil$ | smallest integer greater than or equal to $x$ |
 | $x \leftarrow y$ | $x$ is set to $y$ |

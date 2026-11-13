@@ -16,7 +16,7 @@ random_infection_characteristics <- function() {
     nrow = 2
   )
 
-  logs <- MASS::mvrnorm(1, mu = meanlogs, Sigma = covariance)
+  logs <- random_multivariate_normal(meanlogs, covariance)
 
   infection_characteristics <- list(
     viral_load_level = exp(logs[1]),

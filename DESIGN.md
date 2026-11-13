@@ -124,9 +124,12 @@ population or fewer replicates; do not restructure the code.
    example when a Poisson number of contact events is zero. Use a
    vectorised base function only when it reads at least as clearly as a
    loop, as `sum()` does.
-9. Draw random numbers with R's named distribution functions (`rlnorm`,
-   `rpois`, `runif`) rather than writing sampling out by hand, so the code
-   and the equations name the same distribution. Draw jointly distributed
+9. Call R's random number functions only inside `random_` functions that
+   make one draw, such as `random_poisson(mean)`, which calls
+   `rpois(1, lambda = mean)`, so that every draw is visibly a single
+   value. Use R's named distribution functions (`rpois`, `runif`,
+   `rbinom`) rather than writing sampling out by hand, so the code and the
+   equations name the same distribution. Draw jointly distributed
    quantities from their joint distribution, as the equations write it,
    rather than building them from independent draws. Use `sample.int()`
    rather than `sample()` on a number.
@@ -204,9 +207,9 @@ population or fewer replicates; do not restructure the code.
    that a word always names an object and a letter always an index. Where
    an index must be named with a word, as an element of an object or the
    value of a function, the name ends in `_index` or `_indices`, such as
-   `individual$household_index`. A changed element is written back with `population[[i]] <- individual`.
-   A loop over something that is not a list, such as timesteps, uses a
-   word: `timestep`.
+   `individual$household_index`. A changed element is written back with
+   `population[[i]] <- individual`. A loop over something that is not a
+   list, such as timesteps, uses a word: `timestep`.
 6. When a function takes two or more arguments of the same kind, name them
    at the call, for example `transmission_probability(infector =
    infector, infectee = infectee, contact_event = contact_event)`.

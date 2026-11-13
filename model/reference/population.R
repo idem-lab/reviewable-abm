@@ -1,15 +1,15 @@
 # the population at the start of the simulation (maths.md: Population)
 
-# individuals in households of equal size, with random ages, some of whom
-# are infected at random
+# individuals in households of random sizes, with random ages, some of
+# whom are infected at random
 simulate_initial_population <- function() {
 
   population_size <- setting("population_size")
-  stopifnot(population_size %% setting("household_size") == 0)
+  household_indices <- simulate_household_indices(population_size)
 
   population <- list()
   for (i in seq_len(population_size)) {
-    population[[i]] <- simulate_new_individual(i)
+    population[[i]] <- simulate_new_individual(household_indices[i])
   }
 
   initially_infected_indices <- random_individual_indices(
@@ -25,13 +25,32 @@ simulate_initial_population <- function() {
 
 }
 
+# the household index of each individual: households of random sizes are
+# filled in turn until everyone has a household, and the last household is
+# cut short to fit the population
+simulate_household_indices <- function(population_size) {
+
+  household_indices <- c()
+  h <- 0
+  while (length(household_indices) < population_size) {
+    h <- h + 1
+    household_size <- random_poisson(setting("average_household_size"))
+    household_indices <- c(household_indices, rep(h, household_size))
+  }
+
+  household_indices <- household_indices[seq_len(population_size)]
+
+  household_indices
+
+}
+
 # a new individual with a random age, who has never been infected and has no
 # immunity; the quantities describing infections and boosts are undefined
 # (NA) until the first infection
-simulate_new_individual <- function(individual_index) {
+simulate_new_individual <- function(household_index) {
 
   new_individual <- list(
-    household_index = household_index(individual_index),
+    household_index = household_index,
     age = random_uniform(0, setting("maximum_initial_age")), # years
     infected = FALSE,
     time_since_infection = NA, # days
@@ -45,14 +64,6 @@ simulate_new_individual <- function(individual_index) {
   )
 
   new_individual
-
-}
-
-# index of the household of an individual: households are made of
-# consecutive individuals
-household_index <- function(individual_index) {
-
-  ceiling(individual_index / setting("household_size"))
 
 }
 

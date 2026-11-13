@@ -28,3 +28,18 @@ random_uniform <- function(lower, upper) {
   runif(1, min = lower, max = upper)
 
 }
+
+# a count drawn from a Poisson distribution with the given mean
+random_poisson <- function(mean) {
+
+  rpois(1, lambda = mean)
+
+}
+
+# a vector drawn from a multivariate normal distribution with the given
+# means and covariance matrix
+random_multivariate_normal <- function(means, covariance) {
+
+  MASS::mvrnorm(1, mu = means, Sigma = covariance)
+
+}

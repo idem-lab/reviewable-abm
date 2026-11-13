@@ -5,7 +5,7 @@ globals <- list(
 
   settings = list(
     population_size = 500,
-    household_size = 4,
+    average_household_size = 4,
     initial_infections = 5,
     timestep_length = 1, # days
     maximum_initial_age = 80, # years
