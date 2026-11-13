@@ -12,9 +12,8 @@ random_initial_population <- function() {
     population[[i]] <- random_uninfected_individual(i)
   }
 
-  # chosen without replacement
-  initially_infected <- sample.int(population_size,
-                                   setting("initial_infections"))
+  initially_infected <- random_individuals(population,
+                                           setting("initial_infections"))
   for (i in initially_infected) {
     population[[i]] <- random_infection(population[[i]])
   }

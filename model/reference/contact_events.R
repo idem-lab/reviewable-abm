@@ -11,23 +11,16 @@ random_contact_events <- function(population) {
 
 }
 
-# the same elements in a random order
-random_order <- function(elements) {
-
-  elements[sample.int(length(elements))]
-
-}
-
 # one contact event for every pair of individuals in the same household
 household_contact_events <- function(population) {
 
   households <- households(population)
 
   household_contact_events <- list()
-  for (h in seq_along(households)) {
+  for (household in seq_along(households)) {
     household_contact_events <- c(
       household_contact_events,
-      contact_events_in_household(households[[h]])
+      contact_events_in_household(households[[household]])
     )
   }
 
@@ -43,8 +36,8 @@ households <- function(population) {
   households <- rep(list(NULL), number_of_households)
 
   for (i in seq_along(population)) {
-    h <- population[[i]]$household
-    households[[h]] <- c(households[[h]], i)
+    household <- population[[i]]$household
+    households[[household]] <- c(households[[household]], i)
   }
 
   households
@@ -58,13 +51,13 @@ contact_events_in_household <- function(members) {
     setting("timestep_length")
 
   contact_events_in_household <- list()
-  for (a in seq_along(members)) {
-    for (b in seq_along(members)) {
-      if (a < b) {
+  for (member_a in seq_along(members)) {
+    for (member_b in seq_along(members)) {
+      if (member_a < member_b) {
         k <- length(contact_events_in_household) + 1
         contact_events_in_household[[k]] <- contact_event(
-          individual_a = members[a],
-          individual_b = members[b],
+          individual_a = members[member_a],
+          individual_b = members[member_b],
           in_household = TRUE,
           duration = duration
         )
@@ -93,8 +86,8 @@ random_non_household_contact_events <- function(population) {
 
   non_household_contact_events <- list()
   for (k in seq_len(number_of_non_household_contact_events)) {
-    # two different individuals, who may live in the same household
-    pair <- sample.int(length(population), 2)
+    # who may live in the same household
+    pair <- random_individuals(population, 2)
     non_household_contact_events[[k]] <- contact_event(
       individual_a = pair[1],
       individual_b = pair[2],

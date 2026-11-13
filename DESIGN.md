@@ -174,10 +174,15 @@ population or fewer replicates; do not restructure the code.
    word is used for the same idea.
 4. Parameter names state what they are and on what scale, for example
    `infectiousness_profile_meanlog`.
-5. When a function takes two or more arguments of the same kind, name them
+5. Name a loop variable for what it holds, for example `household` or
+   `timestep`. The exceptions are positions in the population and in the
+   list of contact events, which are `i` and `k`, as in the mathematical
+   description; `individual` and `contact_event` are the objects
+   themselves.
+6. When a function takes two or more arguments of the same kind, name them
    at the call, for example
    `random_transmission_outcome(infector = individual_a, infectee = individual_b)`.
-6. Comments explain what the names do not, such as units, scales and the
+7. Comments explain what the names do not, such as units, scales and the
    reason for a step, in as few words as possible.
 
 ### When to write a function
