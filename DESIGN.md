@@ -214,7 +214,11 @@ population or fewer replicates; do not restructure the code.
    at the call, for example `transmission_probability(infector =
    infector, infectee = infectee, contact_event = contact_event)`.
 7. Comments explain what the names do not, such as units, scales and the
-   reason for a step, in as few words as possible.
+   reason for a step, in as few words as possible. Every step that indexes,
+   subsets, repeats or reorders a vector in a way the names do not make
+   plain has a comment saying what it does and why, such as cutting the
+   last household short by keeping only the first `population_size`
+   household indices.
 
 ### When to write a function
 

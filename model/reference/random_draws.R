@@ -11,7 +11,9 @@ random_individual_indices <- function(population, number) {
 # the same elements in a random order
 random_order <- function(elements) {
 
-  elements[sample.int(length(elements))]
+  # the indices of the elements, in a random order
+  random_indices <- sample.int(length(elements))
+  elements[random_indices]
 
 }
 

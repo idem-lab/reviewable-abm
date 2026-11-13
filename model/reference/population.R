@@ -36,9 +36,12 @@ simulate_household_indices <- function(population_size) {
     h <- h + 1
     # every household has at least one member
     household_size <- 1 + random_poisson(setting("average_household_size") - 1)
+    # the next household_size individuals belong to household h
     household_indices <- c(household_indices, rep(h, household_size))
   }
 
+  # keep only the first population_size individuals, which cuts the final
+  # household short if it would overfill the population
   household_indices <- household_indices[seq_len(population_size)]
 
   household_indices

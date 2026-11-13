@@ -8,7 +8,8 @@ random_infection_characteristics <- function() {
   sdlog_boost <- parameter("immunity_boost_sdlog")
   correlation <- parameter("viral_load_boost_correlation")
 
-  # the meanlog of the viral load level is fixed at 0
+  # in the order (viral load level, boost size); the meanlog of the viral
+  # load level is fixed at 0
   meanlogs <- c(0, parameter("immunity_boost_meanlog"))
   covariance <- matrix(
     c(sdlog_level ^ 2, correlation * sdlog_level * sdlog_boost,
@@ -16,6 +17,8 @@ random_infection_characteristics <- function() {
     nrow = 2
   )
 
+  # the first is the log viral load level and the second the log boost
+  # size, in the order of meanlogs
   logs <- random_multivariate_normal(meanlogs, covariance)
 
   infection_characteristics <- list(
