@@ -101,11 +101,12 @@ individuals can be reinfected.
 Each infection boosts the individual's immunity at the time of infection,
 reducing their log hazard of infection by an amount drawn for that
 infection, whatever immunity they had left. Boost sizes vary between
-infections following a lognormal distribution, and are correlated with the
-infection's viral load level, so that, for example, infections with a higher
-viral load can give larger boosts. The boost does not affect the viral load
-of the infection that caused it. The reduction shrinks linearly with time
-since the boost until immunity is lost entirely. Because the reduction is on
+infections following a lognormal distribution, and are positively correlated
+with the infection's viral load level: infections with a higher viral load
+level tend to give larger boosts, or the two are unrelated. The boost does
+not affect the viral load of the infection that caused it. The reduction
+shrinks linearly with time since the boost until immunity is lost
+entirely. Because the reduction is on
 the log scale, susceptibility returns slowly at first and then quickly,
 reaching full susceptibility abruptly. Individuals who have never been
 infected have no immunity.

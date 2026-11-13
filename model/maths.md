@@ -246,7 +246,8 @@ their logs are correlated:
 
 where $\sigma_\nu$ is the standard deviation of $\log \nu_i$, $\mu_z$ and
 $\sigma_z$ are the mean and standard deviation of $\log z_i^{\mathrm{boost}}$,
-and $\rho$ is the correlation between the two logs.
+and $\rho \ge 0$ is the correlation between the two logs, so that
+infections with a higher viral load level tend to give larger boosts.
 
 The new boost changes the immunity level at step 3
 ([Advancing individuals](#sec-advance)); it does not affect the viral load
@@ -431,7 +432,7 @@ Ages are in years and elapsed times in days.
 | $\kappa$ | reduction in log viral load per unit of immunity level at infection | $[0, \infty)$ | | `viral_load_immunity_effect` |
 | $\mu_z$ | meanlog of the size of an immunity boost | $\mathbb{R}$ | | `immunity_boost_meanlog` |
 | $\sigma_z$ | sdlog of the size of an immunity boost | $[0, \infty)$ | | `immunity_boost_sdlog` |
-| $\rho$ | correlation between the log viral load level and the log size of the immunity boost of an infection | $[-1, 1]$ | | `viral_load_boost_correlation` |
+| $\rho$ | correlation between the log viral load level and the log size of the immunity boost of an infection | $[0, 1]$ | | `viral_load_boost_correlation` |
 | $D_{\mathrm{imm}}$ | time from a boost (at infection) until immunity is lost | $(0, \infty)$ | days | `immunity_duration` |
 
 **Individual state**, for individual $i$
