@@ -43,15 +43,15 @@ households $h = 1, 2, \dots$ of random sizes:
 <a id="eq-household"></a>
 
 ```math
-H_h \sim \mathrm{Poisson}(\bar H)
+H_h - 1 \sim \mathrm{Poisson}(\bar H - 1)
 ```
 
 where $H_h$ is the number of members of household $h$ and $\bar H$ is the
-average household size. Households are filled in turn: household 1 has
-individuals 1 to $H_1$, household 2 the next $H_2$ individuals, and so on,
-until every individual has a household. The last household is cut short to
-fit the population, and a household with $H_h = 0$ has no members. $h_i$ is
-the household to which individual $i$ belongs.
+average household size, so every household has at least one member.
+Households are filled in turn: household 1 has individuals 1 to $H_1$,
+household 2 the next $H_2$ individuals, and so on, until every individual
+has a household. The last household is cut short to fit the population.
+$h_i$ is the household to which individual $i$ belongs.
 
 Initial ages are independent and uniform:
 
@@ -418,7 +418,7 @@ Ages are in years and elapsed times in days.
 | Symbol | Meaning | Support | Units | Code name |
 |---|---|---|---|---|
 | $N$ | population size | $\lbrace 1, 2, \dots \rbrace$ | individuals | `population_size` |
-| $\bar H$ | average household size | $(0, \infty)$ | individuals | `average_household_size` |
+| $\bar H$ | average household size | $[1, \infty)$ | individuals | `average_household_size` |
 | $I_0$ | number of individuals infected at the start | $\lbrace 1, \dots, N \rbrace$ | individuals | `initial_infections` |
 | $\Delta t$ | timestep length | $(0, \infty)$ | days | `timestep_length` |
 | $A_{\max}$ | upper limit of initial ages (80) | $(0, \infty)$ | years | `maximum_initial_age` |

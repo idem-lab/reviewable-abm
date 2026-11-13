@@ -19,9 +19,9 @@ are not calibrated to any pathogen.
 ## Population
 
 A fixed population of individuals lives in households of random sizes.
-Each household's size is drawn from a Poisson distribution with a fixed
-average, and households are filled in turn until everyone has a household;
-the last is cut short to fit, and some households have no members. Each
+Each household has one member plus a number drawn from a Poisson
+distribution, so that sizes have a fixed average, and households are filled
+in turn until everyone has a household; the last is cut short to fit. Each
 individual's age is drawn at the start of the simulation, uniformly between
 0 and 80 years. Individuals under 18 are children and the rest are adults.
 Ages increase as time passes. There are no births, deaths, or migration.

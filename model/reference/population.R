@@ -34,7 +34,8 @@ simulate_household_indices <- function(population_size) {
   h <- 0
   while (length(household_indices) < population_size) {
     h <- h + 1
-    household_size <- random_poisson(setting("average_household_size"))
+    # every household has at least one member
+    household_size <- 1 + random_poisson(setting("average_household_size") - 1)
     household_indices <- c(household_indices, rep(h, household_size))
   }
 

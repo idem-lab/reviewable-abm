@@ -29,7 +29,7 @@ household_contact_events <- function(population) {
 
 # the households, each listing the indices of its members in the
 # population; an individual's household index is the index of their
-# household in this list. Households with no members are included.
+# household in this list
 households <- function(population) {
 
   number_of_households <- 0
