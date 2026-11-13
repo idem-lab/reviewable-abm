@@ -5,6 +5,8 @@
 simulate_initial_population <- function() {
 
   population_size <- setting("population_size")
+  initial_infections <- setting("initial_infections")
+
   household_indices <- simulate_household_indices(population_size)
 
   population <- list()
@@ -12,9 +14,8 @@ simulate_initial_population <- function() {
     population[[i]] <- simulate_new_individual(household_indices[i])
   }
 
-  initially_infected_indices <- random_individual_indices(
-    population, setting("initial_infections")
-  )
+  initially_infected_indices <- random_individual_indices(population,
+                                                          initial_infections)
   for (i in initially_infected_indices) {
     individual <- population[[i]]
     infection_characteristics <- random_infection_characteristics()
@@ -30,12 +31,14 @@ simulate_initial_population <- function() {
 # cut short to fit the population
 simulate_household_indices <- function(population_size) {
 
+  average_household_size <- setting("average_household_size")
+
   household_indices <- c()
   h <- 0
   while (length(household_indices) < population_size) {
     h <- h + 1
     # every household has at least one member
-    household_size <- 1 + random_poisson(setting("average_household_size") - 1)
+    household_size <- 1 + random_poisson(average_household_size - 1)
     # the next household_size individuals belong to household h
     household_indices <- c(household_indices, rep(h, household_size))
   }
@@ -53,9 +56,11 @@ simulate_household_indices <- function(population_size) {
 # (NA) until the first infection
 simulate_new_individual <- function(household_index) {
 
+  maximum_initial_age <- setting("maximum_initial_age")
+
   new_individual <- list(
     household_index = household_index,
-    age = random_uniform(0, setting("maximum_initial_age")), # years
+    age = random_uniform(0, maximum_initial_age), # years
     infected = FALSE,
     time_since_infection = NA, # days
     time_since_boost = NA, # days
@@ -74,6 +79,8 @@ simulate_new_individual <- function(household_index) {
 # whether an individual is a child
 is_child <- function(individual) {
 
-  individual$age < setting("adult_age")
+  adult_age <- setting("adult_age")
+
+  individual$age < adult_age
 
 }

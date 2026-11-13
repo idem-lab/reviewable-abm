@@ -106,11 +106,15 @@ population or fewer replicates; do not restructure the code.
    in one file. Functions read it with `setting("name")` and
    `parameter("name")`, which stop with an error if the name does not
    exist. (Reading a misspelt name with `$` returns `NULL` without an
-   error.) Model functions never change `globals`. The current simulation
-   time is read with `current_time()`. It is the only value that changes
-   during a simulation without being passed as an argument, and only the
-   main simulation loop sets it. Tests of functions that read it set it
-   first.
+   error.) A function reads each setting and parameter it uses into a
+   local variable of the same name at its start, such as
+   `viral_load_peak_time <- parameter("viral_load_peak_time")`, so that
+   what it depends on is listed at the top and its calculations read like
+   the equations. Model functions never change `globals`. The current
+   simulation time is read with `current_time()`. It is the only value
+   that changes during a simulation without being passed as an argument,
+   and only the main simulation loop sets it. Tests of functions that read
+   it set it first.
 6. One version of the model. No options or flags that switch between
    alternative structures. A proposed alternative is kept on a separate
    branch until researchers choose; a permanent alternative is a separate

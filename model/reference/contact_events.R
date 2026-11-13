@@ -59,8 +59,11 @@ households <- function(population) {
 # one contact event for every pair of members of a household
 contact_events_in_household <- function(household) {
 
-  duration <- parameter("household_contact_event_hours_per_day") *
-    setting("timestep_length")
+  household_contact_event_hours_per_day <-
+    parameter("household_contact_event_hours_per_day")
+  timestep_length <- setting("timestep_length")
+
+  duration <- household_contact_event_hours_per_day * timestep_length
 
   contact_events_in_household <- list()
   for (i in household$member_indices) {
@@ -84,16 +87,20 @@ contact_events_in_household <- function(household) {
 # chosen at random from the whole population
 simulate_non_household_contact_events <- function(population) {
 
+  non_household_contact_events_per_person_per_day <-
+    parameter("non_household_contact_events_per_person_per_day")
+  non_household_contact_event_hours_per_day <-
+    parameter("non_household_contact_event_hours_per_day")
+  timestep_length <- setting("timestep_length")
+
   # each contact event counts for both individuals in it
   mean_number_of_non_household_contact_events <- length(population) *
-    parameter("non_household_contact_events_per_person_per_day") *
-    setting("timestep_length") / 2
+    non_household_contact_events_per_person_per_day * timestep_length / 2
   number_of_non_household_contact_events <- random_poisson(
     mean_number_of_non_household_contact_events
   )
 
-  duration <- parameter("non_household_contact_event_hours_per_day") *
-    setting("timestep_length")
+  duration <- non_household_contact_event_hours_per_day * timestep_length
 
   non_household_contact_events <- list()
   for (k in seq_len(number_of_non_household_contact_events)) {

@@ -51,7 +51,9 @@ simulate_transmissions <- function(population, contact_events) {
 # hazard over the contact event's duration
 transmission_probability <- function(infector, infectee, contact_event) {
 
-  log_hazard <- log(parameter("baseline_transmission_hazard")) +
+  baseline_transmission_hazard <- parameter("baseline_transmission_hazard")
+
+  log_hazard <- log(baseline_transmission_hazard) +
     infectiousness_score(infector) +
     susceptibility_score(infectee) +
     location_score(contact_event)
@@ -68,15 +70,19 @@ transmission_probability <- function(infector, infectee, contact_event) {
 # score of minus infinity, and so no transmission
 infectiousness_score <- function(individual) {
 
+  child_infectiousness_score <- parameter("child_infectiousness_score")
+
   log(individual$viral_load) +
-    parameter("child_infectiousness_score") * is_child(individual)
+    child_infectiousness_score * is_child(individual)
 
 }
 
 # log hazard ratio for the uninfected individual
 susceptibility_score <- function(individual) {
 
-  parameter("child_susceptibility_score") * is_child(individual) -
+  child_susceptibility_score <- parameter("child_susceptibility_score")
+
+  child_susceptibility_score * is_child(individual) -
     individual$immunity_level
 
 }
@@ -84,6 +90,8 @@ susceptibility_score <- function(individual) {
 # log hazard ratio for the location of a contact event
 location_score <- function(contact_event) {
 
-  parameter("household_location_score") * contact_event$in_household
+  household_location_score <- parameter("household_location_score")
+
+  household_location_score * contact_event$in_household
 
 }
