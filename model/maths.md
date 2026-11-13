@@ -76,11 +76,11 @@ otherwise.
 At time 0, $I_0$ individuals chosen uniformly at random without replacement
 are infected ([Infection](#sec-infection)). For every other individual,
 $X_i = 0$, where $X_i$ is 1 if individual $i$ is infected and 0 otherwise.
-Before these initial infections, no individual has any immunity: their
-immunity level is $z_i = 0$, their immunity after their most recent boost
-is $z_i^{\mathrm{boost}} = 0$, and the time since that boost is
-$\tau_i^{\mathrm{boost}} = \infty$
-([Recovery and immunity](#sec-immunity)).
+Before these initial infections, every individual has immunity level
+$z_i = 0$ ([Recovery and immunity](#sec-immunity)) and viral load
+$V_i = 0$ ([Viral load](#sec-viral-load)). The quantities that describe an
+individual's infections and immunity boosts, defined in
+[Infection](#sec-infection), are undefined until their first infection.
 
 <a id="sec-time"></a>
 
@@ -353,7 +353,7 @@ where $z_i^{\mathrm{boost}}$ is the immunity level just after the most
 recent boost, and $\omega$ is the rate at which immunity wanes, in log
 hazard ratio per day. Immunity is therefore lost
 $z_i^{\mathrm{boost}} / \omega$ days after the most recent boost, so higher
-immunity lasts longer. $z_i = 0$ when $\tau_i^{\mathrm{boost}} = \infty$.
+immunity lasts longer. $z_i = 0$ before the first boost.
 
 The hazard of infection is proportional to $\exp(-z_i)$
 ([susceptibility score equation](#eq-susceptibility-score)), so it rises
@@ -399,7 +399,7 @@ At step 3 of each timestep, for every individual:
 ```math
 a_i \leftarrow a_i + \frac{\Delta t}{365.25}, \qquad
 \tau_i^{\mathrm{inf}} \leftarrow \tau_i^{\mathrm{inf}} + \Delta t \ \text{ if } X_i = 1, \qquad
-\tau_i^{\mathrm{boost}} \leftarrow \tau_i^{\mathrm{boost}} + \Delta t
+\tau_i^{\mathrm{boost}} \leftarrow \tau_i^{\mathrm{boost}} + \Delta t \ \text{ if defined}
 ```
 
 then $z_i$ is recalculated from the [immunity equation](#eq-immunity), and
@@ -451,9 +451,9 @@ Ages are in years and elapsed times in days.
 | $g_i$ | 1 if a child, 0 if an adult | | `is_child()` |
 | $X_i$ | 1 if infected, 0 otherwise | | `infected` |
 | $\tau_i^{\mathrm{inf}}$ | time since most recent infection | days | `time_since_infection` |
-| $\tau_i^{\mathrm{boost}}$ | time since most recent immunity boost, which is at infection; $\infty$ if never boosted | days | `time_since_boost` |
+| $\tau_i^{\mathrm{boost}}$ | time since most recent immunity boost, which is at infection | days | `time_since_boost` |
 | $\Delta z_i$ | size of the most recent immunity boost | log hazard ratio | `boost_size` |
-| $z_i^{\mathrm{boost}}$ | immunity level just after the most recent immunity boost; 0 if never boosted | log hazard ratio | `immunity_after_boost` |
+| $z_i^{\mathrm{boost}}$ | immunity level just after the most recent immunity boost | log hazard ratio | `immunity_after_boost` |
 | $\nu_i$ | viral load level of the current or most recent infection | | `viral_load_level` |
 | $V_i$ | viral load | | `viral_load` |
 | $z_i$ | immunity level: the reduction in log hazard of infection | log hazard ratio | `immunity_level` |

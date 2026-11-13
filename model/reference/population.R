@@ -32,19 +32,20 @@ random_uninfected_individual <- function(index) {
 }
 
 # a new individual who has never been infected and has no immunity; the
-# characteristics of an infection are missing until the first infection
+# quantities describing infections and boosts are undefined (NA) until the
+# first infection
 uninfected_individual <- function(index, age) {
 
   list(
     household = household(index),
     age = age, # years
     infected = FALSE,
-    time_since_infection = Inf, # days
-    time_since_boost = Inf, # days
+    time_since_infection = NA, # days
+    time_since_boost = NA, # days
     viral_load_level = NA,
     viral_load = 0,
     immunity_level = 0,
-    immunity_after_boost = 0,
+    immunity_after_boost = NA,
     immunity_at_infection = NA,
     boost_size = NA
   )

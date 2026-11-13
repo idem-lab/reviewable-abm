@@ -15,8 +15,10 @@ advance_individuals_one_timestep <- function(population) {
       individual$time_since_infection <-
         individual$time_since_infection + timestep_length
     }
-    individual$time_since_boost <- individual$time_since_boost +
-      timestep_length
+    if (!is.na(individual$time_since_boost)) {
+      individual$time_since_boost <- individual$time_since_boost +
+        timestep_length
+    }
 
     individual$immunity_level <- immunity_level(individual)
     individual$viral_load <- viral_load(individual)

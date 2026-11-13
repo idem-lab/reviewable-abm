@@ -40,7 +40,7 @@ immunity_level <- function(individual) {
 
   immunity_level <- 0
 
-  if (is.finite(individual$time_since_boost)) {
+  if (!is.na(individual$time_since_boost)) {
     waned <- parameter("immunity_waning_rate") * individual$time_since_boost
     immunity_level <- max(0, individual$immunity_after_boost - waned)
   }

@@ -14,16 +14,46 @@ random_contact_events <- function(population) {
 # one contact event for every pair of individuals in the same household
 household_contact_events <- function(population) {
 
+  households <- household_members(population)
+
+  contact_events <- list()
+  for (h in seq_along(households)) {
+    contact_events <- c(contact_events,
+                        contact_events_in_household(households[[h]]))
+  }
+
+  contact_events
+
+}
+
+# the positions in the population of the members of each household
+household_members <- function(population) {
+
+  number_of_households <- length(population) / setting("household_size")
+  households <- rep(list(NULL), number_of_households)
+
+  for (i in seq_along(population)) {
+    h <- population[[i]]$household
+    households[[h]] <- c(households[[h]], i)
+  }
+
+  households
+
+}
+
+# one contact event for every pair of members of a household
+contact_events_in_household <- function(members) {
+
   duration <- parameter("household_contact_event_hours_per_day") *
     setting("timestep_length")
 
   contact_events <- list()
-  for (i in seq_along(population)) {
-    for (j in seq_along(population)) {
-      if (i < j && population[[i]]$household == population[[j]]$household) {
+  for (a in seq_along(members)) {
+    for (b in seq_along(members)) {
+      if (a < b) {
         contact_events[[length(contact_events) + 1]] <- contact_event(
-          individual_a = i,
-          individual_b = j,
+          individual_a = members[a],
+          individual_b = members[b],
           in_household = TRUE,
           duration = duration
         )

@@ -14,6 +14,9 @@ random_simulation <- function(number_of_timesteps) {
 
   for (timestep in seq_len(number_of_timesteps)) {
 
+    # the time at the start of this timestep, in days
+    set_current_time((timestep - 1) * setting("timestep_length"))
+
     # 1. contact events, which may transmit infection
     contact_events <- random_contact_events(population)
     population <- random_transmissions(population, contact_events)
@@ -25,8 +28,7 @@ random_simulation <- function(number_of_timesteps) {
     # 3. ages, elapsed times and levels
     population <- advance_individuals_one_timestep(population)
 
-    # the timestep starts at this time, in days
-    results$time[timestep] <- (timestep - 1) * setting("timestep_length")
+    results$time[timestep] <- current_time()
     results$new_infections[timestep] <- new_infections
     results$infected[timestep] <- number_infected(population)
 
