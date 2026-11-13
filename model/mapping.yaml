@@ -1,0 +1,136 @@
+# Links between the written description (description.md), the mathematical
+# description (maths.md), the reference implementation (reference/) and the
+# behaviour figures (reports/), as a list of model features.
+#
+# For each feature:
+#   description: section labels in description.md
+#   maths: section and equation labels in maths.md
+#   code: functions in reference/
+#   figures: behaviour figures in reports/
+#
+# A label or function may appear under several features. Automated checks
+# confirm that everything named here exists, and that every equation in
+# maths.md and every function in reference/ appears under at least one
+# feature. Infrastructure (infrastructure/) is not part of the model and is
+# not listed.
+
+features:
+
+  - name: Households
+    description: [sec-population]
+    maths: [sec-population, eq-household]
+    code: [simulate_households, random_poisson]
+    figures: []
+
+  - name: Initial population
+    description: [sec-population]
+    maths: [sec-population, eq-initial-age, eq-child]
+    code:
+      - simulate_initial_population
+      - simulate_new_individual
+      - random_uniform
+      - is_child
+      - random_individual_indices
+    figures: []
+
+  - name: Timesteps
+    description: [sec-time]
+    maths: [sec-time]
+    code: [simulate_epidemic, number_newly_infected, number_infected]
+    figures: []
+
+  - name: Household contact events
+    description: [sec-contacts]
+    maths: [sec-contacts, eq-household-contacts]
+    code:
+      - household_contact_events
+      - contact_events_in_household
+      - contact_event
+    figures: []
+
+  - name: Non-household contact events
+    description: [sec-contacts]
+    maths: [sec-contacts, eq-non-household-count, eq-non-household-contacts]
+    code:
+      - simulate_non_household_contact_events
+      - random_poisson
+      - random_individual_indices
+      - contact_event
+    figures: []
+
+  - name: Order of contact events
+    description: [sec-contacts]
+    maths: [sec-contacts]
+    code: [simulate_contact_events, random_order]
+    figures: []
+
+  - name: Transmission during a contact event
+    description: [sec-transmission]
+    maths: [sec-transmission, eq-hazard, eq-transmission-probability]
+    code:
+      - simulate_transmissions
+      - transmission_probability
+      - location_score
+      - random_bernoulli
+    figures: []
+
+  - name: Infectiousness
+    description: [sec-transmission, sec-viral-load]
+    maths: [sec-transmission, eq-infectiousness-score]
+    code: [infectiousness_score, infectiousness_age_score, is_child]
+    figures: []
+
+  - name: Susceptibility
+    description: [sec-transmission, sec-immunity]
+    maths: [sec-transmission, eq-susceptibility-score]
+    code: [susceptibility_score, susceptibility_age_score, is_child]
+    figures: []
+
+  - name: Infection and its characteristics
+    description: [sec-viral-load, sec-immunity]
+    maths:
+      - sec-infection
+      - eq-infection
+      - eq-infection-characteristics
+      - eq-boost
+    code:
+      - infection
+      - random_infection_characteristics
+      - random_multivariate_normal
+    figures: []
+
+  - name: Viral load over time
+    description: [sec-viral-load]
+    maths: [sec-viral-load-over-time, eq-viral-load, eq-viral-load-profile]
+    code: [viral_load, viral_load_profile, viral_load_immunity_multiplier]
+    figures: []
+
+  - name: Generation interval
+    description: [sec-viral-load]
+    maths: [sec-generation-interval, eq-generation-interval]
+    code: []
+    figures: []
+
+  - name: Recovery
+    description: [sec-immunity]
+    maths: [sec-immunity, eq-recovery]
+    code: [recover_individuals, ready_to_recover, recovery]
+    figures: []
+
+  - name: Duration of infection
+    description: [sec-immunity]
+    maths: [sec-duration, eq-duration]
+    code: []
+    figures: []
+
+  - name: Waning immunity
+    description: [sec-immunity]
+    maths: [sec-immunity, eq-immunity]
+    code: [immunity_level]
+    figures: []
+
+  - name: Advancing individuals
+    description: [sec-time]
+    maths: [sec-advance, eq-advance]
+    code: [advance_individuals_one_timestep]
+    figures: []
