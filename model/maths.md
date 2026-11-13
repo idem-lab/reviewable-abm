@@ -15,7 +15,7 @@ the log of a lognormal random variable, $\rho$ for a correlation, and
 $\omega$ for the rate at which immunity wanes.
 
 Individual state changes only at discrete times. A quantity written as a
-function of time, such as $a_i(t)$, is its value during the timestep
+function of time, such as $A_i(t)$, is its value during the timestep
 starting at time $t$, and $x \leftarrow y$ means that $x$ is set to $y$.
 
 ## Contents
@@ -58,23 +58,12 @@ Initial ages are independent and uniform:
 <a id="eq-initial-age"></a>
 
 ```math
-a_i(0) \sim \mathrm{Uniform}(0, A_{\max})
+A_i(0) \sim \mathrm{Uniform}(0, A_{\max})
 ```
 
-where $a_i(t)$ is the age of individual $i$ in years, and $A_{\max}$ is the
-upper limit of initial ages (80 years).
-
-An individual is a child while younger than $A$ (18 years):
-
-<a id="eq-child"></a>
-
-```math
-g_i(t) = \mathbb{1}\left[a_i(t) < A\right]
-```
-
-where $g_i$ is 1 if individual $i$ is a child and 0 if an adult, and
-$\mathbb{1}[\cdot]$ is 1 when the condition in brackets holds and 0
-otherwise.
+where $A_i(t)$ is the age of individual $i$ in years, and $A_{\max}$ is the
+upper limit of initial ages (80 years). An individual is a child while
+younger than $A_{\mathrm{adult}}$ (18 years).
 
 At time 0, $I_0$ individuals chosen uniformly at random without replacement
 are infected ([Infection](#sec-infection)). For every other individual,
@@ -182,20 +171,32 @@ The scores of an individual $i$ are log hazard ratios:
 <a id="eq-infectiousness-score"></a>
 
 ```math
-\eta_i^{\mathrm{inf}} = \log V_i + \alpha_{\mathrm{inf}}\, g_i
+\eta_i^{\mathrm{inf}} = \log V_i + \phi^{\mathrm{inf}}(A_i)
 ```
 
 <a id="eq-susceptibility-score"></a>
 
 ```math
-\eta_i^{\mathrm{sus}} = \alpha_{\mathrm{sus}}\, g_i - z_i
+\eta_i^{\mathrm{sus}} = \phi^{\mathrm{sus}}(A_i) - z_i
 ```
 
 where $V_i$ is the viral load of the individual ([Viral
-load](#sec-viral-load)), and $\alpha_{\mathrm{inf}}$ and
-$\alpha_{\mathrm{sus}}$ are the log hazard ratios for an infected and an
-uninfected individual who is a child. Adults and non-household contact
-events are the reference categories, with log hazard ratios of zero.
+load](#sec-viral-load)), and $\phi^{\mathrm{inf}}$ and $\phi^{\mathrm{sus}}$
+are the effects of age on infectiousness and susceptibility, as log hazard
+ratios. At present each is a step, with children differing from adults:
+
+<a id="eq-age-effects"></a>
+
+```math
+\phi^{\mathrm{inf}}(A) = \alpha_{\mathrm{inf}} \, \mathbb{1}\left[A < A_{\mathrm{adult}}\right], \qquad
+\phi^{\mathrm{sus}}(A) = \alpha_{\mathrm{sus}} \, \mathbb{1}\left[A < A_{\mathrm{adult}}\right]
+```
+
+where $\alpha_{\mathrm{inf}}$ and $\alpha_{\mathrm{sus}}$ are the log
+hazard ratios for an infected and an uninfected individual who is a child,
+and $\mathbb{1}[\cdot]$ is 1 when the condition in brackets holds and 0
+otherwise. Adults and non-household contact events are the reference
+categories, with log hazard ratios of zero.
 
 The hazard is constant over the contact event, so the probability of
 transmission is
@@ -415,7 +416,7 @@ At step 3 of each timestep, for every individual:
 <a id="eq-advance"></a>
 
 ```math
-a_i \leftarrow a_i + \frac{\Delta t}{365.25}, \qquad
+A_i \leftarrow A_i + \frac{\Delta t}{365.25}, \qquad
 \tau_i^{\mathrm{inf}} \leftarrow \tau_i^{\mathrm{inf}} + \Delta t \ \text{ if } X_i = 1, \qquad
 \tau_i^{\mathrm{boost}} \leftarrow \tau_i^{\mathrm{boost}} + \Delta t \ \text{ if defined}
 ```
@@ -438,7 +439,7 @@ Ages are in years and elapsed times in days.
 | $\Delta t$ | timestep length | $(0, \infty)$ | days | `timestep_length` |
 | $T$ | number of timesteps simulated | $\lbrace 1, 2, \dots \rbrace$ | | `number_of_timesteps` |
 | $A_{\max}$ | upper limit of initial ages (80) | $(0, \infty)$ | years | `maximum_initial_age` |
-| $A$ | age at which individuals become adults (18) | $(0, A_{\max})$ | years | `adult_age` |
+| $A_{\mathrm{adult}}$ | age at which individuals become adults (18) | $(0, A_{\max})$ | years | `adult_age` |
 | $V_{\mathrm{rec}}$ | recovery threshold (0.001): viral load, after the peak, below which an infection ends, as a fraction of the peak viral load of a typical infection | $(0, 1)$ | | `recovery_viral_load_threshold` |
 
 **Parameters**
@@ -472,8 +473,7 @@ Ages are in years and elapsed times in days.
 | Symbol | Meaning | Units | Code name |
 |---|---|---|---|
 | $h_i$ | household to which the individual belongs | | `household_index` |
-| $a_i$ | age | years | `age` |
-| $g_i$ | 1 if a child, 0 if an adult | | `is_child()` |
+| $A_i$ | age | years | `age` |
 | $X_i$ | 1 if infected, 0 otherwise | | `infected` |
 | $\tau_i^{\mathrm{inf}}$ | time since most recent infection | days | `time_since_infection()` |
 | $\tau_i^{\mathrm{boost}}$ | time since most recent immunity boost, which is at infection | days | `time_since_boost()` |
@@ -507,5 +507,6 @@ Ages are in years and elapsed times in days.
 | $g(\tau)$ | viral load profile: a Gaussian curve in log time since infection, peaking at 1 |
 | $V_i^{\mathrm{peak}}$ | peak viral load of the current or most recent infection (`peak_viral_load()`) |
 | $\tau_{\mathrm{end}}$ | time since infection at which viral load falls below $V_{\mathrm{rec}}$, in days |
-| $\mathbb{1}[\cdot]$ | 1 when the condition in brackets holds, 0 otherwise |
+| $\phi^{\mathrm{inf}}(A)$, $\phi^{\mathrm{sus}}(A)$ | effects of age on infectiousness and on susceptibility, as log hazard ratios (`infectiousness_age_score()`, `susceptibility_age_score()`) |
+| $\mathbb{1}[\cdot]$ | 1 when the condition in brackets holds, 0 otherwise; $\mathbb{1}[A < A_{\mathrm{adult}}]$ is `is_child()` |
 | $x \leftarrow y$ | $x$ is set to $y$ |

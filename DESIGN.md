@@ -61,6 +61,11 @@ are `\tau_i^{\mathrm{inf}}` and `\tau_i^{\mathrm{boost}}`, and the immunity
 level at infection and just after a boost are `z_i^{\mathrm{inf}}` and
 `z_i^{\mathrm{boost}}`.
 
+The mathematical description states the model in exact arithmetic.
+Numerical details of the implementation, such as storing elapsed times as
+whole numbers of timesteps to avoid rounding error, belong in the code and
+in this document, not in the maths.
+
 **Labels and equations.** Both descriptions must render on GitHub, where
 researchers review them. A label is an HTML anchor on the line before its
 heading or equation, such as `<a id="eq-immunity"></a>`, and is referred to

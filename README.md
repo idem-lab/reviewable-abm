@@ -43,8 +43,8 @@ contact event between two people transmits infection, might appear in each.
 > infected. Transmission occurs at a constant hazard over the duration of
 > the contact event. The log of this hazard is the sum of the log of a
 > baseline hazard and three effects: the infectiousness of the infected
-> person (from their viral load and age group), the susceptibility of the
-> uninfected person (from their immunity and age group), and the location of
+> person (from their viral load and age), the susceptibility of the
+> uninfected person (from their immunity and age), and the location of
 > the contact event (household or elsewhere).
 
 **Mathematical description**

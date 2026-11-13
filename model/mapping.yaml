@@ -25,7 +25,7 @@ features:
 
   - name: Initial population
     description: [sec-population]
-    maths: [sec-population, eq-initial-age, eq-child]
+    maths: [sec-population, eq-initial-age]
     code:
       - simulate_initial_population
       - simulate_new_individual
@@ -90,14 +90,14 @@ features:
 
   - name: Infectiousness
     description: [sec-transmission, sec-viral-load]
-    maths: [sec-transmission, eq-infectiousness-score]
+    maths: [sec-transmission, eq-infectiousness-score, eq-age-effects]
     code: [infectiousness_score, infectiousness_age_score, is_child]
     figures:
       - reports/figures/infectiousness_and_susceptibility.png
 
   - name: Susceptibility
     description: [sec-transmission, sec-immunity]
-    maths: [sec-transmission, eq-susceptibility-score]
+    maths: [sec-transmission, eq-susceptibility-score, eq-age-effects]
     code: [susceptibility_score, susceptibility_age_score, is_child]
     figures:
       - reports/figures/infectiousness_and_susceptibility.png

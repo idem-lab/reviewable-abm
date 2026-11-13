@@ -66,9 +66,11 @@ A contact event can transmit infection only if exactly one of the pair is
 infected. Transmission occurs at a constant hazard over the duration of the
 contact event. The log of this hazard is the sum of the log of a baseline
 hazard and three effects: the infectiousness of the infected individual
-(from their viral load and age group), the susceptibility of the uninfected
-individual (from their immunity and age group), and the location of the
-contact event (household or elsewhere).
+(from their viral load and age), the susceptibility of the uninfected
+individual (from their immunity and age), and the location of the
+contact event (household or elsewhere). At present the effects of age are
+steps: children differ from adults, and all children, and all adults, are
+alike.
 
 <a id="sec-viral-load"></a>
 

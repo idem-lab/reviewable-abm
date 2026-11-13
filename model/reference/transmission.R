@@ -80,8 +80,8 @@ infectiousness_score <- function(individual) {
 
 }
 
-# log hazard ratio for the age of the infected individual; adults are the
-# reference
+# effect of age on infectiousness, as a log hazard ratio: at present a
+# step, with children differing from adults, who are the reference
 infectiousness_age_score <- function(age) {
 
   load_parameters("child_infectiousness_score")
@@ -97,8 +97,8 @@ susceptibility_score <- function(individual) {
 
 }
 
-# log hazard ratio for the age of the uninfected individual; adults are the
-# reference
+# effect of age on susceptibility, as a log hazard ratio: at present a
+# step, with children differing from adults, who are the reference
 susceptibility_age_score <- function(age) {
 
   load_parameters("child_susceptibility_score")
