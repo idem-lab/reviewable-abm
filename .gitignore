@@ -1,0 +1,6 @@
+# editor and R session files
+*.swp
+*~
+.Rhistory
+.RData
+.Rproj.user/
