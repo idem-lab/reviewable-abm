@@ -11,7 +11,8 @@ The notation follows the usual conventions for epidemic models where they
 exist: $N$ for population size, $I_0$ for the number initially infected,
 $\beta$ for transmission rates, $c$ for the contact rate, $\tau$ for time
 since infection, $\mu$ and $\sigma$ for the mean and standard deviation of
-the log of a lognormal random variable, and $\rho$ for a correlation.
+the log of a lognormal random variable, $\rho$ for a correlation, and
+$\omega$ for the rate at which immunity wanes.
 
 Individual state changes only at discrete times. A quantity written as a
 function of time, such as $a_i(t)$, is its value during the timestep
@@ -75,9 +76,10 @@ otherwise.
 At time 0, $I_0$ individuals chosen uniformly at random without replacement
 are infected ([Infection](#sec-infection)). For every other individual,
 $X_i = 0$, where $X_i$ is 1 if individual $i$ is infected and 0 otherwise.
-Before these initial infections, no individual has any immunity: the time
-since their most recent immunity boost is $\tau_i^{\mathrm{boost}} = \infty$
-and their immunity level is $z_i = 0$
+Before these initial infections, no individual has any immunity: their
+immunity level is $z_i = 0$, their immunity after their most recent boost
+is $z_i^{\mathrm{boost}} = 0$, and the time since that boost is
+$\tau_i^{\mathrm{boost}} = \infty$
 ([Recovery and immunity](#sec-immunity)).
 
 <a id="sec-time"></a>
@@ -229,13 +231,13 @@ $\tau_i^{\mathrm{boost}}$ the time since the most recent immunity boost, both
 in days.
 
 At the same time, the infection's viral load level $\nu_i$ and the size of
-its immunity boost $z_i^{\mathrm{boost}}$ are drawn. Both are lognormal, and
-their logs are correlated:
+its immunity boost $\Delta z_i$ are drawn. Both are lognormal, and their
+logs are correlated:
 
 <a id="eq-infection-draws"></a>
 
 ```math
-\begin{pmatrix} \log \nu_i \\ \log z_i^{\mathrm{boost}} \end{pmatrix}
+\begin{pmatrix} \log \nu_i \\ \log \Delta z_i \end{pmatrix}
 \sim \mathrm{Normal}\left(
   \begin{pmatrix} 0 \\ \mu_z \end{pmatrix},
   \begin{pmatrix} \sigma_\nu^2 & \rho \sigma_\nu \sigma_z \\
@@ -244,9 +246,19 @@ their logs are correlated:
 ```
 
 where $\sigma_\nu$ is the standard deviation of $\log \nu_i$, $\mu_z$ and
-$\sigma_z$ are the mean and standard deviation of $\log z_i^{\mathrm{boost}}$,
-and $\rho \ge 0$ is the correlation between the two logs, so that
-infections with a higher viral load level tend to give larger boosts.
+$\sigma_z$ are the mean and standard deviation of $\log \Delta z_i$, and
+$\rho \ge 0$ is the correlation between the two logs, so that infections
+with a higher viral load level tend to give larger boosts. The boost is
+added to the individual's current immunity:
+
+<a id="eq-boost"></a>
+
+```math
+z_i^{\mathrm{boost}} \leftarrow z_i^{\mathrm{inf}} + \Delta z_i
+```
+
+where $z_i^{\mathrm{boost}}$ is the immunity level just after the boost
+([Recovery and immunity](#sec-immunity)).
 
 The mean of $\log \nu_i$ is fixed at 0, so that the viral load of a typical
 infection (with the median level, $\nu_i = 1$, and no immunity) peaks at 1.
@@ -327,31 +339,32 @@ viral load of a typical infection. The viral load is the one calculated at
 step 3 of the previous timestep ([Advancing individuals](#sec-advance)).
 Recovery ends transmission and allows reinfection.
 
-Immunity is boosted at infection ([Infection](#sec-infection)). A boost
-sets immunity to the size of the boost. Immunity then declines linearly
-with time since the boost, and is lost after $D_{\mathrm{imm}}$ days:
+Immunity is boosted at infection ([boost equation](#eq-boost)). It then
+declines at a constant rate until it is lost:
 
 <a id="eq-immunity"></a>
 
 ```math
-z_i(t) = z_i^{\mathrm{boost}} \max\left(0,\ 1 - \frac{\tau_i^{\mathrm{boost}}(t)}{D_{\mathrm{imm}}}\right)
+z_i(t) = \max\left(0,\ z_i^{\mathrm{boost}} - \omega\, \tau_i^{\mathrm{boost}}(t)\right)
 ```
 
-where $z_i^{\mathrm{boost}}$ is the size of the most recent boost
-([Infection](#sec-infection)), and $z_i = 0$ when
-$\tau_i^{\mathrm{boost}} = \infty$.
+where $z_i^{\mathrm{boost}}$ is the immunity level just after the most
+recent boost, and $\omega$ is the rate at which immunity wanes, in log
+hazard ratio per day. Immunity is therefore lost
+$z_i^{\mathrm{boost}} / \omega$ days after the most recent boost, so higher
+immunity lasts longer. $z_i = 0$ when $\tau_i^{\mathrm{boost}} = \infty$.
 
 The hazard of infection is proportional to $\exp(-z_i)$
 ([susceptibility score equation](#eq-susceptibility-score)), so it rises
-slowly at first after a boost and reaches its full value abruptly when the
-time since the boost reaches $D_{\mathrm{imm}}$.
+slowly at first after a boost and reaches its full value abruptly when
+immunity is lost.
 
 <a id="sec-duration"></a>
 
 ### Duration of infection
 
-The duration of infection follows from the viral load. Setting $V_i = \theta$ in the
-[viral load equation](#eq-viral-load) gives the time since infection at
+The duration of infection follows from the viral load. Setting
+$V_i = \theta$ in the [viral load equation](#eq-viral-load) gives the time since infection at
 which viral load falls below $\theta$:
 
 <a id="eq-duration"></a>
@@ -422,7 +435,7 @@ Ages are in years and elapsed times in days.
 | $\mu_z$ | meanlog of the size of an immunity boost | $\mathbb{R}$ | | `immunity_boost_meanlog` |
 | $\sigma_z$ | sdlog of the size of an immunity boost | $[0, \infty)$ | | `immunity_boost_sdlog` |
 | $\rho$ | correlation between the log viral load level and the log size of the immunity boost of an infection | $[0, 1]$ | | `viral_load_boost_correlation` |
-| $D_{\mathrm{imm}}$ | time from a boost (at infection) until immunity is lost | $(0, \infty)$ | days | `immunity_duration` |
+| $\omega$ | rate at which immunity wanes | $[0, \infty)$ | log hazard ratio per day | `immunity_waning_rate` |
 
 **Individual state**, for individual $i$
 
@@ -434,7 +447,8 @@ Ages are in years and elapsed times in days.
 | $X_i$ | 1 if infected, 0 otherwise | | `infected` |
 | $\tau_i^{\mathrm{inf}}$ | time since most recent infection | days | `time_since_infection` |
 | $\tau_i^{\mathrm{boost}}$ | time since most recent immunity boost, which is at infection; $\infty$ if never boosted | days | `time_since_boost` |
-| $z_i^{\mathrm{boost}}$ | size of the most recent immunity boost: the immunity level immediately after it | log hazard ratio | `immunity_boost` |
+| $\Delta z_i$ | size of the most recent immunity boost | log hazard ratio | `boost_size` |
+| $z_i^{\mathrm{boost}}$ | immunity level just after the most recent immunity boost; 0 if never boosted | log hazard ratio | `immunity_after_boost` |
 | $\nu_i$ | viral load level of the current or most recent infection | | `viral_load_level` |
 | $V_i$ | viral load | | `viral_load` |
 | $z_i$ | immunity level: the reduction in log hazard of infection | log hazard ratio | `immunity_level` |

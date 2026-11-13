@@ -56,7 +56,7 @@ meaning throughout the document. Each equation has a label, such as
 symbol and are distinguished by a text superscript naming the event: for
 example, the time since infection and the time since an immunity boost
 are `\tau_i^{\mathrm{inf}}` and `\tau_i^{\mathrm{boost}}`, and the immunity
-level at infection and the size of a boost are `z_i^{\mathrm{inf}}` and
+level at infection and just after a boost are `z_i^{\mathrm{inf}}` and
 `z_i^{\mathrm{boost}}`.
 
 **Labels and equations.** Both descriptions must render on GitHub, where
