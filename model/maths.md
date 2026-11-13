@@ -225,29 +225,17 @@ contact event:
 
 ```math
 z_i^{\mathrm{inf}} \leftarrow z_i, \qquad
-X_i \leftarrow 1, \qquad s_i^{\mathrm{inf}} \leftarrow 0, \qquad
-s_i^{\mathrm{boost}} \leftarrow 0
+X_i \leftarrow 1, \qquad \tau_i^{\mathrm{inf}} \leftarrow 0, \qquad
+\tau_i^{\mathrm{boost}} \leftarrow 0
 ```
 
 where $z_i$ is the individual's current immunity level, left from earlier
 infections ([immunity equation](#eq-immunity)), and $z_i^{\mathrm{inf}}$
 records it at the moment of infection. $z_i^{\mathrm{inf}}$ reduces the
 viral load of this infection ([Viral load over time](#sec-viral-load-over-time)).
-$s_i^{\mathrm{inf}}$ and $s_i^{\mathrm{boost}}$ count the whole timesteps
-since infection and since the most recent immunity boost, and give the
-elapsed times in days:
-
-<a id="eq-elapsed-times"></a>
-
-```math
-\tau_i^{\mathrm{inf}} = s_i^{\mathrm{inf}} \Delta t, \qquad
-\tau_i^{\mathrm{boost}} = s_i^{\mathrm{boost}} \Delta t
-```
-
-Counting whole timesteps makes elapsed times exact multiples of $\Delta t$;
-adding $\Delta t$ repeatedly would accumulate rounding error, so that a
-comparison such as $\tau_i^{\mathrm{inf}} \ge \tau_{\mathrm{peak}}$ could
-come out one timestep late.
+$\tau_i^{\mathrm{inf}}$ is the time since infection and
+$\tau_i^{\mathrm{boost}}$ the time since the most recent immunity boost, both
+in days.
 
 At the same time, the characteristics of the infection are drawn: its
 potential peak viral load $\nu_i$, the peak its viral load would reach with
@@ -428,14 +416,13 @@ At step 3 of each timestep, for every individual:
 
 ```math
 a_i \leftarrow a_i + \frac{\Delta t}{365.25}, \qquad
-s_i^{\mathrm{inf}} \leftarrow s_i^{\mathrm{inf}} + 1 \ \text{ if } X_i = 1, \qquad
-s_i^{\mathrm{boost}} \leftarrow s_i^{\mathrm{boost}} + 1 \ \text{ if defined}
+\tau_i^{\mathrm{inf}} \leftarrow \tau_i^{\mathrm{inf}} + \Delta t \ \text{ if } X_i = 1, \qquad
+\tau_i^{\mathrm{boost}} \leftarrow \tau_i^{\mathrm{boost}} + \Delta t \ \text{ if defined}
 ```
 
 then $z_i$ is recalculated from the [immunity equation](#eq-immunity), and
-$V_i$ from the [viral load equation](#eq-viral-load), using the elapsed
-times from the [elapsed times equation](#eq-elapsed-times). Ages are in
-years.
+$V_i$ from the [viral load equation](#eq-viral-load).
+Ages are in years and elapsed times in days.
 
 <a id="sec-notation"></a>
 
@@ -488,10 +475,8 @@ years.
 | $a_i$ | age | years | `age` |
 | $g_i$ | 1 if a child, 0 if an adult | | `is_child()` |
 | $X_i$ | 1 if infected, 0 otherwise | | `infected` |
-| $s_i^{\mathrm{inf}}$ | number of whole timesteps since most recent infection | timesteps | `timesteps_since_infection` |
-| $s_i^{\mathrm{boost}}$ | number of whole timesteps since most recent immunity boost, which is at infection | timesteps | `timesteps_since_boost` |
 | $\tau_i^{\mathrm{inf}}$ | time since most recent infection | days | `time_since_infection()` |
-| $\tau_i^{\mathrm{boost}}$ | time since most recent immunity boost | days | `time_since_boost()` |
+| $\tau_i^{\mathrm{boost}}$ | time since most recent immunity boost, which is at infection | days | `time_since_boost()` |
 | $\Delta z_i$ | size of the most recent immunity boost | log hazard ratio | `boost_size` |
 | $z_i^{\mathrm{boost}}$ | immunity level just after the most recent immunity boost | log hazard ratio | `immunity_after_boost` |
 | $\nu_i$ | potential peak viral load of the current or most recent infection: its peak viral load with no immunity | | `potential_peak_viral_load` |

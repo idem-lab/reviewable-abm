@@ -165,7 +165,7 @@ features:
 
   - name: Advancing individuals
     description: [sec-time]
-    maths: [sec-advance, eq-advance, eq-elapsed-times]
+    maths: [sec-advance, eq-advance]
     code:
       - advance_individuals_one_timestep
       - time_since_infection
