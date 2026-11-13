@@ -19,32 +19,40 @@ style_linters <- function() {
 # linters, lintr linters for the rules in DESIGN.md Section 4, and this
 # procedure's own linters
 reference_linters <- function() {
+
+  # reasons given for functions the reference implementation must not use
+  only_infrastructure <- "use only in model/infrastructure/"
+  no_nse <- "non-standard evaluation is not allowed"
+  only_base_r <- "only base R is allowed; call MASS with ::"
+  no_classes <- "classes are not allowed"
+  use_for_loop <- "use a for loop"
+
   c(
     style_linters(),
     list(
       # language rules 2, 3 and 9, and naming rule 2
       undesirable_function_linter(c(
-        assign = "use only in model/infrastructure/",
-        get = "use only in model/infrastructure/",
-        new.env = "use only in model/infrastructure/",
-        environment = "use only in model/infrastructure/",
-        with = "non-standard evaluation is not allowed",
-        within = "non-standard evaluation is not allowed",
-        subset = "non-standard evaluation is not allowed",
-        transform = "non-standard evaluation is not allowed",
-        attach = "non-standard evaluation is not allowed",
-        library = "only base R is allowed; call MASS with ::",
-        require = "only base R is allowed; call MASS with ::",
+        assign = only_infrastructure,
+        get = only_infrastructure,
+        new.env = only_infrastructure,
+        environment = only_infrastructure,
+        with = no_nse,
+        within = no_nse,
+        subset = no_nse,
+        transform = no_nse,
+        attach = no_nse,
+        library = only_base_r,
+        require = only_base_r,
         sample = "use sample.int(), inside a random_ function",
-        setClass = "classes are not allowed",
-        setRefClass = "classes are not allowed",
-        R6Class = "classes are not allowed",
-        structure = "classes are not allowed",
-        sapply = "use a for loop",
-        lapply = "use a for loop",
-        vapply = "use a for loop",
-        mapply = "use a for loop",
-        Map = "use a for loop",
+        setClass = no_classes,
+        setRefClass = no_classes,
+        R6Class = no_classes,
+        structure = no_classes,
+        sapply = use_for_loop,
+        lapply = use_for_loop,
+        vapply = use_for_loop,
+        mapply = use_for_loop,
+        Map = use_for_loop,
         ifelse = "use if and else on single values"
       )),
       undesirable_operator_linter(),
