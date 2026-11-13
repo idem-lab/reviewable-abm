@@ -1,9 +1,11 @@
 # settings and parameters of the model, with illustrative values (not
-# calibrated to any pathogen); see the notation tables in maths.md
+# calibrated to any pathogen); see the notation tables in maths.md. They are
+# held in locked environments so that nothing can change them while the
+# model runs, and model functions read them only with load_settings() and
+# load_parameters().
 
-globals <- list(
-
-  settings = list(
+settings <- list2env(
+  list(
     population_size = 500,
     average_household_size = 4,
     initial_infections = 5,
@@ -11,9 +13,12 @@ globals <- list(
     maximum_initial_age = 80, # years
     adult_age = 18, # years
     recovery_viral_load_threshold = 0.001 # fraction of a typical peak
-  ),
+  )
+)
+lockEnvironment(settings, bindings = TRUE)
 
-  parameters = list(
+parameters <- list2env(
+  list(
     baseline_transmission_hazard = 0.015, # per hour
     child_infectiousness_score = -0.2,
     child_susceptibility_score = -0.4,
@@ -30,27 +35,43 @@ globals <- list(
     viral_load_boost_correlation = 0.5,
     immunity_waning_rate = 0.01 # log hazard ratio per day
   )
-
 )
+lockEnvironment(parameters, bindings = TRUE)
 
-# value of a setting, stopping if the name does not exist
-setting <- function(name) {
+# make the named settings available as variables of the same name in the
+# function that calls this, stopping if a name does not exist; called only
+# at the top of a function
+load_settings <- function(...) {
 
-  if (!name %in% names(globals$settings)) {
-    stop("no setting called ", name)
+  names <- c(...)
+  caller <- parent.frame()
+
+  for (name in names) {
+    if (!exists(name, envir = settings, inherits = FALSE)) {
+      stop("no setting called ", name)
+    }
+    assign(name, get(name, envir = settings), envir = caller)
   }
 
-  globals$settings[[name]]
+  invisible(names)
 
 }
 
-# value of a parameter, stopping if the name does not exist
-parameter <- function(name) {
+# make the named parameters available as variables of the same name in the
+# function that calls this, stopping if a name does not exist; called only
+# at the top of a function
+load_parameters <- function(...) {
 
-  if (!name %in% names(globals$parameters)) {
-    stop("no parameter called ", name)
+  names <- c(...)
+  caller <- parent.frame()
+
+  for (name in names) {
+    if (!exists(name, envir = parameters, inherits = FALSE)) {
+      stop("no parameter called ", name)
+    }
+    assign(name, get(name, envir = parameters), envir = caller)
   }
 
-  globals$parameters[[name]]
+  invisible(names)
 
 }

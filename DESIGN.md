@@ -98,23 +98,33 @@ population or fewer replicates; do not restructure the code.
    package that ships with R and called with `::`, such as
    `MASS::mvrnorm()` for a multivariate normal.
 2. Functions take values and return new values. No environments, `<<-`,
-   `assign()` or `get()`, except for the simulation clock (rule 5).
+   `assign()` or `get()`, except in the two files that hold the shared
+   values in rule 5.
 3. No non-standard evaluation, such as `with()`, `subset()` or formulas.
-4. Everything a function uses is passed to it as an argument, apart from
-   the global settings in rule 5. No default argument values.
-5. Settings, data and parameters are held in one list, `globals`, defined
-   in one file. Functions read it with `setting("name")` and
-   `parameter("name")`, which stop with an error if the name does not
-   exist. (Reading a misspelt name with `$` returns `NULL` without an
-   error.) A function reads each setting and parameter it uses into a
-   local variable of the same name at its start, such as
-   `viral_load_peak_time <- parameter("viral_load_peak_time")`, so that
-   what it depends on is listed at the top and its calculations read like
-   the equations. Model functions never change `globals`. The current
-   simulation time is read with `current_time()`. It is the only value
-   that changes during a simulation without being passed as an argument,
-   and only the main simulation loop sets it. Tests of functions that read
-   it set it first.
+4. No lexical scoping: everything a function uses is passed to it as an
+   argument, apart from the shared values in rule 5. No default argument
+   values.
+5. Shared values are held in environments, one file each, and functions
+   reach them only through small functions, never directly:
+   - Settings and parameters are held in two locked environments,
+     `settings` and `parameters`, defined in `globals.R`, so that nothing
+     can change them while the model runs. A function that uses any of
+     them starts with `load_settings("name", ...)` and
+     `load_parameters("name", ...)`, before any other code. These make
+     each named value available as a variable of the same name, and stop
+     with an error if a name does not exist, so the top of each function
+     lists what it depends on and its calculations read like the
+     equations. The loaded variables are never assigned to.
+   - The current simulation time is held in the simulation clock, in
+     `clock.R`, and read with `current_time()`. It is the only value that
+     changes during a simulation without being passed as an argument, and
+     only the main simulation loop sets it, with
+     `set_clock_to_timestep()`. Tests of functions that read it set it
+     first.
+
+   The linter (Section 12) will check that these calls come first, that
+   loaded names do not clash with a function's arguments, and that loaded
+   variables are not assigned to.
 6. One version of the model. No options or flags that switch between
    alternative structures. A proposed alternative is kept on a separate
    branch until researchers choose; a permanent alternative is a separate
@@ -163,7 +173,7 @@ population or fewer replicates; do not restructure the code.
    ages, elapsed times or levels.
 4. Other functions read levels from the individual rather than calculating
    them.
-5. The timestep length is a setting, `setting("timestep_length")`, in days.
+5. The timestep length is a setting, `timestep_length`, in days.
    Code does not assume it is one day.
 
 ### Names and comments
@@ -396,7 +406,7 @@ trained further on simulations from the exact simulator (Krouglova et al.
 
 ## 12. Decisions still open
 
-- Whether a style guide and linter enforce these rules.
+- The design of the project's own linter, which will enforce these rules.
 - The design of the shared ggplot2 theme.
 
 ## References

@@ -4,10 +4,10 @@
 # boost size: lognormal, with correlated logs
 random_infection_characteristics <- function() {
 
-  viral_load_level_sdlog <- parameter("viral_load_level_sdlog")
-  immunity_boost_meanlog <- parameter("immunity_boost_meanlog")
-  immunity_boost_sdlog <- parameter("immunity_boost_sdlog")
-  viral_load_boost_correlation <- parameter("viral_load_boost_correlation")
+  load_parameters("viral_load_level_sdlog",
+                  "immunity_boost_meanlog",
+                  "immunity_boost_sdlog",
+                  "viral_load_boost_correlation")
 
   # in the order (viral load level, boost size); the meanlog of the viral
   # load level is fixed at 0
@@ -73,8 +73,7 @@ viral_load <- function(individual) {
 # in log time, peaking at 1, and zero at infection
 viral_load_profile <- function(time_since_infection) {
 
-  viral_load_peak_time <- parameter("viral_load_peak_time")
-  viral_load_profile_width <- parameter("viral_load_profile_width")
+  load_parameters("viral_load_peak_time", "viral_load_profile_width")
 
   viral_load_profile <- 0
 
@@ -92,7 +91,7 @@ viral_load_profile <- function(time_since_infection) {
 # individual had when infected, as a multiplier: 1 with no immunity
 viral_load_immunity_multiplier <- function(immunity_at_infection) {
 
-  viral_load_immunity_effect <- parameter("viral_load_immunity_effect")
+  load_parameters("viral_load_immunity_effect")
 
   exp(-viral_load_immunity_effect * immunity_at_infection)
 

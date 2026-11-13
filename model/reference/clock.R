@@ -20,7 +20,7 @@ current_time <- function() {
 # used only by the main simulation loop, and by tests
 set_clock_to_timestep <- function(timestep) {
 
-  timestep_length <- setting("timestep_length")
+  load_settings("timestep_length")
 
   time <- (timestep - 1) * timestep_length
   simulation_clock$time <- time

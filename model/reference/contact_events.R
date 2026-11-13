@@ -59,9 +59,8 @@ households <- function(population) {
 # one contact event for every pair of members of a household
 contact_events_in_household <- function(household) {
 
-  household_contact_event_hours_per_day <-
-    parameter("household_contact_event_hours_per_day")
-  timestep_length <- setting("timestep_length")
+  load_parameters("household_contact_event_hours_per_day")
+  load_settings("timestep_length")
 
   duration <- household_contact_event_hours_per_day * timestep_length
 
@@ -87,11 +86,9 @@ contact_events_in_household <- function(household) {
 # chosen at random from the whole population
 simulate_non_household_contact_events <- function(population) {
 
-  non_household_contact_events_per_person_per_day <-
-    parameter("non_household_contact_events_per_person_per_day")
-  non_household_contact_event_hours_per_day <-
-    parameter("non_household_contact_event_hours_per_day")
-  timestep_length <- setting("timestep_length")
+  load_parameters("non_household_contact_events_per_person_per_day",
+                  "non_household_contact_event_hours_per_day")
+  load_settings("timestep_length")
 
   # each contact event counts for both individuals in it
   mean_number_of_non_household_contact_events <- length(population) *

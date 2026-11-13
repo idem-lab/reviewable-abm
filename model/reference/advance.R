@@ -4,7 +4,7 @@
 # recalculate their viral load and immunity level from these times
 advance_individuals_one_timestep <- function(population) {
 
-  timestep_length <- setting("timestep_length") # days
+  load_settings("timestep_length")
 
   for (i in seq_along(population)) {
 

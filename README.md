@@ -72,7 +72,7 @@ and $p_k$ is the probability of transmission.
 # hazard over the contact event's duration
 transmission_probability <- function(infector, infectee, contact_event) {
 
-  baseline_transmission_hazard <- parameter("baseline_transmission_hazard")
+  load_parameters("baseline_transmission_hazard")
 
   log_hazard <- log(baseline_transmission_hazard) +
     infectiousness_score(infector) +

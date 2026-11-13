@@ -4,8 +4,7 @@
 # whom are infected at random
 simulate_initial_population <- function() {
 
-  population_size <- setting("population_size")
-  initial_infections <- setting("initial_infections")
+  load_settings("population_size", "initial_infections")
 
   household_indices <- simulate_household_indices(population_size)
 
@@ -31,7 +30,7 @@ simulate_initial_population <- function() {
 # cut short to fit the population
 simulate_household_indices <- function(population_size) {
 
-  average_household_size <- setting("average_household_size")
+  load_settings("average_household_size")
 
   household_indices <- c()
   h <- 0
@@ -54,7 +53,7 @@ simulate_household_indices <- function(population_size) {
 # (NA) until the first infection
 simulate_new_individual <- function(household_index) {
 
-  maximum_initial_age <- setting("maximum_initial_age")
+  load_settings("maximum_initial_age")
 
   list(
     household_index = household_index,
@@ -75,7 +74,7 @@ simulate_new_individual <- function(household_index) {
 # whether an individual of this age, in years, is a child
 is_child <- function(age) {
 
-  adult_age <- setting("adult_age")
+  load_settings("adult_age")
 
   age < adult_age
 
