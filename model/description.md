@@ -108,5 +108,4 @@ not affect the viral load of the infection that caused it. The reduction
 shrinks linearly with time since the boost until immunity is lost
 entirely. Because the reduction is on the log scale, susceptibility
 returns slowly at first and then quickly, reaching full susceptibility
-abruptly. Individuals who have never been
-infected have no immunity.
+abruptly. Individuals who have never been infected have no immunity.
