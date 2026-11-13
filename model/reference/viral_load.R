@@ -59,14 +59,12 @@ infection <- function(individual, infection_characteristics) {
 # immunity peaks at 1; zero if not infected
 viral_load <- function(individual) {
 
-  viral_load_immunity_effect <- parameter("viral_load_immunity_effect")
-
   viral_load <- 0
 
   if (individual$infected) {
     viral_load <- individual$viral_load_level *
       viral_load_profile(individual$time_since_infection) *
-      exp(-viral_load_immunity_effect * individual$immunity_at_infection)
+      viral_load_immunity_multiplier(individual$immunity_at_infection)
   }
 
   viral_load
@@ -89,5 +87,18 @@ viral_load_profile <- function(time_since_infection) {
   }
 
   viral_load_profile
+
+}
+
+# reduction in viral load throughout an infection from the immunity the
+# individual had when infected, as a multiplier: 1 with no immunity
+viral_load_immunity_multiplier <- function(immunity_at_infection) {
+
+  viral_load_immunity_effect <- parameter("viral_load_immunity_effect")
+
+  viral_load_immunity_multiplier <- exp(-viral_load_immunity_effect *
+                                          immunity_at_infection)
+
+  viral_load_immunity_multiplier
 
 }
