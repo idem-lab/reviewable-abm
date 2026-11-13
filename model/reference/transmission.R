@@ -8,17 +8,17 @@ random_transmissions <- function(population, contact_events) {
   for (k in seq_along(contact_events)) {
 
     contact_event <- contact_events[[k]]
-    pair <- contact_event$pair
-    infected <- c(population[[pair[1]]]$infected,
-                  population[[pair[2]]]$infected)
+    i <- contact_event$individual_indices[1]
+    j <- contact_event$individual_indices[2]
+    infected <- c(population[[i]]$infected, population[[j]]$infected)
     one_infected <- any(infected) && !all(infected)
 
     # transmission is possible only if exactly one of the pair is infected
     if (one_infected) {
 
       # a is the infected individual and b the uninfected one
-      a <- pair[infected]
-      b <- pair[!infected]
+      a <- c(i, j)[infected]
+      b <- c(i, j)[!infected]
       infector <- population[[a]]
       infectee <- population[[b]]
 

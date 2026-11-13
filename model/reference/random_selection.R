@@ -1,8 +1,8 @@
 # choosing at random from what already exists
 
-# the positions in the population of a number of different individuals,
-# each equally likely to be chosen
-random_individuals <- function(population, number) {
+# the indices in the population of a number of different individuals, each
+# equally likely to be chosen
+random_individual_indices <- function(population, number) {
 
   sample.int(length(population), number)
 

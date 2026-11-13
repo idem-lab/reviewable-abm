@@ -446,7 +446,7 @@ Ages are in years and elapsed times in days.
 
 | Symbol | Meaning | Units | Code name |
 |---|---|---|---|
-| $h_i$ | household to which the individual belongs | | `household` |
+| $h_i$ | household to which the individual belongs | | `household_index` |
 | $a_i$ | age | years | `age` |
 | $g_i$ | 1 if a child, 0 if an adult | | `is_child()` |
 | $X_i$ | 1 if infected, 0 otherwise | | `infected` |
@@ -466,7 +466,7 @@ Ages are in years and elapsed times in days.
 | Symbol | Meaning | Units | Code name |
 |---|---|---|---|
 | $\mathcal C_{\mathrm{hh}}$ | set of pairs of individuals with a household contact event in a timestep | | |
-| $(i, j)$ | the pair of individuals in the contact event | | `pair` |
+| $(i, j)$ | the pair of individuals in the contact event | | `individual_indices` |
 | $a$, $b$ | the infected and the uninfected individual of the pair, when exactly one is infected | | |
 | $\ell_k$ | location: 1 if a household contact event, 0 otherwise | | `in_household` |
 | $d_k$ | duration | hours | `duration` |

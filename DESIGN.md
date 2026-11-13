@@ -156,8 +156,8 @@ population or fewer replicates; do not restructure the code.
 
 ### Names and comments
 
-1. Objects such as an individual or a contact event are named lists, with the
-   same element names everywhere they appear. The list of all individuals
+1. Objects such as an individual, a household or a contact event are
+   named lists, with the same element names everywhere they appear. The list of all individuals
    is called `population`, and one of its elements `individual`. An object
    that is updated keeps its name (`population <- ...`); a second name is
    used only where a function needs the old and new versions together.
@@ -177,13 +177,15 @@ population or fewer replicates; do not restructure the code.
    word is used for the same idea.
 4. Parameter names state what they are and on what scale, for example
    `infectiousness_profile_meanlog`.
-5. A loop over a list runs over positions, with the letters of the
+5. A loop over a list runs over indices, with the letters of the
    mathematical description: `i` and `j` for individuals, `h` for
    households and `k` for contact events. The first line of the loop
-   names the element at that position, such as
+   names the element at that index, such as
    `individual <- population[[i]]` or `household <- households[[h]]`, so
-   that a word always names an object and a letter always a position. A
-   changed element is written back with `population[[i]] <- individual`.
+   that a word always names an object and a letter always an index. Where
+   an index must be named with a word, as an element of an object or the
+   value of a function, the name ends in `_index` or `_indices`, such as
+   `individual$household_index`. A changed element is written back with `population[[i]] <- individual`.
    A loop over something that is not a list, such as timesteps, uses a
    word: `timestep`.
 6. When a function takes two or more arguments of the same kind, name them

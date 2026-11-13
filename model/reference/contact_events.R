@@ -27,38 +27,40 @@ household_contact_events <- function(population) {
 
 }
 
-# the households, each given by the positions in the population of its
-# members; an individual's household is the position of their household in
-# this list
+# the households, each listing the indices of its members in the
+# population; an individual's household index is the index of their
+# household in this list
 households <- function(population) {
 
   number_of_households <- length(population) / setting("household_size")
-  households <- rep(list(NULL), number_of_households)
+  households <- list()
+  for (h in seq_len(number_of_households)) {
+    households[[h]] <- list(member_indices = c())
+  }
 
   for (i in seq_along(population)) {
     individual <- population[[i]]
-    h <- individual$household
-    households[[h]] <- c(households[[h]], i)
+    h <- individual$household_index
+    households[[h]]$member_indices <- c(households[[h]]$member_indices, i)
   }
 
   households
 
 }
 
-# one contact event for every pair of members of a household, given by their
-# positions in the population
+# one contact event for every pair of members of a household
 contact_events_in_household <- function(household) {
 
   duration <- parameter("household_contact_event_hours_per_day") *
     setting("timestep_length")
 
   contact_events_in_household <- list()
-  for (i in household) {
-    for (j in household) {
+  for (i in household$member_indices) {
+    for (j in household$member_indices) {
       if (i < j) {
         k <- length(contact_events_in_household) + 1
         contact_events_in_household[[k]] <- contact_event(
-          pair = c(i, j),
+          individual_indices = c(i, j),
           in_household = TRUE,
           duration = duration
         )
@@ -88,9 +90,9 @@ random_non_household_contact_events <- function(population) {
   non_household_contact_events <- list()
   for (k in seq_len(number_of_non_household_contact_events)) {
     # who may live in the same household
-    pair <- random_individuals(population, 2)
+    individual_indices <- random_individual_indices(population, 2)
     non_household_contact_events[[k]] <- contact_event(
-      pair = pair,
+      individual_indices = individual_indices,
       in_household = FALSE,
       duration = duration
     )
@@ -100,12 +102,12 @@ random_non_household_contact_events <- function(population) {
 
 }
 
-# a contact event between a pair of individuals, given by their positions in
+# a contact event between a pair of individuals, given by their indices in
 # the population; duration is in hours
-contact_event <- function(pair, in_household, duration) {
+contact_event <- function(individual_indices, in_household, duration) {
 
   list(
-    pair = pair,
+    individual_indices = individual_indices,
     in_household = in_household,
     duration = duration
   )
