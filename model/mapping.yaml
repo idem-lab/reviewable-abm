@@ -45,6 +45,7 @@ features:
     code:
       - household_contact_events
       - contact_events_in_household
+      - paired_member_indices
       - contact_event
     figures: []
 
@@ -69,6 +70,7 @@ features:
     maths: [sec-transmission, eq-hazard, eq-transmission-probability]
     code:
       - simulate_transmissions
+      - simulate_contact_event
       - transmission_probability
       - location_score
       - random_bernoulli

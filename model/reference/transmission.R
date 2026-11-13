@@ -6,39 +6,47 @@
 simulate_transmissions <- function(population, contact_events) {
 
   for (k in seq_along(contact_events)) {
-
     contact_event <- contact_events[[k]]
-    i <- contact_event$individual_indices[1]
-    j <- contact_event$individual_indices[2]
-    infected <- c(population[[i]]$infected, population[[j]]$infected)
-    one_infected <- any(infected) && !all(infected)
+    population <- simulate_contact_event(population, contact_event)
+  }
 
-    # transmission is possible only if exactly one of the pair is infected
-    if (one_infected) {
+  population
 
-      # a is the infected individual and b the uninfected one
-      if (population[[i]]$infected) {
-        a <- i
-        b <- j
-      } else {
-        a <- j
-        b <- i
-      }
-      infector <- population[[a]]
-      infectee <- population[[b]]
+}
 
-      transmission_probability <- transmission_probability(
-        infector = infector,
-        infectee = infectee,
-        contact_event = contact_event
-      )
-      transmitted <- random_bernoulli(transmission_probability)
+# resolve one contact event: if exactly one of the pair is infected, the
+# other may be infected
+simulate_contact_event <- function(population, contact_event) {
 
-      if (transmitted) {
-        infection_characteristics <- random_infection_characteristics()
-        population[[b]] <- infection(infectee, infection_characteristics)
-      }
+  i <- contact_event$individual_indices[1]
+  j <- contact_event$individual_indices[2]
+  infected <- c(population[[i]]$infected, population[[j]]$infected)
+  one_infected <- any(infected) && !all(infected)
 
+  # transmission is possible only if exactly one of the pair is infected
+  if (one_infected) {
+
+    # a is the infected individual and b the uninfected one
+    if (population[[i]]$infected) {
+      a <- i
+      b <- j
+    } else {
+      a <- j
+      b <- i
+    }
+    infector <- population[[a]]
+    infectee <- population[[b]]
+
+    transmission_probability <- transmission_probability(
+      infector = infector,
+      infectee = infectee,
+      contact_event = contact_event
+    )
+    transmitted <- random_bernoulli(transmission_probability)
+
+    if (transmitted) {
+      infection_characteristics <- random_infection_characteristics()
+      population[[b]] <- infection(infectee, infection_characteristics)
     }
 
   }

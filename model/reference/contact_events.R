@@ -32,22 +32,37 @@ contact_events_in_household <- function(household) {
   load_settings("timestep_length")
 
   duration <- household_contact_event_hours_per_day * timestep_length
+  paired_member_indices <- paired_member_indices(household)
 
   contact_events_in_household <- list()
-  for (i in household$member_indices) {
-    for (j in household$member_indices) {
-      if (i < j) {
-        k <- length(contact_events_in_household) + 1
-        contact_events_in_household[[k]] <- contact_event(
-          individual_indices = c(i, j),
-          in_household = TRUE,
-          duration = duration
-        )
-      }
-    }
+  for (k in seq_along(paired_member_indices)) {
+    contact_events_in_household[[k]] <- contact_event(
+      individual_indices = paired_member_indices[[k]],
+      in_household = TRUE,
+      duration = duration
+    )
   }
 
   contact_events_in_household
+
+}
+
+# every pair of members of a household, once each, as the indices (i, j) of
+# the two members, with i < j
+paired_member_indices <- function(household) {
+
+  member_indices <- household$member_indices
+
+  paired_member_indices <- list()
+  for (i in member_indices) {
+    # only the members after i, so that each pair appears once
+    later_member_indices <- member_indices[member_indices > i]
+    for (j in later_member_indices) {
+      paired_member_indices[[length(paired_member_indices) + 1]] <- c(i, j)
+    }
+  }
+
+  paired_member_indices
 
 }
 
