@@ -11,9 +11,10 @@ random_transmissions <- function(population, contact_events) {
     pair <- contact_event$pair
     infected <- c(population[[pair[1]]]$infected,
                   population[[pair[2]]]$infected)
+    one_infected <- any(infected) && !all(infected)
 
     # transmission is possible only if exactly one of the pair is infected
-    if (sum(infected) == 1) {
+    if (one_infected) {
 
       # a is the infected individual and b the uninfected one
       a <- pair[infected]
