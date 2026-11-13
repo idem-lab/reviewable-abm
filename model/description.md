@@ -92,9 +92,10 @@ An infection ends once its viral load has passed its peak and fallen below
 a low recovery threshold, the same for all infections. Very little
 transmission happens after this. The duration of infection therefore
 depends on the viral load: infections with a higher viral load level last
-longer, immunity shortens infections, and an infection whose viral load
-never reaches the threshold ends just after its peak. Recovered individuals
-can be reinfected.
+longer, and immunity shortens infections. In the rare infections whose viral
+load never reaches the threshold, the individual stays infected, so cannot
+be reinfected, until the peak, but transmits very little. Recovered
+individuals can be reinfected.
 
 Immunity reduces an individual's log hazard of infection. Each infection
 boosts the individual's immunity at the time of infection, by adding an

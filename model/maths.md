@@ -383,7 +383,10 @@ $\tau_i^{\mathrm{inf}} \ge \tau_{\mathrm{end}}$. A typical infection, with
 $\nu_i e^{-\kappa z_i^{\mathrm{inf}}} = 1$, lasts about
 $\tau_{\mathrm{peak}} \exp\left(w \sqrt{-2 \log V_{\mathrm{rec}}}\right)$
 days. Infections with a higher viral load level last longer, and immunity
-at infection shortens infections.
+at infection shortens infections. In the rare infections with
+$\nu_i e^{-\kappa z_i^{\mathrm{inf}}} \le V_{\mathrm{rec}}$, the individual
+stays infected, so cannot be reinfected, until $\tau_{\mathrm{peak}}$, but
+transmits very little.
 
 <a id="sec-advance"></a>
 
