@@ -130,7 +130,12 @@ population or fewer replicates; do not restructure the code.
    quantities from their joint distribution, as the equations write it,
    rather than building them from independent draws. Use `sample.int()`
    rather than `sample()` on a number.
-10. Use `&&` and `||` in `if` conditions.
+10. Combine single TRUE/FALSE values with `&&` and `||`, not `&` and `|`.
+    They show that each side is a single value, stop with an error if
+    either side is not, and skip the right-hand side when the left decides
+    the result, so the left can guard against a value that is undefined
+    (`NA`), as in `individual$infected && individual$time_since_infection >
+    0`.
 
 ### Individual state
 
