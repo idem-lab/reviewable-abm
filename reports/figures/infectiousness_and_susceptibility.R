@@ -1,7 +1,7 @@
-# Expected: relative infectiousness is proportional to viral load (a
-# straight line of slope 1 on log-log axes), and children's is lower by the
-# factor exp(child infectiousness score) = exp(-0.2), about 0.82, at every
-# viral load, so age shifts the line but does not change its slope.
+# Expected: relative infectiousness is proportional to viral load, a
+# straight line through the origin, and children's is lower by the factor
+# exp(child infectiousness score) = exp(-0.2), about 0.82, at every viral
+# load, so the child line has a shallower slope.
 # Relative susceptibility steps down at the adult age (18) for children by
 # exp(child susceptibility score) = exp(-0.4), about 0.67, and falls
 # exponentially with immunity level, as exp(-immunity), at every age, so
@@ -20,10 +20,7 @@ by_viral_load <- ggplot(infectiousness,
                         aes(viral_load, relative_infectiousness,
                             colour = age_group)) +
   geom_line() +
-  scale_x_log10(labels = scales::label_number()) +
-  scale_y_log10(labels = scales::label_number()) +
-  labs(x = "viral load (log scale)",
-       y = "relative infectiousness (log scale)", colour = NULL,
+  labs(x = "viral load", y = "relative infectiousness", colour = NULL,
        title = "Infectiousness by viral load")
 
 by_age <- ggplot(susceptibility[susceptibility$immunity_level %in%

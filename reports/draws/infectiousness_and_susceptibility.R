@@ -8,7 +8,7 @@ source("reports/helpers.R")
 set_values(settings = list(), parameters = list())
 
 infectiousness <- list()
-for (viral_load in 10 ^ seq(-3, 1, by = 0.05)) {
+for (viral_load in seq(0, 10, by = 0.05)) {
   for (age in seq(0, 80, by = 1)) {
     individual <- individual_with(age = age, infected = TRUE,
                                   viral_load = viral_load)

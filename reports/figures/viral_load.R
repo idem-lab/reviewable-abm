@@ -23,7 +23,7 @@ by_level_and_width <- ggplot(draws[draws$immunity_at_infection == 0, ],
              colour = "grey50") +
   geom_line() +
   facet_wrap(~ paste("profile width", profile_width)) +
-  scale_y_log10(limits = c(1e-4, 3), labels = scales::label_number()) +
+  scale_y_log10(limits = c(1e-4, 10), labels = scales::label_number()) +
   labs(x = "time since infection (days)", y = "viral load (log scale)",
        colour = "viral load level",
        title = "By viral load level and profile width, with no immunity")
@@ -35,7 +35,7 @@ by_immunity <- ggplot(draws[draws$viral_load_level == 1 &
   geom_hline(aes(yintercept = recovery_threshold), linetype = "dashed",
              colour = "grey50") +
   geom_line() +
-  scale_y_log10(limits = c(1e-4, 3), labels = scales::label_number()) +
+  scale_y_log10(limits = c(1e-4, 10), labels = scales::label_number()) +
   labs(x = "time since infection (days)", y = "viral load (log scale)",
        colour = "immunity at infection",
        title = "By immunity at infection, level 1")
@@ -54,5 +54,9 @@ peak_by_level_and_immunity <- ggplot(peaks,
 
 figure <- by_level_and_width / (by_immunity + peak_by_level_and_immunity) +
   plot_annotation(title = "Viral load",
-                  caption = "Dashed: recovery threshold.")
+                  caption = paste(
+                    "Dashed: recovery threshold. Viral load levels 0.14, 1",
+                    "and 7.1 are the 2.5%, 50% and 97.5% quantiles of the",
+                    "viral load level."
+                  ))
 save_figure(figure, "viral_load", width = 10, height = 8)

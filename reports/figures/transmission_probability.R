@@ -23,8 +23,8 @@ typical_duration <- ifelse(draws$in_household, draws$household_hours,
                            draws$non_household_hours)
 typical <- draws[draws$duration == typical_duration, ]
 
-# viral loads of 0.1, 1 and 10, rounded to remove floating point error
-shown_loads <- round(log10(adult_no_immunity$viral_load), 6) %in% c(-1, 0, 1)
+# the 2.5%, 50% and 97.5% quantiles of the viral load level
+shown_loads <- adult_no_immunity$typical_level
 by_duration <- ggplot(adult_no_immunity[shown_loads, ],
                       aes(duration, probability,
                           colour = factor(signif(viral_load, 2)),
@@ -36,7 +36,8 @@ by_duration <- ggplot(adult_no_immunity[shown_loads, ],
        title = "By duration")
 
 by_viral_load <- ggplot(typical[typical$age_group == "adult" &
-                                  typical$immunity_level == 0, ],
+                                  typical$immunity_level == 0 &
+                                  typical$on_grid, ],
                         aes(viral_load, probability, colour = location)) +
   geom_line() +
   scale_x_log10(labels = scales::label_number()) +
@@ -53,7 +54,8 @@ by_immunity <- ggplot(typical[typical$in_household &
        title = "By immunity, household, viral load 1")
 
 by_viral_load_and_immunity <- ggplot(
-  typical[typical$in_household & typical$age_group == "adult", ],
+  typical[typical$in_household & typical$age_group == "adult" &
+            typical$on_grid, ],
   aes(viral_load, immunity_level, fill = probability)
 ) +
   geom_raster() +
@@ -70,7 +72,9 @@ figure <- (by_duration + by_viral_load) /
     title = "Probability of transmission in one contact event",
     caption = paste(
       "Adults with no infectee immunity unless shown. A day's contact:",
-      "6 hours in a household, 0.5 hours elsewhere."
+      "6 hours in a household, 0.5 hours elsewhere.\nViral loads 0.14,",
+      "1 and 7.1 are the 2.5%, 50% and 97.5% quantiles of the viral load",
+      "level."
     )
   )
 save_figure(figure, "transmission_probability", width = 10, height = 8)

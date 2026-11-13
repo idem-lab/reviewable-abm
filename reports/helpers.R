@@ -50,6 +50,13 @@ individual_with <- function(...) {
   individual
 }
 
+# the 2.5%, 50% and 97.5% quantiles of the viral load level at the default
+# parameter values, used wherever a figure shows a few viral load levels
+typical_viral_load_levels <- function() {
+  signif(qlnorm(c(0.025, 0.5, 0.975), meanlog = 0,
+                sdlog = default_parameters$viral_load_level_sdlog), 2)
+}
+
 # save results for a figure as reports/draws/<name>.csv
 write_draws <- function(draws, name) {
   write.csv(draws, file.path("reports", "draws", paste0(name, ".csv")),

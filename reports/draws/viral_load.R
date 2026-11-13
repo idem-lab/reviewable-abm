@@ -7,7 +7,7 @@ rows <- list()
 for (width in c(0.3, 0.4, 0.55)) {
   set_values(settings = list(),
              parameters = list(viral_load_profile_width = width))
-  for (level in c(0.5, 1, 2)) {
+  for (level in typical_viral_load_levels()) {
     for (immunity in c(0, 2, 4)) {
       individual <- infection(individual_with(immunity_level = immunity),
                               list(viral_load_level = level,
@@ -32,7 +32,7 @@ write_draws(draws, "viral_load")
 # peak viral load over viral load level and immunity at infection
 set_values(settings = list(), parameters = list())
 peaks <- list()
-for (level in 10 ^ seq(-2, 1.3, by = 0.05)) {
+for (level in 10 ^ seq(-1, 1, by = 0.025)) {
   for (immunity in seq(0, 8, by = 0.1)) {
     individual <- infection(individual_with(immunity_level = immunity),
                             list(viral_load_level = level, boost_size = 1))
