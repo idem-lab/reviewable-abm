@@ -287,7 +287,12 @@ These are not part of the model, so need not follow the rules in Section 4.
 **Unit tests** use testthat. Each test checks one stated behaviour, with a
 description that reads as a sentence. Prefer unit tests to checks within
 the model code. Add a check to the model code (with `stopifnot()`) only
-where a test cannot easily catch the error.
+where a test cannot easily catch the error. Tests that draw random numbers
+set a seed, and statistical tests state the tolerance and why it is
+enough. Run them from the root of the repository with
+`testthat::test_dir("model/tests")`. `model/tests/test-code-rules.R` holds
+the rules of Section 4 that can be checked automatically, and the checks
+of the links file, until the linter (Section 12) takes them over.
 
 **Behaviour figures** use ggplot2 with a theme shared by all repositories
 in this lineage and copied with them. Each figure script starts with a
