@@ -12,8 +12,10 @@ follow it.
 | Written description | `model/description.md` | agents | researchers, in detail |
 | Mathematical description | `model/maths.md` | agents | researchers, in detail |
 | Reference implementation (R) | `model/reference/` | agents | researchers, in detail |
+| Infrastructure for running the reference implementation | `model/infrastructure/` | agents | researchers, when it changes |
 | Links between the three | `model/mapping.yaml` | agents | researchers |
 | Unit tests | `model/tests/` | agents | researchers |
+| Linter for the rules in Section 4 | `lint/` | agents | researchers, when it changes |
 | Behaviour figures, and the scripts that make them | `reports/` | agents | researchers |
 | Acceptable divergence of the approximate simulator | `validation/tolerances.md` | agreed with researchers | researchers |
 | Exact simulator | `impl/exact/` | agents | tests only |
@@ -46,11 +48,33 @@ reference implementation is wrong.
 **Written description.** Plain scientific prose. Where it helps, follow
 the ODD (Overview, Design concepts, Details) protocol for describing
 agent-based models (Grimm et al. 2020). Each section has a label, such as
-`{#sec-immunity}`, so other documents can refer to it.
+`sec-immunity`, so other documents can refer to it.
 
-**Mathematical description.** Every symbol is defined in a table that also
-gives its name in the code. A symbol keeps one meaning throughout the
-document. Each equation has a label, such as `{#eq-immunity}`.
+**Mathematical description.** Each symbol is defined briefly in the text
+where it is first used, and in full in tables at the end of the document,
+which also give its units and its name in the code. A symbol keeps one
+meaning throughout the document. Each equation has a label, such as
+`eq-immunity`. Parallel quantities that refer to different events share a
+symbol and are distinguished by a text superscript naming the event: for
+example, the time since infection and the time since an immunity boost
+are `\tau_i^{\mathrm{inf}}` and `\tau_i^{\mathrm{boost}}`, and the immunity
+level at infection and just after a boost are `z_i^{\mathrm{inf}}` and
+`z_i^{\mathrm{boost}}`.
+
+The mathematical description states the model in exact arithmetic.
+Numerical details of the implementation, such as storing elapsed times as
+whole numbers of timesteps to avoid rounding error, belong in the code and
+in this document, not in the maths.
+
+**Labels and equations.** Both descriptions must render on GitHub, where
+researchers review them. A label is an HTML anchor on the line before its
+heading or equation, such as `<a id="eq-immunity"></a>`, and is referred to
+with an ordinary link, such as `[immunity equation](#eq-immunity)`. Display
+equations go in fenced `math` code blocks, not between `$$`. In inline
+maths (`$...$`), write subscripts before superscripts (`\tau_i^{b}`, not
+`\tau^{b}_i`), and never put an underscore straight after a closing brace,
+because GitHub can read it as the start of italics. Agents check the
+rendering with GitHub's Markdown API before pushing.
 
 **Links file.** The three descriptions do not divide the model in the same
 way, so they are linked by a list of model features in
@@ -73,80 +97,182 @@ modellers who read R but may not use it daily. Speed is not a
 consideration. If a figure takes too long to produce, use a smaller
 population or fewer replicates; do not restructure the code.
 
+The code that is not part of the model, such as holding the settings and
+parameters of a run and the simulation clock, is kept apart in
+`model/infrastructure/`, so that `model/reference/` contains only the
+model. Infrastructure is short, rarely changes, and is reviewed when it
+does; the rules below are for `model/reference/`, and infrastructure
+follows them where it can. Scripts run the model with `run_model(settings
+= list(...), parameters = list(...))`, which uses the default values in
+`model/reference/default_values.R` except those given, and returns the
+results with the full settings and parameters used.
+
 ### Language
 
 1. Base R only: no packages beyond those R loads by default (`base`,
-   `stats`, `graphics`, `grDevices`, `utils`), and no classes.
+   `stats`, `graphics`, `grDevices`, `utils`), and no classes. The one
+   exception is a distribution these lack, drawn from a recommended
+   package that ships with R and called with `::`, such as
+   `MASS::mvrnorm()` for a multivariate normal.
 2. Functions take values and return new values. No environments, `<<-`,
-   `assign()` or `get()`, except for the simulation clock (rule 5).
+   `assign()` or `get()`; these appear only in `model/infrastructure/`.
 3. No non-standard evaluation, such as `with()`, `subset()` or formulas.
-4. Everything a function uses is passed to it as an argument, apart from
-   the global settings in rule 5. No default argument values.
-5. Settings, data and parameters are held in one list, `globals`, defined
-   in one file. Functions read it with `setting("name")` and
-   `parameter("name")`, which stop with an error if the name does not
-   exist. (Reading a misspelt name with `$` returns `NULL` without an
-   error.) Model functions never change `globals`. The current simulation
-   time is read with `current_time()`. It is the only value that changes
-   during a simulation without being passed as an argument, and only the
-   main simulation loop sets it. Tests of functions that read it set it
-   first.
+4. No lexical scoping: everything a function uses is passed to it as an
+   argument, apart from the shared values in rule 5. No default argument
+   values.
+5. Shared values are held by the infrastructure, and model functions
+   reach them only through small functions, never directly:
+   - Settings and parameters are held in locked environments, set for
+     each run from the defaults and any changes, so that nothing can
+     change them while the model runs. A function that uses any of them
+     starts with `load_settings("name", ...)` and
+     `load_parameters("name", ...)`, before any other code. These make
+     each named value available as a variable of the same name, and stop
+     with an error if a name does not exist, so the top of each function
+     lists what it depends on and its calculations read like the
+     equations. The loaded variables are never assigned to.
+   - The current simulation time is held in the simulation clock and
+     read with `current_time()`. It is the only value that changes during
+     a simulation without being passed as an argument, and only the main
+     simulation loop sets it, with `set_clock_to_timestep()`.
+
+   Tests of single functions set the values with
+   `set_values(settings = list(...), parameters = list(...))`, and the
+   clock with `set_clock_to_timestep()` where needed, before calling the
+   function.
+
+   The linter (Section 5) checks that these calls come first, that loaded
+   names do not clash with a function's arguments, and that loaded
+   variables are not assigned to.
 6. One version of the model. No options or flags that switch between
    alternative structures. A proposed alternative is kept on a separate
    branch until researchers choose; a permanent alternative is a separate
    repository (Section 9).
 7. Each function's last line is its returned value, outside any `if`. No
    `return()`.
-8. Loop over individuals with `for`. Use `seq_len()` or `seq_along()`
-   rather than `1:n`. Use a vectorised base function only when it reads at
-   least as clearly as a loop, as `sum()` does.
-9. Use R's named distribution functions (`dlnorm`, `rpois`, `runif`) rather
-   than writing densities or sampling out by hand, so the code and the
-   equations name the same distribution. Use `sample.int()` rather than
-   `sample()` on a number.
-10. Use `&&` and `||` in `if` conditions.
+8. Loop over individuals with `for`. Use `seq_len(n)` or `seq_along(x)`
+   rather than `1:n` or `1:length(x)`: when `n` is zero, `1:n` is `c(1, 0)`
+   and the loop runs twice instead of not at all, so a reviewer would have
+   to check every loop for that case. This happens in practice, for
+   example when a Poisson number of contact events is zero. Use a
+   vectorised base function only when it reads at least as clearly as a
+   loop, as `sum()` does.
+9. Call R's random number functions only inside `random_` functions that
+   make one draw, such as `random_poisson(mean)`, which calls
+   `rpois(1, lambda = mean)`, so that every draw is visibly a single
+   value. Use R's named distribution functions (`rpois`, `runif`,
+   `rbinom`) rather than writing sampling out by hand, so the code and the
+   equations name the same distribution. Draw jointly distributed
+   quantities from their joint distribution, as the equations write it,
+   rather than building them from independent draws. Use `sample.int()`
+   rather than `sample()` on a number.
+10. Add a value to a vector with `c()`, as in
+    `member_indices <- c(member_indices, i)`, and an object to a list at
+    the next index, as in `contact_events[[length(contact_events) + 1]] <-
+    contact_event`, because `c()` would merge the object's elements into the
+    list.
+11. Combine single TRUE/FALSE values with `&&` and `||`, not `&` and `|`,
+    so that each condition reads as being about one individual or event,
+    stops the code if it is not, and can be read left to right as "only
+    if".
 
 ### Individual state
 
-1. Each individual carries their age, the time elapsed since each event
-   that their state depends on (such as time since infection and time
-   since last immunity boost), and the current levels calculated from
-   those times (such as viral load and immunity level).
+1. Each individual carries their age, the number of whole timesteps since
+   each event that their state depends on (such as infection and the last
+   immunity boost), and the current levels calculated from those times
+   (such as viral load and immunity level).
 2. Event functions (such as infection, recovery and boosting) set the
-   relevant elapsed time to zero and the level to its starting value.
+   relevant count of timesteps to zero and the level to its starting
+   value.
 3. Between events, one function, `advance_individuals_one_timestep()`, adds
-   the length of one timestep to each individual's age and elapsed times,
-   then recalculates each level from its elapsed time using the formula
-   for the level as a function of time, rather than by updating the
-   previous level. Apart from event functions, no other function changes
-   ages, elapsed times or levels.
-4. Other functions read levels from the individual rather than calculating
+   the length of one timestep to each individual's age and one to each
+   count of timesteps, then recalculates each level from its elapsed time
+   using the formula for the level as a function of time, rather than by
+   updating the previous level. Apart from event functions, no other
+   function changes ages, counts of timesteps or levels.
+4. Elapsed times in days are calculated from the counts of timesteps by
+   functions such as `time_since_infection()`, as the count times the
+   timestep length. Counting whole timesteps keeps elapsed times exact
+   multiples of the timestep length, where adding the timestep length
+   repeatedly would accumulate rounding error, so that comparisons such as
+   reaching the peak time could come out a timestep late, and the exact
+   simulator, which may calculate elapsed times differently, would
+   disagree with the reference implementation.
+5. Other functions read levels from the individual rather than calculating
    them.
-5. The timestep length is a setting, `setting("timestep_length")`, in days.
+6. The timestep length is a setting, `timestep_length`, in days.
    Code does not assume it is one day.
 
 ### Names and comments
 
-1. Objects such as an individual or a contact are named lists, with the
-   same element names everywhere they appear. The list of all individuals
-   is called `population`, and one of its elements `individual`. An object
-   that is updated keeps its name (`population <- ...`); a second name is
-   used only where a function needs the old and new versions together.
-   Function names say what the function returns or does.
-2. A function that draws random numbers, directly or through the functions
-   it calls, has a name starting `random_`. All other functions give the
-   same output for the same input. Random values are drawn in the `random_`
-   function and passed to the others.
+1. Objects such as an individual, a household or a contact event are
+   named lists, with the same element names everywhere they appear. The
+   list of all individuals is called `population`, and one of its
+   elements `individual`; the list of all households is `households`, and
+   one of its elements `household`. Objects that refer to each other store
+   each other's indices, such as `individual$household_index` and
+   `household$member_indices`, set once when the objects are made, rather
+   than one being worked out from the other when needed. An object that is updated keeps its name
+   (`population <- ...`); a second name is used only where a function
+   needs the old and new versions together. Function names say what the
+   function returns or does. Where the returned value is set inside loops
+   or `if`s, the function builds it in a variable with the function's
+   name, without its `random_` or `simulate_` prefix, so the control flow
+   shows how the value is set: for example `viral_load` inside
+   `viral_load()`, and `non_household_contact_events` inside
+   `simulate_non_household_contact_events()`. Otherwise the last line is
+   the final calculation itself, with no variable to name it, so there is
+   less code to read. Other variables take the name
+   of what they hold, without generic words such as `result`, `value` or
+   `count`.
+2. Functions that use random numbers have one of two prefixes, so that
+   reviewers can see where chance enters the model:
+   - `random_` for a function that only draws a value from a
+     distribution, given what it needs, like R's own `r*` functions: for
+     example `random_bernoulli()` or `random_infection_characteristics()`.
+     It contains no model process, and never calls a `simulate_` function.
+   - `simulate_` for a model process that uses random draws, directly or
+     through the functions it calls: for example
+     `simulate_transmissions()`.
+
+   All other functions give the same output for the same input; random
+   values are drawn by the prefixed functions and passed to them. The
+   linter (Section 5) checks that every function that calls an R random
+   number function (such as `runif()`, `sample.int()` or
+   `MASS::mvrnorm()`) or a prefixed function has a prefix itself, and that
+   no `random_` function calls a `simulate_` function, so that names
+   cannot drift from what the functions do. The prefixes apply to the
+   model in `model/reference/`; infrastructure functions, such as
+   `run_model()`, are named for what they do.
 3. Each recurring term has one meaning, defined once. For example, *score*
    means an additive term on the log hazard scale throughout, and no other
    word is used for the same idea.
 4. Parameter names state what they are and on what scale, for example
    `infectiousness_profile_meanlog`.
-5. When a function takes two or more arguments of the same kind, name them
-   at the call, for example
-   `random_transmission_outcome(infector = individual_a, infectee = individual_b)`.
-6. Comments explain what the names do not, such as units, scales and the
-   reason for a step, in as few words as possible.
+5. A loop over a list runs over indices, with the letters of the
+   mathematical description: `i` and `j` for individuals, `h` for
+   households and `k` for contact events. The first line of the loop
+   names the element at that index, such as
+   `individual <- population[[i]]` or `household <- households[[h]]`, so
+   that a word always names an object and a letter always an index. Loops
+   never run over the objects themselves, so a reader never has to work
+   out which kind of loop they are in. A loop over a vector of indices
+   runs over the indices, as in `for (i in household$member_indices)`.
+   Where an index must be named with a word, as an element of an object
+   or the value of a function, the name ends in `_index` or `_indices`,
+   such as `individual$household_index`. A changed element is written back
+   with `population[[i]] <- individual`. A loop over something that is not
+   a list, such as timesteps, uses a word: `timestep`.
+6. When a function takes two or more arguments of the same kind, name them
+   at the call, for example `transmission_probability(infector =
+   infector, infectee = infectee, contact_event = contact_event)`.
+7. Comments explain what the names do not, such as units, scales and the
+   reason for a step, in as few words as possible. Every step that indexes,
+   subsets, repeats or reorders a vector in a way the names do not make
+   plain has a comment saying what it does and why, such as cutting the
+   last household short by keeping only the first `population_size`
+   household indices.
 
 ### When to write a function
 
@@ -169,24 +295,89 @@ they describe different processes. Do not pass functions as arguments.
 Order functions so that each appears above the functions it calls. Keep
 each file to one group of related processes.
 
-## 5. Unit tests and behaviour figures
+## 5. Unit tests, linter and behaviour figures
 
 These are not part of the model, so need not follow the rules in Section 4.
 
 **Unit tests** use testthat. Each test checks one stated behaviour, with a
 description that reads as a sentence. Prefer unit tests to checks within
 the model code. Add a check to the model code (with `stopifnot()`) only
-where a test cannot easily catch the error.
+where a test cannot easily catch the error. Tests that draw random numbers
+set a seed, and statistical tests state the tolerance and why it is
+enough. Run them from the root of the repository with
+`testthat::test_dir("model/tests")`. They include the checks of the links
+file (`test-mapping.R`), and a test that the linter finds nothing
+(`test-lint.R`).
+
+**The linter**, in `lint/`, checks the rules of Section 4 that can be
+checked automatically, using the lintr package. It applies lintr's default
+style linters, except those that conflict with this design (the limit on
+name length, and the check for undefined variables, which does not know
+about `load_parameters()`); lintr linters that match rules in Section 4,
+such as `sample_int_linter()` and a list of functions not to use; and this
+procedure's own linters, in `lint/model_linters.R`. These check the
+`random_` and `simulate_` prefixes, that R's random functions are called
+only inside `random_` functions, the rules for `load_settings()` and
+`load_parameters()`, no default arguments, no `1:n`, no packages other
+than MASS, `&&` and `||` rather than `&` and `|`, that model code does not
+set values or the clock, no more than two levels of nested loops and
+`if`s, and functions under about 40 lines. Each of the procedure's own
+linters is tested, in `model/tests/test-linters.R`, on code it should flag
+and code it should leave alone. The full set applies to
+`model/reference/`, and the style linters alone to the infrastructure,
+tests, linters and reports. Run it from the root of the repository with
+`source("lint/lint_model.R")` and then `lint_model()`. A rule is not
+relaxed to make code pass; the code is changed, or the rule is changed by
+researchers.
 
 **Behaviour figures** use ggplot2 with a theme shared by all repositories
 in this lineage and copied with them. Each figure script starts with a
 comment stating what behaviour is expected and why, so reviewers can
-compare the figure with the expectation. Component figures show one
-process in isolation as its parameters vary. Whole-model figures show
-epidemics under perturbations and interventions, with replicate
-simulations, including extinction frequencies and other outcomes near
-unstable states. Figures use fixed random seeds, and are committed so that
+compare the figure with the expectation. The expectation is written
+before the figure is seen, and is not changed to match it afterwards; a
+figure that disagrees with its expectation is reported to researchers.
+Figures use epidemiological terms where they exist, such as incidence,
+prevalence, final attack rate and generation interval. There are three
+kinds of figure:
+
+- Component figures show the main output of each section of the
+  descriptions, such as relative infectiousness, relative susceptibility,
+  transmission probability, viral load and immunity, against every
+  quantity it depends on, holding the others at stated values, in several
+  panels, with interactions shown where they are of interest. They are
+  calculated with the model's own functions, and show the quantities on
+  the scales where they act in the model.
+- Emergent behaviour figures show behaviour that is not written into any
+  one equation but follows from several processes together, found by
+  simulating parts of the model under controlled conditions. For example,
+  the generation intervals and offspring distribution of transmission
+  pairs, from infectors who meet a constant rate of contacts who are never
+  depleted. Their draws are also targets for testing the faster
+  simulators.
+- Whole-model figures show epidemics under perturbations and
+  interventions, with replicate simulations, including extinction
+  frequencies and other outcomes near unstable states, over periods long
+  enough for the behaviour to show, such as a second wave after immunity
+  wanes. Figures use fixed random seeds, and are committed so that
 changes to them show in pull requests.
+
+Simulating and plotting are kept apart, so that how a figure looks can be
+changed without simulating again. Each figure has a script in
+`reports/draws/` that runs the model, using the model's own functions or
+`run_model()`, and saves the results as a CSV file there, and a script of
+the same name in `reports/figures/` that reads only that file and saves the
+figure. The expected behaviour is stated at the top of the figure script.
+Replicate simulations run in parallel, each with its own random number
+stream from a fixed seed, so results do not depend on the number of cores.
+The shared theme is in `reports/theme.R`. Colour only ever shows a
+quantity that a figure varies, and each such quantity has its own scale,
+used in every figure: bright colours from one family of hues, running from
+light for low values to dark for high values, with the palest and darkest
+ends left out, and readable with red-green colour-blindness. Groups of
+two, such as adults and children, are shown by line type. Simulated
+values are in IDEM dark teal (from the idpalette package) and values from
+the equations in near-black. Lines are heavy, except in figures of individual simulations.
+`reports/make_all.R` remakes everything. Each figure is listed under its features in the links file.
 
 ## 6. The exact simulator
 
@@ -317,8 +508,8 @@ trained further on simulations from the exact simulator (Krouglova et al.
 
 ## 12. Decisions still open
 
-- Whether a style guide and linter enforce these rules.
-- The design of the shared ggplot2 theme.
+- The design of the shared ggplot2 theme; a first version is in
+  `reports/theme.R`.
 
 ## References
 

@@ -35,55 +35,59 @@ in response to issues raised by researchers. Researchers then check that
 the three still agree.
 
 As an example, here is how one part of a model, the probability that a
-contact between two people transmits infection, might appear in each.
+contact event between two people transmits infection, might appear in each.
 
 **Written description**
 
-> A contact can transmit infection only if exactly one of the pair is
+> A contact event can transmit infection only if exactly one of the pair is
 > infected. Transmission occurs at a constant hazard over the duration of
-> the contact. The log of this hazard is the sum of a baseline value and
-> three effects: the infectiousness of the infected person (from their viral
-> load and age group), the susceptibility of the uninfected person (from
-> their immunity and age group), and the setting of the contact (household
-> or elsewhere).
+> the contact event. The log of this hazard is the sum of the log of a
+> baseline hazard and three effects: the infectiousness of the infected
+> person (from their viral load and age), the susceptibility of the
+> uninfected person (from their immunity and age), and the location of
+> the contact event (household or elsewhere).
 
 **Mathematical description**
 
-For a contact $c$ of duration $d_c$ in setting $e_c$, between infected
-person $j$ and uninfected person $i$:
+For a contact event $k$ of duration $d_k$, between infected person $a$ and
+uninfected person $b$:
 
-$$
-\eta_c = \beta + I_j + S_i + \gamma_{e_c}, \qquad
-p_c = 1 - \exp\left(-d_c\, e^{\eta_c}\right)
-$$
+```math
+\log \beta_k = \log \beta_0 + \eta_a^{\mathrm{inf}} + \eta_b^{\mathrm{sus}}
+  + \alpha_{\mathrm{hh}}\, \ell_k, \qquad
+p_k = 1 - \exp\left(-\beta_k d_k\right)
+```
 
-where $\beta$ is the baseline log hazard, $I_j$ and $S_i$ are the
-infectiousness and susceptibility of the two people on the log hazard
-scale, $\gamma_{e}$ is the effect of setting $e$, and $p_c$ is the
-probability of transmission.
+where $\beta_k$ is the hazard of transmission, $\beta_0$ is the baseline
+hazard, $\eta_a^{\mathrm{inf}}$ and $\eta_b^{\mathrm{sus}}$ are the
+infectiousness and susceptibility of the two people as log hazard ratios,
+$\ell_k$ is 1 if the contact event is in a household and 0 otherwise,
+$\alpha_{\mathrm{hh}}$ is the log hazard ratio for a household contact event,
+and $p_k$ is the probability of transmission.
 
 **Reference implementation**
 
 ```r
-# probability of transmission during one contact, from a constant hazard
-# over the contact's duration
-transmission_probability <- function(infector, infectee, contact) {
+# probability of transmission during one contact event, from a constant
+# hazard over the contact event's duration
+transmission_probability <- function(infector, infectee, contact_event) {
 
-  log_hazard <- parameter("per_contact_log_hazard") +
+  load_parameters("baseline_transmission_hazard")
+
+  log_hazard <- log(baseline_transmission_hazard) +
     infectiousness_score(infector) +
     susceptibility_score(infectee) +
-    setting_score(contact$setting)
+    location_score(contact_event)
 
+  # per hour
   hazard <- exp(log_hazard)
-  probability <- 1 - exp(-hazard * contact$duration)
-
-  probability
+  1 - exp(-hazard * contact_event$duration)
 
 }
 ```
 
 Alongside these, the reference implementation generates **behaviour
-figures**: for example, transmission probability against contact duration
+figures**: for example, transmission probability against contact event duration
 for several viral loads, or immunity against time since infection for
 several waning rates. These show researchers what the model's choices imply
 in practice, which is often not obvious from the equations alone.
@@ -187,7 +191,7 @@ The reference implementation is written for researchers who read R but
 may not use it daily. The detailed rules are in [DESIGN.md](DESIGN.md). In
 summary:
 
-- plain R with no packages and no classes;
+- plain R with no add-on packages and no classes;
 - `for` loops over individuals, rather than vectorised or functional code;
 - one version of the model only, with no options to switch between
   alternative structures;
