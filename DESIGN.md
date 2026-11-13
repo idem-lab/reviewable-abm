@@ -130,7 +130,12 @@ population or fewer replicates; do not restructure the code.
    quantities from their joint distribution, as the equations write it,
    rather than building them from independent draws. Use `sample.int()`
    rather than `sample()` on a number.
-10. Combine single TRUE/FALSE values with `&&` and `||`, not `&` and `|`,
+10. Add a value to a vector with `c()`, as in
+    `member_indices <- c(member_indices, i)`, and an object to a list at
+    the next index, as in `contact_events[[length(contact_events) + 1]] <-
+    contact_event`, because `c()` would merge the object's elements into the
+    list.
+11. Combine single TRUE/FALSE values with `&&` and `||`, not `&` and `|`,
     so that each condition reads as being about one individual or event,
     stops the code if it is not, and can be read left to right as "only
     if".

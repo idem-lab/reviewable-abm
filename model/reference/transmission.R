@@ -17,8 +17,13 @@ random_transmissions <- function(population, contact_events) {
     if (one_infected) {
 
       # a is the infected individual and b the uninfected one
-      a <- c(i, j)[infected]
-      b <- c(i, j)[!infected]
+      if (population[[i]]$infected) {
+        a <- i
+        b <- j
+      } else {
+        a <- j
+        b <- i
+      }
       infector <- population[[a]]
       infectee <- population[[b]]
 
@@ -49,7 +54,7 @@ random_transmission_outcome <- function(infector, infectee, contact_event) {
     contact_event = contact_event
   )
 
-  runif(1) < transmission_probability
+  random_bernoulli(transmission_probability)
 
 }
 
