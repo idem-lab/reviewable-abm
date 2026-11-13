@@ -336,8 +336,8 @@ X_i \leftarrow 0
 
 where $V_{\mathrm{rec}}$ is the recovery threshold: the viral load at
 recovery, as a fraction of the peak viral load of a typical infection. The
-viral load is the one calculated at
-step 3 of the previous timestep ([Advancing individuals](#sec-advance)).
+viral load is the one calculated at step 3 of the previous timestep
+([Advancing individuals](#sec-advance)).
 Recovery ends transmission and allows reinfection.
 
 Immunity is boosted at infection ([boost equation](#eq-boost)). It then
