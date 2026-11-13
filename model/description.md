@@ -106,7 +106,7 @@ with the infection's viral load level: infections with a higher viral load
 level tend to give larger boosts, or the two are unrelated. The boost does
 not affect the viral load of the infection that caused it. The reduction
 shrinks linearly with time since the boost until immunity is lost
-entirely. Because the reduction is on
-the log scale, susceptibility returns slowly at first and then quickly,
-reaching full susceptibility abruptly. Individuals who have never been
+entirely. Because the reduction is on the log scale, susceptibility
+returns slowly at first and then quickly, reaching full susceptibility
+abruptly. Individuals who have never been
 infected have no immunity.
