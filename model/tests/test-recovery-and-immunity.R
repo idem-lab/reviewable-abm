@@ -5,7 +5,7 @@ description <- paste("an infection never ends before its peak, however low its",
 test_that(description, {
   use_values(parameters = list(viral_load_peak_time = 4))
   individual <- make_infected_individual(potential_peak_viral_load = 1e-6)
-  individual$time_since_infection <- 3
+  individual$timesteps_since_infection <- 3
   individual$viral_load <- 1e-9
   expect_false(ready_to_recover(individual))
 })
@@ -16,7 +16,7 @@ test_that(description, {
   use_values(settings = list(recovery_viral_load_threshold = 0.001),
              parameters = list(viral_load_peak_time = 4))
   individual <- make_infected_individual()
-  individual$time_since_infection <- 10
+  individual$timesteps_since_infection <- 10
   individual$viral_load <- 0.0009
   expect_true(ready_to_recover(individual))
   individual$viral_load <- 0.0011
@@ -46,14 +46,14 @@ test_that("immunity is zero before the first boost", {
 test_that("immunity declines linearly at the waning rate", {
   use_values(parameters = list(immunity_waning_rate = 0.01))
   individual <- make_infected_individual(boost_size = 2)
-  individual$time_since_boost <- 50
+  individual$timesteps_since_boost <- 50
   expect_equal(immunity_level(individual), 2 - 0.5)
 })
 
 test_that("immunity is lost, not negative, once it has waned", {
   use_values(parameters = list(immunity_waning_rate = 0.01))
   individual <- make_infected_individual(boost_size = 2)
-  individual$time_since_boost <- 500
+  individual$timesteps_since_boost <- 500
   expect_equal(immunity_level(individual), 0)
 })
 
@@ -71,24 +71,35 @@ test_that("advancing a timestep ages everyone and advances elapsed times", {
   after <- advance_individuals_one_timestep(population)
   expect_equal(after[[1]]$age, population[[1]]$age + 0.5 / 365.25)
   expect_equal(after[[2]]$age, 40 + 0.5 / 365.25)
-  expect_equal(after[[1]]$time_since_infection, 0.5)
-  expect_equal(after[[1]]$time_since_boost, 0.5)
+  expect_equal(time_since_infection(after[[1]]), 0.5)
+  expect_equal(time_since_boost(after[[1]]), 0.5)
+})
+
+test_that("elapsed times are exact multiples of the timestep length", {
+  use_values(settings = list(timestep_length = 0.1))
+  population <- list(make_infected_individual())
+  for (step in seq_len(50)) {
+    population <- advance_individuals_one_timestep(population)
+  }
+  # exactly 5, where adding 0.1 fifty times gives slightly less
+  expect_identical(time_since_infection(population[[1]]), 50 * 0.1)
+  expect_true(time_since_infection(population[[1]]) >= 5)
 })
 
 test_that("advancing a timestep leaves undefined elapsed times undefined", {
   use_values()
   after <- advance_individuals_one_timestep(list(make_individual()))
-  expect_true(is.na(after[[1]]$time_since_infection))
-  expect_true(is.na(after[[1]]$time_since_boost))
+  expect_true(is.na(time_since_infection(after[[1]])))
+  expect_true(is.na(time_since_boost(after[[1]])))
   expect_equal(after[[1]]$immunity_level, 0)
 })
 
 test_that("time since infection stops advancing after recovery", {
   use_values()
   individual <- recovery(make_infected_individual())
-  individual$time_since_infection <- 12
+  individual$timesteps_since_infection <- 12
   after <- advance_individuals_one_timestep(list(individual))
-  expect_equal(after[[1]]$time_since_infection, 12)
+  expect_equal(after[[1]]$timesteps_since_infection, 12)
   expect_equal(after[[1]]$viral_load, 0)
 })
 

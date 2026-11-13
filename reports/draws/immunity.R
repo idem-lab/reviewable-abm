@@ -14,7 +14,8 @@ for (rate in c(0.005, 0.01, 0.02)) {
                             list(potential_peak_viral_load = 1,
                                  boost_size = boost))
     for (day in 0:600) {
-      individual$time_since_boost <- day
+      # timesteps of 1 day
+      individual$timesteps_since_boost <- day
       individual$immunity_level <- immunity_level(individual)
       rows[[length(rows) + 1]] <- data.frame(
         waning_rate = rate, boost_size = boost, time_since_boost = day,

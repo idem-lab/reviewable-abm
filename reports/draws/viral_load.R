@@ -1,22 +1,24 @@
-# viral load from the model's viral_load(), over time since infection,
-# potential peak viral load, profile width and immunity at infection
+# viral load from the model's viral_load(), over time since infection (in
+# timesteps of 0.1 days), potential peak viral load, profile width and
+# immunity at infection
 
 source("reports/helpers.R")
 
 rows <- list()
 for (width in c(0.3, 0.4, 0.55)) {
-  set_values(settings = list(),
+  set_values(settings = list(timestep_length = 0.1),
              parameters = list(viral_load_profile_width = width))
   for (level in typical_potential_peak_viral_loads()) {
     for (immunity in c(0, 2, 4)) {
       individual <- infection(individual_with(immunity_level = immunity),
                               list(potential_peak_viral_load = level,
                                    boost_size = 1))
-      for (time in seq(0.1, 40, by = 0.1)) {
-        individual$time_since_infection <- time
+      for (timesteps in seq_len(400)) {
+        individual$timesteps_since_infection <- timesteps
         rows[[length(rows) + 1]] <- data.frame(
           profile_width = width, potential_peak_viral_load = level,
-          immunity_at_infection = immunity, time_since_infection = time,
+          immunity_at_infection = immunity,
+          time_since_infection = time_since_infection(individual),
           viral_load = viral_load(individual)
         )
       }

@@ -37,8 +37,8 @@ infection <- function(individual, infection_characteristics) {
 
   individual$immunity_at_infection <- individual$immunity_level
   individual$infected <- TRUE
-  individual$time_since_infection <- 0
-  individual$time_since_boost <- 0
+  individual$timesteps_since_infection <- 0
+  individual$timesteps_since_boost <- 0
 
   individual$potential_peak_viral_load <-
     infection_characteristics$potential_peak_viral_load
@@ -62,7 +62,7 @@ viral_load <- function(individual) {
 
   if (individual$infected) {
     viral_load <- peak_viral_load(individual) *
-      viral_load_profile(individual$time_since_infection)
+      viral_load_profile(time_since_infection(individual))
   }
 
   viral_load

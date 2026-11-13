@@ -173,21 +173,30 @@ results with the full settings and parameters used.
 
 ### Individual state
 
-1. Each individual carries their age, the time elapsed since each event
-   that their state depends on (such as time since infection and time
-   since last immunity boost), and the current levels calculated from
-   those times (such as viral load and immunity level).
+1. Each individual carries their age, the number of whole timesteps since
+   each event that their state depends on (such as infection and the last
+   immunity boost), and the current levels calculated from those times
+   (such as viral load and immunity level).
 2. Event functions (such as infection, recovery and boosting) set the
-   relevant elapsed time to zero and the level to its starting value.
+   relevant count of timesteps to zero and the level to its starting
+   value.
 3. Between events, one function, `advance_individuals_one_timestep()`, adds
-   the length of one timestep to each individual's age and elapsed times,
-   then recalculates each level from its elapsed time using the formula
-   for the level as a function of time, rather than by updating the
-   previous level. Apart from event functions, no other function changes
-   ages, elapsed times or levels.
-4. Other functions read levels from the individual rather than calculating
+   the length of one timestep to each individual's age and one to each
+   count of timesteps, then recalculates each level from its elapsed time
+   using the formula for the level as a function of time, rather than by
+   updating the previous level. Apart from event functions, no other
+   function changes ages, counts of timesteps or levels.
+4. Elapsed times in days are calculated from the counts of timesteps by
+   functions such as `time_since_infection()`, as the count times the
+   timestep length. Counting whole timesteps keeps elapsed times exact
+   multiples of the timestep length, where adding the timestep length
+   repeatedly would accumulate rounding error, so that comparisons such as
+   reaching the peak time could come out a timestep late, and the exact
+   simulator, which may calculate elapsed times differently, would
+   disagree with the reference implementation.
+5. Other functions read levels from the individual rather than calculating
    them.
-5. The timestep length is a setting, `timestep_length`, in days.
+6. The timestep length is a setting, `timestep_length`, in days.
    Code does not assume it is one day.
 
 ### Names and comments

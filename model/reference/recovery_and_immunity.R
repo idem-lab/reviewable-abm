@@ -23,7 +23,7 @@ ready_to_recover <- function(individual) {
   load_settings("recovery_viral_load_threshold")
 
   individual$infected &&
-    individual$time_since_infection >= viral_load_peak_time &&
+    time_since_infection(individual) >= viral_load_peak_time &&
     individual$viral_load < recovery_viral_load_threshold
 
 }
@@ -46,8 +46,8 @@ immunity_level <- function(individual) {
 
   immunity_level <- 0
 
-  if (!is.na(individual$time_since_boost)) {
-    waned <- immunity_waning_rate * individual$time_since_boost
+  if (!is.na(individual$timesteps_since_boost)) {
+    waned <- immunity_waning_rate * time_since_boost(individual)
     immunity_level <- max(0, individual$immunity_after_boost - waned)
   }
 

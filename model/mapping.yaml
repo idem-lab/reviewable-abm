@@ -165,7 +165,10 @@ features:
 
   - name: Advancing individuals
     description: [sec-time]
-    maths: [sec-advance, eq-advance]
-    code: [advance_individuals_one_timestep]
+    maths: [sec-advance, eq-advance, eq-elapsed-times]
+    code:
+      - advance_individuals_one_timestep
+      - time_since_infection
+      - time_since_boost
     figures:
       - reports/figures/individual_trajectories.png

@@ -30,7 +30,7 @@ simulate_infector <- function(width, timestep_length) {
       probability <- transmission_probability(infector, contact, event)
       if (random_bernoulli(probability)) {
         generation_intervals <- c(generation_intervals,
-                                  infector$time_since_infection)
+                                  time_since_infection(infector))
       }
     }
     # 2. recovery
@@ -41,7 +41,7 @@ simulate_infector <- function(width, timestep_length) {
     infector <- advance_individuals_one_timestep(list(infector))[[1]]
   }
   list(potential_peak_viral_load = infector$potential_peak_viral_load,
-       duration = infector$time_since_infection,
+       duration = time_since_infection(infector),
        generation_intervals = generation_intervals)
 }
 

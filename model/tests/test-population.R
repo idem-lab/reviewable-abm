@@ -80,7 +80,7 @@ test_that("a new individual is uninfected, with no immunity or viral load", {
 test_that("a new individual's infection and boost quantities are undefined", {
   use_values()
   individual <- simulate_new_individual(household_index = 1)
-  undefined <- c("time_since_infection", "time_since_boost",
+  undefined <- c("timesteps_since_infection", "timesteps_since_boost",
                  "potential_peak_viral_load", "boost_size",
                  "immunity_at_infection", "immunity_after_boost")
   for (name in undefined) {

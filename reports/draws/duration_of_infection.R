@@ -34,7 +34,7 @@ for (immunity in immunity_levels) {
     rows[[length(rows) + 1]] <- data.frame(
       immunity_at_infection = immunity,
       potential_peak_viral_load = level,
-      simulated_duration = individual$time_since_infection,
+      simulated_duration = time_since_infection(individual),
       equation_duration = equation
     )
   }

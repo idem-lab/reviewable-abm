@@ -64,8 +64,8 @@ simulate_new_individual <- function(household_index) {
     household_index = household_index,
     age = random_uniform(0, maximum_initial_age), # years
     infected = FALSE,
-    time_since_infection = NA, # days
-    time_since_boost = NA, # days
+    timesteps_since_infection = NA,
+    timesteps_since_boost = NA,
     potential_peak_viral_load = NA,
     viral_load = 0,
     immunity_level = 0,

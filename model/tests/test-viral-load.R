@@ -14,8 +14,8 @@ test_that("infection starts both elapsed times at zero", {
   use_values()
   infected <- make_infected_individual()
   expect_true(infected$infected)
-  expect_equal(infected$time_since_infection, 0)
-  expect_equal(infected$time_since_boost, 0)
+  expect_equal(time_since_infection(infected), 0)
+  expect_equal(time_since_boost(infected), 0)
 })
 
 test_that("viral load is zero at infection", {
@@ -41,7 +41,7 @@ test_that("the viral load profile is symmetric in log time about its peak", {
 test_that("a typical infection with no immunity peaks at a viral load of 1", {
   use_values(parameters = list(viral_load_peak_time = 4))
   individual <- make_infected_individual(potential_peak_viral_load = 1)
-  individual$time_since_infection <- 4
+  individual$timesteps_since_infection <- 4
   expect_equal(viral_load(individual), 1)
 })
 
@@ -49,8 +49,8 @@ test_that("viral load scales with the potential peak viral load", {
   use_values()
   low <- make_infected_individual(potential_peak_viral_load = 1)
   high <- make_infected_individual(potential_peak_viral_load = 3)
-  low$time_since_infection <- 2
-  high$time_since_infection <- 2
+  low$timesteps_since_infection <- 2
+  high$timesteps_since_infection <- 2
   expect_equal(viral_load(high), 3 * viral_load(low))
 })
 
@@ -63,7 +63,7 @@ test_that("immunity at infection reduces viral load by exp(-kappa z)", {
 test_that("an uninfected individual has zero viral load", {
   use_values()
   individual <- make_infected_individual()
-  individual$time_since_infection <- 4
+  individual$timesteps_since_infection <- 4
   individual$infected <- FALSE
   expect_equal(viral_load(individual), 0)
 })

@@ -22,17 +22,17 @@ simulate_epidemic <- function() {
     # 1. contact events, which may transmit infection
     contact_events <- simulate_contact_events(population, households)
     population <- simulate_transmissions(population, contact_events)
-    new_infections <- number_newly_infected(population)
 
     # 2. recovery
     population <- recover_individuals(population)
 
+    # record this timestep, before elapsed times advance
+    epidemic$time[timestep] <- current_time()
+    epidemic$new_infections[timestep] <- number_newly_infected(population)
+    epidemic$infected[timestep] <- number_infected(population)
+
     # 3. ages, elapsed times and levels
     population <- advance_individuals_one_timestep(population)
-
-    epidemic$time[timestep] <- current_time()
-    epidemic$new_infections[timestep] <- new_infections
-    epidemic$infected[timestep] <- number_infected(population)
 
   }
 
@@ -48,7 +48,7 @@ number_newly_infected <- function(population) {
   number_newly_infected <- 0
   for (i in seq_along(population)) {
     individual <- population[[i]]
-    if (individual$infected && individual$time_since_infection == 0) {
+    if (individual$infected && individual$timesteps_since_infection == 0) {
       number_newly_infected <- number_newly_infected + 1
     }
   }
