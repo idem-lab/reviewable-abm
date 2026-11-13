@@ -151,7 +151,7 @@ contact events are part of the state seen by later ones.
 ## Transmission
 
 When contact event $k$ is resolved, if exactly one of its pair is infected,
-call the infected individual $j$ and the uninfected individual $i$. The log
+call the infected individual $a$ and the uninfected individual $b$. The log
 of the hazard of transmission is the sum of the log of the baseline hazard,
 the infectiousness and susceptibility scores of the pair, and the effect of
 the contact event's location:
@@ -159,23 +159,23 @@ the contact event's location:
 <a id="eq-hazard"></a>
 
 ```math
-\log \beta_k = \log \beta_0 + \eta_j^{\mathrm{inf}} + \eta_i^{\mathrm{sus}}
+\log \beta_k = \log \beta_0 + \eta_a^{\mathrm{inf}} + \eta_b^{\mathrm{sus}}
   + \alpha_{\mathrm{hh}}\, \ell_k
 ```
 
 where $\beta_k$ is the hazard of transmission during contact event $k$, per
 hour; $\beta_0$ is the baseline hazard of transmission;
-$\eta_j^{\mathrm{inf}}$ is the infectiousness score of the infected
-individual and $\eta_i^{\mathrm{sus}}$ the susceptibility score of the
+$\eta_a^{\mathrm{inf}}$ is the infectiousness score of the infected
+individual and $\eta_b^{\mathrm{sus}}$ the susceptibility score of the
 uninfected individual; and $\alpha_{\mathrm{hh}}$ is the log hazard ratio
 for a household contact event.
 
-The scores are log hazard ratios:
+The scores of an individual $i$ are log hazard ratios:
 
 <a id="eq-infectiousness-score"></a>
 
 ```math
-\eta_j^{\mathrm{inf}} = \log V_j + \alpha_{\mathrm{inf}}\, g_j
+\eta_i^{\mathrm{inf}} = \log V_i + \alpha_{\mathrm{inf}}\, g_i
 ```
 
 <a id="eq-susceptibility-score"></a>
@@ -184,7 +184,7 @@ The scores are log hazard ratios:
 \eta_i^{\mathrm{sus}} = \alpha_{\mathrm{sus}}\, g_i - z_i
 ```
 
-where $V_j$ is the viral load of the infected individual ([Viral
+where $V_i$ is the viral load of the individual ([Viral
 load](#sec-viral-load)), and $\alpha_{\mathrm{inf}}$ and
 $\alpha_{\mathrm{sus}}$ are the log hazard ratios for an infected and an
 uninfected individual who is a child. Adults and non-household contact
@@ -199,9 +199,9 @@ transmission is
 p_k = 1 - \exp\left(-\beta_k d_k\right)
 ```
 
-and individual $i$ is infected with probability $p_k$
+and individual $b$ is infected with probability $p_k$
 ([Infection](#sec-infection)). If both or neither of the pair are infected,
-nothing happens. When $V_j = 0$, $\beta_k = 0$ and $p_k = 0$.
+nothing happens. When $V_a = 0$, $\beta_k = 0$ and $p_k = 0$.
 
 <a id="sec-viral-load"></a>
 
@@ -466,6 +466,8 @@ Ages are in years and elapsed times in days.
 | Symbol | Meaning | Units | Code name |
 |---|---|---|---|
 | $\mathcal C_{\mathrm{hh}}$ | set of pairs of individuals with a household contact event in a timestep | | |
+| $(i, j)$ | the pair of individuals in the contact event | | `pair` |
+| $a$, $b$ | the infected and the uninfected individual of the pair, when exactly one is infected | | |
 | $\ell_k$ | location: 1 if a household contact event, 0 otherwise | | `in_household` |
 | $d_k$ | duration | hours | `duration` |
 | $\beta_k$ | hazard of transmission | per hour | `hazard` |

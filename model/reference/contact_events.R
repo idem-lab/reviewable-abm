@@ -58,8 +58,7 @@ contact_events_in_household <- function(household) {
       if (i < j) {
         k <- length(contact_events_in_household) + 1
         contact_events_in_household[[k]] <- contact_event(
-          individual_a = i,
-          individual_b = j,
+          pair = c(i, j),
           in_household = TRUE,
           duration = duration
         )
@@ -91,8 +90,7 @@ random_non_household_contact_events <- function(population) {
     # who may live in the same household
     pair <- random_individuals(population, 2)
     non_household_contact_events[[k]] <- contact_event(
-      individual_a = pair[1],
-      individual_b = pair[2],
+      pair = pair,
       in_household = FALSE,
       duration = duration
     )
@@ -102,14 +100,12 @@ random_non_household_contact_events <- function(population) {
 
 }
 
-# a contact event between two individuals, identified by their positions in
+# a contact event between a pair of individuals, given by their positions in
 # the population; duration is in hours
-contact_event <- function(individual_a, individual_b, in_household,
-                          duration) {
+contact_event <- function(pair, in_household, duration) {
 
   list(
-    individual_a = individual_a,
-    individual_b = individual_b,
+    pair = pair,
     in_household = in_household,
     duration = duration
   )

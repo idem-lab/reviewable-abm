@@ -49,17 +49,17 @@ contact event between two people transmits infection, might appear in each.
 
 **Mathematical description**
 
-For a contact event $k$ of duration $d_k$, between infected person $j$ and
-uninfected person $i$:
+For a contact event $k$ of duration $d_k$, between infected person $a$ and
+uninfected person $b$:
 
 ```math
-\log \beta_k = \log \beta_0 + \eta_j^{\mathrm{inf}} + \eta_i^{\mathrm{sus}}
+\log \beta_k = \log \beta_0 + \eta_a^{\mathrm{inf}} + \eta_b^{\mathrm{sus}}
   + \alpha_{\mathrm{hh}}\, \ell_k, \qquad
 p_k = 1 - \exp\left(-\beta_k d_k\right)
 ```
 
 where $\beta_k$ is the hazard of transmission, $\beta_0$ is the baseline
-hazard, $\eta_j^{\mathrm{inf}}$ and $\eta_i^{\mathrm{sus}}$ are the
+hazard, $\eta_a^{\mathrm{inf}}$ and $\eta_b^{\mathrm{sus}}$ are the
 infectiousness and susceptibility of the two people as log hazard ratios,
 $\ell_k$ is 1 if the contact event is in a household and 0 otherwise,
 $\alpha_{\mathrm{hh}}$ is the log hazard ratio for a household contact event,

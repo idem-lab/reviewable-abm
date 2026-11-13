@@ -184,8 +184,8 @@ population or fewer replicates; do not restructure the code.
    A loop over something that is not a list, such as timesteps, uses a
    word: `timestep`.
 6. When a function takes two or more arguments of the same kind, name them
-   at the call, for example
-   `random_transmission_outcome(infector = individual_a, infectee = individual_b)`.
+   at the call, for example `random_transmission_outcome(infector =
+   infector, infectee = infectee, contact_event = contact_event)`.
 7. Comments explain what the names do not, such as units, scales and the
    reason for a step, in as few words as possible.
 
