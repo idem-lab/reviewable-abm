@@ -2,7 +2,7 @@
 
 test_that("infection records immunity before boosting it", {
   use_values()
-  individual <- make_individual(immunity_level = 0.8)
+  individual <- individual_with(immunity_level = 0.8)
   infected <- infection(individual, list(potential_peak_viral_load = 2,
                                          boost_size = 0.5))
   expect_equal(infected$immunity_at_infection, 0.8)

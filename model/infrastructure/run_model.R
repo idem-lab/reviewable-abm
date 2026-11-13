@@ -6,8 +6,8 @@
 # Returns the epidemic, with the full settings and parameters used.
 run_model <- function(settings, parameters) {
 
+  # also clears the clock
   set_values(settings, parameters)
-  reset_clock()
 
   epidemic <- simulate_epidemic()
 

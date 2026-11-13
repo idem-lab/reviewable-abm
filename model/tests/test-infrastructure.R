@@ -19,8 +19,33 @@ test_that("loading a parameter makes it a variable in the calling function", {
 
 test_that("the values of a run cannot be changed while it runs", {
   use_values()
-  expect_error(assign("viral_load_peak_time", 1, envir = values$parameters),
+  expect_error(assign("viral_load_peak_time", 1,
+                      envir = model_values$parameters),
                "locked")
+  expect_error(assign("parameters", list(), envir = model_values), "locked")
+})
+
+test_that("values given without a name, twice or as NULL are refused", {
+  expect_error(set_values(list(), list(0.5)), "must be named")
+  expect_error(set_values(list(), list(immunity_waning_rate = 0.5,
+                                       immunity_waning_rate = 0.9)),
+               "given twice")
+  expect_error(set_values(list(), list(immunity_waning_rate = NULL)),
+               "is NULL")
+})
+
+test_that("the values of a run are returned in the order of the defaults", {
+  use_values()
+  values <- current_values()
+  expect_identical(names(values$settings), names(default_settings))
+  expect_identical(names(values$parameters), names(default_parameters))
+})
+
+test_that("setting new values clears the clock", {
+  use_values()
+  set_clock_to_timestep(5)
+  use_values(settings = list(timestep_length = 0.5))
+  expect_error(current_time(), "not been set")
 })
 
 test_that("the clock gives the start of the timestep", {

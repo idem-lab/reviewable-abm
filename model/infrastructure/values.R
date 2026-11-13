@@ -4,33 +4,59 @@
 # model/reference/default_values.R and any changes; model functions read
 # them only with load_settings() and load_parameters().
 
-values <- new.env()
+# the current settings and parameters, each a locked environment; this
+# environment is itself locked, so only set_values() can replace them
+model_values <- new.env()
+model_values$settings <- NULL
+model_values$parameters <- NULL
+lockEnvironment(model_values, bindings = TRUE)
 
 # set the settings and parameters for a run: the defaults, with the values
-# in the lists settings and parameters replacing them by name. Called by
+# in the named lists settings and parameters replacing them by name. Also
+# clears the simulation clock, which depends on the settings. Called by
 # run_model(), and by tests of single functions.
 set_values <- function(settings, parameters) {
 
-  values$settings <- locked_values(default_settings, settings, "setting")
-  values$parameters <- locked_values(default_parameters, parameters,
-                                     "parameter")
+  new_settings <- locked_values(default_settings, settings, "setting")
+  new_parameters <- locked_values(default_parameters, parameters,
+                                  "parameter")
+
+  for (kind in c("settings", "parameters")) {
+    unlockBinding(kind, model_values)
+  }
+  model_values$settings <- new_settings
+  model_values$parameters <- new_parameters
+  for (kind in c("settings", "parameters")) {
+    lockBinding(kind, model_values)
+  }
+
+  reset_clock()
 
   invisible(NULL)
 
 }
 
 # a locked environment holding the defaults with the changes applied,
-# stopping if a change names a value that does not exist
+# stopping if a change is unnamed, named twice, NULL, or names a value that
+# does not exist
 locked_values <- function(defaults, changes, kind) {
 
-  for (name in names(changes)) {
-    if (!name %in% names(defaults)) {
-      stop("no ", kind, " called ", name)
-    }
+  names <- names(changes)
+  if (length(changes) > 0 && (is.null(names) || any(names == ""))) {
+    stop("every ", kind, " given must be named")
+  }
+  if (any(duplicated(names))) {
+    stop(kind, " given twice: ", names[duplicated(names)][1])
   }
 
   combined <- defaults
-  for (name in names(changes)) {
+  for (name in names) {
+    if (!name %in% names(defaults)) {
+      stop("no ", kind, " called ", name)
+    }
+    if (is.null(changes[[name]])) {
+      stop("the ", kind, " ", name, " is NULL")
+    }
     combined[[name]] <- changes[[name]]
   }
 
@@ -41,11 +67,14 @@ locked_values <- function(defaults, changes, kind) {
 
 }
 
-# the settings and parameters of the current run, as lists
+# the settings and parameters of the current run, as lists in the order of
+# the defaults
 current_values <- function() {
 
-  list(settings = as.list(values$settings),
-       parameters = as.list(values$parameters))
+  list(settings = mget(names(default_settings),
+                       envir = model_values$settings),
+       parameters = mget(names(default_parameters),
+                         envir = model_values$parameters))
 
 }
 
@@ -54,7 +83,7 @@ current_values <- function() {
 # at the top of a model function
 load_settings <- function(...) {
 
-  load_values(c(...), values$settings, "setting", parent.frame())
+  load_values(c(...), model_values$settings, "setting", parent.frame())
 
 }
 
@@ -63,7 +92,7 @@ load_settings <- function(...) {
 # at the top of a model function
 load_parameters <- function(...) {
 
-  load_values(c(...), values$parameters, "parameter", parent.frame())
+  load_values(c(...), model_values$parameters, "parameter", parent.frame())
 
 }
 

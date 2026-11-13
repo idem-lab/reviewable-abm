@@ -1,8 +1,9 @@
 # transmission during contact events (maths.md: Transmission)
 
 # resolve contact events one at a time, in the order given, so that
-# individuals infected by earlier contact events can infect, and cannot be
-# infected, in later ones
+# individuals infected by earlier contact events cannot be infected again
+# in later ones; they cannot infect others until the next timestep, as
+# their viral load is zero at infection
 simulate_transmissions <- function(population, contact_events) {
 
   for (k in seq_along(contact_events)) {

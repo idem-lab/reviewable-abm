@@ -6,7 +6,8 @@ source("model/infrastructure/load_model.R")
 
 # apply a function to each of 1, ..., n in parallel, giving each its own
 # random number stream from the seed, so results do not depend on the
-# number of cores; returns a list of the results
+# number of cores; returns a list of the results, and stops if any run
+# failed. Runs in parallel only where R can fork processes (not Windows).
 run_in_parallel <- function(n, simulate_one, seed) {
   RNGkind("L'Ecuyer-CMRG")
   set.seed(seed)
@@ -16,12 +17,20 @@ run_in_parallel <- function(n, simulate_one, seed) {
     streams[[index]] <- stream
     stream <- parallel::nextRNGStream(stream)
   }
-  parallel::mclapply(seq_len(n), function(index) {
+  cores <- if (.Platform$OS.type == "windows") 1 else parallel::detectCores()
+  results <- parallel::mclapply(seq_len(n), function(index) {
     # use this run's stream; .Random.seed is R's name, not ours
     assign(".Random.seed", streams[[index]], # nolint: object_name_linter.
            envir = globalenv())
     simulate_one(index)
-  }, mc.cores = parallel::detectCores())
+  }, mc.cores = cores)
+  # a run that fails returns its error rather than stopping
+  for (result in results) {
+    if (inherits(result, "try-error")) {
+      stop("a simulation failed: ", result)
+    }
+  }
+  results
 }
 
 # run the model for a number of replicates in parallel, with the default
@@ -37,17 +46,6 @@ run_replicates <- function(settings, parameters, replicates, seed) {
     epidemic
   }, seed = seed)
   do.call(rbind, epidemics)
-}
-
-# an individual with the given characteristics, starting from a new
-# individual who has never been infected
-individual_with <- function(...) {
-  individual <- simulate_new_individual(household_index = 1)
-  changes <- list(...)
-  for (name in names(changes)) {
-    individual[[name]] <- changes[[name]]
-  }
-  individual
 }
 
 # the 2.5%, 50% and 97.5% quantiles of the potential peak viral load at the

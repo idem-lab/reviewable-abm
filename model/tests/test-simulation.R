@@ -8,12 +8,14 @@ test_that("a simulation records every timestep, from time 0", {
   expect_equal(epidemic$time, c(0, 0.5, 1, 1.5, 2))
 })
 
-test_that("new infections in the first timestep include the initial ones", {
+test_that("new infections in the first timestep are the initial ones", {
   use_values(settings = list(population_size = 60, number_of_timesteps = 2,
                              initial_infections = 4))
   set.seed(1)
   epidemic <- simulate_epidemic()
-  expect_gte(epidemic$new_infections[1], 4)
+  # no one can transmit in the first timestep, as viral load is zero at
+  # infection
+  expect_equal(epidemic$new_infections[1], 4)
 })
 
 test_that("the same seed gives the same epidemic", {

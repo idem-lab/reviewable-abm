@@ -1,12 +1,16 @@
-# Expected: a larger household location score raises the hazard of
-# household contact events, so the final attack rate rises and the peak
-# comes earlier. A wider viral load profile means more total viral load,
-# and so more transmission, over each infection, so the final attack rate
-# rises; it also spreads transmission over more days, which slows growth
-# and can make the peak later. The correlation between potential peak viral load
-# and boost size changes who is best protected afterwards, but over 150
-# days, mostly a single wave, it should have little effect. Replicates
-# that die out early sit near zero.
+# Expected: a larger household location score raises the hazard of household
+# contact events, so household outbreaks are larger and the final attack
+# rate rises, though by less as household outbreaks approach the size of the
+# household. Spread between households depends on non-household contact
+# events, so the day of peak prevalence changes little compared with the
+# variation between replicates. (Revised after review: this expectation
+# first said the peak would come earlier.) A wider viral load profile means
+# more total viral load, and so more transmission, over each infection, so
+# the final attack rate rises; it also spreads transmission over more days,
+# which slows growth and can make the peak later. The correlation between
+# potential peak viral load and boost size changes who is best protected
+# afterwards, but over 150 days, mostly a single wave, it should have little
+# effect. Replicates that die out early sit near zero.
 
 source("reports/theme.R")
 

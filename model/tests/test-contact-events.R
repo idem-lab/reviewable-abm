@@ -80,3 +80,17 @@ test_that("a timestep's contact events include all household contact events", {
   in_household <- vapply(contact_events, `[[`, logical(1), "in_household")
   expect_equal(sum(in_household), length(household_contact_events(households)))
 })
+
+test_that("contact events are resolved in a random order", {
+  use_values(settings = list(population_size = 50))
+  set.seed(1)
+  households <- simulate_households()
+  population <- simulate_initial_population(households)
+  # household contact events are listed first before the order is drawn,
+  # so the first event is sometimes in a household and sometimes not
+  first_in_household <- replicate(50, {
+    simulate_contact_events(population, households)[[1]]$in_household
+  })
+  expect_true(any(first_in_household))
+  expect_true(any(!first_in_household))
+})

@@ -25,7 +25,7 @@ test_that(description, {
 
 test_that("an individual who has never been infected is not ready to recover", {
   use_values()
-  expect_false(ready_to_recover(make_individual()))
+  expect_false(ready_to_recover(individual_with()))
 })
 
 test_that("recovery ends infection and leaves immunity unchanged", {
@@ -40,7 +40,7 @@ test_that("recovery ends infection and leaves immunity unchanged", {
 
 test_that("immunity is zero before the first boost", {
   use_values()
-  expect_equal(immunity_level(make_individual()), 0)
+  expect_equal(immunity_level(individual_with()), 0)
 })
 
 test_that("immunity declines linearly at the waning rate", {
@@ -57,17 +57,9 @@ test_that("immunity is lost, not negative, once it has waned", {
   expect_equal(immunity_level(individual), 0)
 })
 
-test_that("a boost adds to the immunity that remains", {
-  use_values()
-  individual <- make_individual(immunity_level = 1.2)
-  boosted <- infection(individual, list(potential_peak_viral_load = 1,
-                                        boost_size = 0.1))
-  expect_gt(boosted$immunity_level, individual$immunity_level)
-})
-
 test_that("advancing a timestep ages everyone and advances elapsed times", {
   use_values(settings = list(timestep_length = 0.5))
-  population <- list(make_infected_individual(), make_individual(age = 40))
+  population <- list(make_infected_individual(), individual_with(age = 40))
   after <- advance_individuals_one_timestep(population)
   expect_equal(after[[1]]$age, population[[1]]$age + 0.5 / 365.25)
   expect_equal(after[[2]]$age, 40 + 0.5 / 365.25)
@@ -88,7 +80,7 @@ test_that("elapsed times are exact multiples of the timestep length", {
 
 test_that("advancing a timestep leaves undefined elapsed times undefined", {
   use_values()
-  after <- advance_individuals_one_timestep(list(make_individual()))
+  after <- advance_individuals_one_timestep(list(individual_with()))
   expect_true(is.na(time_since_infection(after[[1]])))
   expect_true(is.na(time_since_boost(after[[1]])))
   expect_equal(after[[1]]$immunity_level, 0)

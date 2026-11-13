@@ -10,8 +10,8 @@
 source("reports/helpers.R")
 
 # follow one household of the given size, with member 1 the index case,
-# resolving contact events as simulate_contact_event() does but recording
-# who infected whom
+# resolving contact events with simulate_contact_event() and recording who
+# infected whom
 simulate_household <- function(household_size, location_score) {
   set_values(settings = list(),
              parameters = list(household_location_score = location_score))
@@ -26,19 +26,16 @@ simulate_household <- function(household_size, location_score) {
   repeat {
     contact_events <- random_order(contact_events_in_household(household))
     for (k in seq_along(contact_events)) {
-      i <- contact_events[[k]]$individual_indices[1]
-      j <- contact_events[[k]]$individual_indices[2]
-      if (population[[i]]$infected != population[[j]]$infected) {
-        a <- if (population[[i]]$infected) i else j
-        b <- if (population[[i]]$infected) j else i
-        probability <- transmission_probability(population[[a]],
-                                                population[[b]],
-                                                contact_events[[k]])
-        if (random_bernoulli(probability)) {
-          population[[b]] <- infection(population[[b]],
-                                       random_infection_characteristics())
-          infectors[b] <- a
-        }
+      pair <- contact_events[[k]]$individual_indices
+      infected_before <- c(population[[pair[1]]]$infected,
+                           population[[pair[2]]]$infected)
+      population <- simulate_contact_event(population, contact_events[[k]])
+      infected_after <- c(population[[pair[1]]]$infected,
+                          population[[pair[2]]]$infected)
+      # if one of the pair has just been infected, the other infected them
+      newly_infected <- infected_after & !infected_before
+      if (any(newly_infected)) {
+        infectors[pair[newly_infected]] <- pair[!newly_infected]
       }
     }
     population <- recover_individuals(population)

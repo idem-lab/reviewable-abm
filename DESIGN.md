@@ -313,17 +313,22 @@ file (`test-mapping.R`), and a test that the linter finds nothing
 checked automatically, using the lintr package. It applies lintr's default
 style linters, except those that conflict with this design (the limit on
 name length, and the check for undefined variables, which does not know
-about `load_parameters()`), lintr linters that match rules in Section 4
-(such as `seq_linter()` and `sample_int_linter()`), and this procedure's
-own linters, in `lint/model_linters.R`: the `random_` and `simulate_`
-prefixes, R's random functions only inside `random_` functions, the rules
-for `load_settings()` and `load_parameters()`, no default arguments, no
-more than two levels of nested loops and `if`s, and functions under about
-40 lines. The full set applies to `model/reference/`, and the style
-linters alone to the infrastructure, tests and linters. Run it from the
-root of the repository with `source("lint/lint_model.R")` and then
-`lint_model()`. A rule is not relaxed to make code pass; the code is
-changed, or the rule is changed by researchers.
+about `load_parameters()`); lintr linters that match rules in Section 4,
+such as `sample_int_linter()` and a list of functions not to use; and this
+procedure's own linters, in `lint/model_linters.R`. These check the
+`random_` and `simulate_` prefixes, that R's random functions are called
+only inside `random_` functions, the rules for `load_settings()` and
+`load_parameters()`, no default arguments, no `1:n`, no packages other
+than MASS, `&&` and `||` rather than `&` and `|`, that model code does not
+set values or the clock, no more than two levels of nested loops and
+`if`s, and functions under about 40 lines. Each of the procedure's own
+linters is tested, in `model/tests/test-linters.R`, on code it should flag
+and code it should leave alone. The full set applies to
+`model/reference/`, and the style linters alone to the infrastructure,
+tests, linters and reports. Run it from the root of the repository with
+`source("lint/lint_model.R")` and then `lint_model()`. A rule is not
+relaxed to make code pass; the code is changed, or the rule is changed by
+researchers.
 
 **Behaviour figures** use ggplot2 with a theme shared by all repositories
 in this lineage and copied with them. Each figure script starts with a

@@ -1,16 +1,17 @@
-# Expected: the probability of transmission in one contact event is
-# 1 - exp(-hazard x duration). It rises almost linearly with duration while
+# Expected: the probability of transmission in one contact event is 1 -
+# exp(-hazard x duration). It rises almost linearly with duration while
 # hazard x duration is small, then levels off towards 1; at the default
 # hazards most contact events are in the near-linear range. Household
 # contact events have exp(0.7), about 2 times, the hazard, so a household
 # contact event at one viral load matches a non-household one at twice that
 # viral load. Probability rises with infector viral load (nearly in
 # proportion while small) and falls with infectee immunity (by about
-# exp(-immunity) while small); child infectees have lower probability at
-# every immunity level. Viral load and immunity act multiplicatively on the
-# hazard, so in the bottom-right panel lines of equal probability are
-# straight, with viral load needing to rise by a factor e for each unit of
-# immunity.
+# exp(-immunity) while small). Where both are children, the probability is
+# lower at every immunity level, by the combined child infectiousness and
+# susceptibility scores, exp(-0.2 - 0.4), while the hazard is small. Viral
+# load and immunity act multiplicatively on the hazard, so in the bottom-
+# right panel lines of equal probability are straight, with viral load
+# needing to rise by a factor e for each unit of immunity.
 
 source("reports/theme.R")
 library(patchwork)

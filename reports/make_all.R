@@ -3,14 +3,22 @@
 # how figures look, run the scripts in reports/figures/ alone, which read
 # the saved draws.
 
+# run a script in a new R session, stopping if it fails, so that a figure
+# is never made from out-of-date draws
+run_script <- function(script) {
+  message("running ", script)
+  status <- system2("Rscript", script)
+  if (status != 0) {
+    stop(script, " failed")
+  }
+}
+
 for (script in list.files("reports/draws", pattern = "\\.R$",
                           full.names = TRUE)) {
-  message("simulating ", script)
-  system2("Rscript", script)
+  run_script(script)
 }
 
 for (script in list.files("reports/figures", pattern = "\\.R$",
                           full.names = TRUE)) {
-  message("plotting ", script)
-  system2("Rscript", script)
+  run_script(script)
 }

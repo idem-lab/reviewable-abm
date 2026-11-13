@@ -53,6 +53,13 @@ reference_linters <- function() {
         vapply = use_for_loop,
         mapply = use_for_loop,
         Map = use_for_loop,
+        apply = use_for_loop,
+        tapply = use_for_loop,
+        Reduce = use_for_loop,
+        Filter = use_for_loop,
+        do.call = "call the function directly",
+        class = no_classes,
+        return = "the last line is the returned value (language rule 7)",
         ifelse = "use if and else on single values"
       )),
       undesirable_operator_linter(),
@@ -69,10 +76,13 @@ reference_linters <- function() {
       length_test_linter(),
       # this procedure's own rules
       random_prefix_linter(),
-      random_calls_no_simulate_linter(),
       r_random_only_in_random_linter(),
       loaded_values_linter(),
       no_default_arguments_linter(),
+      one_to_n_linter(),
+      package_call_linter(),
+      vector_logic_anywhere_linter(),
+      infrastructure_call_linter(),
       nesting_depth_linter(),
       function_length_linter(maximum_lines = 40)
     )
