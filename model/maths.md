@@ -230,11 +230,11 @@ $\tau_i^{\mathrm{inf}}$ is the time since infection and
 $\tau_i^{\mathrm{boost}}$ the time since the most recent immunity boost, both
 in days.
 
-At the same time, the infection's viral load level $\nu_i$ and the size of
-its immunity boost $\Delta z_i$ are drawn. Both are lognormal, and their
-logs are correlated:
+At the same time, the characteristics of the infection are drawn: its
+viral load level $\nu_i$ and the size of its immunity boost $\Delta z_i$.
+Both are lognormal, and their logs are correlated:
 
-<a id="eq-infection-draws"></a>
+<a id="eq-infection-characteristics"></a>
 
 ```math
 \begin{pmatrix} \log \nu_i \\ \log \Delta z_i \end{pmatrix}

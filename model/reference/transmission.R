@@ -34,7 +34,8 @@ random_transmissions <- function(population, contact_events) {
       )
 
       if (transmitted) {
-        population[[b]] <- random_infection(infectee)
+        infection_characteristics <- random_infection_characteristics()
+        population[[b]] <- infection(infectee, infection_characteristics)
       }
 
     }

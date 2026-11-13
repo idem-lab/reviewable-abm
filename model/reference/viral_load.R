@@ -1,21 +1,8 @@
 # infection and viral load (maths.md: Viral load)
 
-# infect an individual, with a random viral load level and immunity boost
-random_infection <- function(individual) {
-
-  draws <- random_viral_load_level_and_boost_size()
-
-  infection(
-    individual,
-    viral_load_level = draws$viral_load_level,
-    boost_size = draws$boost_size
-  )
-
-}
-
-# viral load level and immunity boost size of a new infection: lognormal,
-# with correlated logs
-random_viral_load_level_and_boost_size <- function() {
+# characteristics of a new infection, its viral load level and immunity
+# boost size: lognormal, with correlated logs
+random_infection_characteristics <- function() {
 
   sdlog_level <- parameter("viral_load_level_sdlog")
   sdlog_boost <- parameter("immunity_boost_sdlog")
@@ -31,25 +18,28 @@ random_viral_load_level_and_boost_size <- function() {
 
   logs <- MASS::mvrnorm(1, mu = meanlogs, Sigma = covariance)
 
-  list(
+  infection_characteristics <- list(
     viral_load_level = exp(logs[1]),
     boost_size = exp(logs[2])
   )
 
+  infection_characteristics
+
 }
 
-# an individual just infected: their immunity is recorded, then boosted
-infection <- function(individual, viral_load_level, boost_size) {
+# an individual just infected, with the given characteristics of the
+# infection: their immunity is recorded, then boosted
+infection <- function(individual, infection_characteristics) {
 
   individual$immunity_at_infection <- individual$immunity_level
   individual$infected <- TRUE
   individual$time_since_infection <- 0
   individual$time_since_boost <- 0
 
-  individual$viral_load_level <- viral_load_level
-  individual$boost_size <- boost_size
+  individual$viral_load_level <- infection_characteristics$viral_load_level
+  individual$boost_size <- infection_characteristics$boost_size
   individual$immunity_after_boost <- individual$immunity_at_infection +
-    boost_size
+    individual$boost_size
 
   # levels at zero elapsed time
   individual$viral_load <- viral_load(individual)

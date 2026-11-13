@@ -17,7 +17,8 @@ random_initial_population <- function() {
   )
   for (i in initially_infected_indices) {
     individual <- population[[i]]
-    population[[i]] <- random_infection(individual)
+    infection_characteristics <- random_infection_characteristics()
+    population[[i]] <- infection(individual, infection_characteristics)
   }
 
   population
