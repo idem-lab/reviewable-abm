@@ -44,13 +44,13 @@ random_transmissions <- function(population, contact_events) {
 # whether a contact event transmits infection
 random_transmission_outcome <- function(infector, infectee, contact_event) {
 
-  probability <- transmission_probability(
+  transmission_probability <- transmission_probability(
     infector = infector,
     infectee = infectee,
     contact_event = contact_event
   )
 
-  runif(1) < probability
+  runif(1) < transmission_probability
 
 }
 
@@ -65,9 +65,9 @@ transmission_probability <- function(infector, infectee, contact_event) {
 
   # per hour
   hazard <- exp(log_hazard)
-  probability <- 1 - exp(-hazard * contact_event$duration)
+  transmission_probability <- 1 - exp(-hazard * contact_event$duration)
 
-  probability
+  transmission_probability
 
 }
 

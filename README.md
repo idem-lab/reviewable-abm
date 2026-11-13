@@ -78,9 +78,9 @@ transmission_probability <- function(infector, infectee, contact_event) {
     location_score(contact_event)
 
   hazard <- exp(log_hazard)
-  probability <- 1 - exp(-hazard * contact_event$duration)
+  transmission_probability <- 1 - exp(-hazard * contact_event$duration)
 
-  probability
+  transmission_probability
 
 }
 ```

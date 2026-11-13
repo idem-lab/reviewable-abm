@@ -117,8 +117,11 @@ population or fewer replicates; do not restructure the code.
    repository (Section 9).
 7. Each function's last line is its returned value, outside any `if`. No
    `return()`.
-8. Loop over individuals with `for`. Use `seq_len()` or `seq_along()`
-   rather than `1:n`. Use a vectorised base function only when it reads at
+8. Loop over individuals with `for`. Use `seq_len(n)` or `seq_along(x)`
+   rather than `1:n` or `1:length(x)`: when `n` is zero, `1:n` is `c(1, 0)`
+   and the loop runs twice instead of not at all, so a reviewer would have
+   to check every loop for that case. This happens in practice, for
+   example when a Poisson number of contact events is zero. Use a vectorised base function only when it reads at
    least as clearly as a loop, as `sum()` does.
 9. Draw random numbers with R's named distribution functions (`rlnorm`,
    `rpois`, `runif`) rather than writing sampling out by hand, so the code
@@ -154,7 +157,13 @@ population or fewer replicates; do not restructure the code.
    is called `population`, and one of its elements `individual`. An object
    that is updated keeps its name (`population <- ...`); a second name is
    used only where a function needs the old and new versions together.
-   Function names say what the function returns or does.
+   Function names say what the function returns or does. A function
+   named for the value it returns builds that value in a variable of the
+   same name, without any `random_` prefix: for example `viral_load`
+   inside `viral_load()`, and `non_household_contact_events` inside
+   `random_non_household_contact_events()`. Other variables take the name
+   of what they hold, without generic words such as `result`, `value` or
+   `count`.
 2. A function that draws random numbers, directly or through the functions
    it calls, has a name starting `random_`. All other functions give the
    same output for the same input. Random values are drawn in the `random_`

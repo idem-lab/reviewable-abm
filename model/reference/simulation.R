@@ -6,7 +6,7 @@ random_simulation <- function(number_of_timesteps) {
 
   population <- random_initial_population()
 
-  results <- data.frame(
+  simulation <- data.frame(
     time = rep(NA, number_of_timesteps),
     new_infections = rep(NA, number_of_timesteps),
     infected = rep(NA, number_of_timesteps)
@@ -28,13 +28,13 @@ random_simulation <- function(number_of_timesteps) {
     # 3. ages, elapsed times and levels
     population <- advance_individuals_one_timestep(population)
 
-    results$time[timestep] <- current_time()
-    results$new_infections[timestep] <- new_infections
-    results$infected[timestep] <- number_infected(population)
+    simulation$time[timestep] <- current_time()
+    simulation$new_infections[timestep] <- new_infections
+    simulation$infected[timestep] <- number_infected(population)
 
   }
 
-  results
+  simulation
 
 }
 
@@ -43,28 +43,28 @@ random_simulation <- function(number_of_timesteps) {
 # initial infections
 number_newly_infected <- function(population) {
 
-  count <- 0
+  number_newly_infected <- 0
   for (i in seq_along(population)) {
     individual <- population[[i]]
     if (individual$infected && individual$time_since_infection == 0) {
-      count <- count + 1
+      number_newly_infected <- number_newly_infected + 1
     }
   }
 
-  count
+  number_newly_infected
 
 }
 
 # number of individuals currently infected
 number_infected <- function(population) {
 
-  count <- 0
+  number_infected <- 0
   for (i in seq_along(population)) {
     if (population[[i]]$infected) {
-      count <- count + 1
+      number_infected <- number_infected + 1
     }
   }
 
-  count
+  number_infected
 
 }

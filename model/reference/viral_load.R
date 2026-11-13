@@ -80,15 +80,15 @@ viral_load <- function(individual) {
 # in log time, peaking at 1, and zero at infection
 viral_load_profile <- function(time_since_infection) {
 
-  profile <- 0
+  viral_load_profile <- 0
 
   if (time_since_infection > 0) {
     log_relative_time <- log(time_since_infection /
                                parameter("viral_load_peak_time"))
-    profile <- exp(-log_relative_time ^ 2 /
-                     (2 * parameter("viral_load_profile_width") ^ 2))
+    viral_load_profile <- exp(-log_relative_time ^ 2 /
+                                (2 * parameter("viral_load_profile_width") ^ 2))
   }
 
-  profile
+  viral_load_profile
 
 }
