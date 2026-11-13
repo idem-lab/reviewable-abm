@@ -225,12 +225,15 @@ population or fewer replicates; do not restructure the code.
    households and `k` for contact events. The first line of the loop
    names the element at that index, such as
    `individual <- population[[i]]` or `household <- households[[h]]`, so
-   that a word always names an object and a letter always an index. Where
-   an index must be named with a word, as an element of an object or the
-   value of a function, the name ends in `_index` or `_indices`, such as
-   `individual$household_index`. A changed element is written back with
-   `population[[i]] <- individual`. A loop over something that is not a
-   list, such as timesteps, uses a word: `timestep`.
+   that a word always names an object and a letter always an index. Loops
+   never run over the objects themselves, so a reader never has to work
+   out which kind of loop they are in. A loop over a vector of indices
+   runs over the indices, as in `for (i in household$member_indices)`.
+   Where an index must be named with a word, as an element of an object
+   or the value of a function, the name ends in `_index` or `_indices`,
+   such as `individual$household_index`. A changed element is written back
+   with `population[[i]] <- individual`. A loop over something that is not
+   a list, such as timesteps, uses a word: `timestep`.
 6. When a function takes two or more arguments of the same kind, name them
    at the call, for example `transmission_probability(infector =
    infector, infectee = infectee, contact_event = contact_event)`.

@@ -89,8 +89,9 @@ individual's infections and immunity boosts, defined in
 
 ## Time
 
-Timestep $n = 0, 1, 2, \dots$ starts at time $t_n = n \Delta t$, where
-$\Delta t$ is the timestep length in days. Within each timestep:
+The simulation runs for $T$ timesteps. Timestep $n = 0, 1, \dots, T - 1$
+starts at time $t_n = n \Delta t$, where $\Delta t$ is the timestep length
+in days. Within each timestep:
 
 1. contact events are generated and resolved ([Contact events](#sec-contacts),
    [Transmission](#sec-transmission));
@@ -421,6 +422,7 @@ Ages are in years and elapsed times in days.
 | $\bar H$ | average household size | $[1, \infty)$ | individuals | `average_household_size` |
 | $I_0$ | number of individuals infected at the start | $\lbrace 1, \dots, N \rbrace$ | individuals | `initial_infections` |
 | $\Delta t$ | timestep length | $(0, \infty)$ | days | `timestep_length` |
+| $T$ | number of timesteps simulated | $\lbrace 1, 2, \dots \rbrace$ | | `number_of_timesteps` |
 | $A_{\max}$ | upper limit of initial ages (80) | $(0, \infty)$ | years | `maximum_initial_age` |
 | $A$ | age at which individuals become adults (18) | $(0, A_{\max})$ | years | `adult_age` |
 | $V_{\mathrm{rec}}$ | recovery threshold (0.001): viral load, after the peak, below which an infection ends, as a fraction of the peak viral load of a typical infection | $(0, 1)$ | | `recovery_viral_load_threshold` |
