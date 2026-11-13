@@ -11,8 +11,7 @@ The notation follows the usual conventions for epidemic models where they
 exist: $N$ for population size, $I_0$ for the number initially infected,
 $\beta$ for transmission rates, $c$ for the contact rate, $\tau$ for time
 since infection, $\mu$ and $\sigma$ for the mean and standard deviation of
-the log of a lognormal random variable, and $\rho$ for a correlation. Because $S$, $I$ and $R$ conventionally name the
-compartments of an SIR model, they are not used for individual quantities.
+the log of a lognormal random variable, and $\rho$ for a correlation.
 
 Individual state changes only at discrete times. A quantity written as a
 function of time, such as $a_i(t)$, is its value during the timestep
@@ -227,7 +226,7 @@ records it at the moment of infection. $z_i^{\mathrm{inf}}$ reduces the
 viral load of this infection ([Viral load over time](#sec-viral-load-over-time)).
 $\tau_i^{\mathrm{inf}}$ is the time since infection and
 $\tau_i^{\mathrm{boost}}$ the time since the most recent immunity boost, both
-in days: every infection boosts immunity.
+in days.
 
 At the same time, the infection's viral load level $\nu_i$ and the size of
 its immunity boost $z_i^{\mathrm{boost}}$ are drawn. Both are lognormal, and
@@ -248,10 +247,6 @@ where $\sigma_\nu$ is the standard deviation of $\log \nu_i$, $\mu_z$ and
 $\sigma_z$ are the mean and standard deviation of $\log z_i^{\mathrm{boost}}$,
 and $\rho \ge 0$ is the correlation between the two logs, so that
 infections with a higher viral load level tend to give larger boosts.
-
-The new boost changes the immunity level at step 3
-([Advancing individuals](#sec-advance)); it does not affect the viral load
-of the infection that caused it, which depends on $z_i^{\mathrm{inf}}$.
 
 The mean of $\log \nu_i$ is fixed at 0, so that the viral load of a typical
 infection (with the median level, $\nu_i = 1$, and no immunity) peaks at 1.
@@ -284,9 +279,7 @@ g(\tau) = \exp\left(-\frac{\left(\log (\tau / \tau_{\mathrm{peak}})\right)^2}{2 
 \qquad g(0) = 0
 ```
 
-where $w$ is the width of the profile on the log time scale. The profile
-is not a probability density, and $w$ is not a standard deviation of a
-random variable.
+where $w$ is the width of the profile on the log time scale.
 
 Because $g(0) = 0$, an individual has $V_i = 0$ during the timestep in
 which they are infected, so cannot transmit until the next timestep.
@@ -310,11 +303,10 @@ proportional to $g$, which is a lognormal density:
   \mathrm{LogNormal}\left(\log \tau_{\mathrm{peak}} + w^2,\ w\right)
 ```
 
-The meanlog is $\log \tau_{\mathrm{peak}} + w^2$, not
-$\log \tau_{\mathrm{peak}}$, because a lognormal density is $g(\tau)$
-divided by $\tau$, up to a constant. This holds apart from the truncation at
-recovery ([Duration of infection](#sec-duration)) and the discrete
-timesteps.
+The meanlog exceeds $\log \tau_{\mathrm{peak}}$ by $w^2$ because a
+lognormal density is $g(\tau)$ divided by $\tau$, up to a constant. This
+holds apart from the truncation at recovery
+([Duration of infection](#sec-duration)) and the discrete timesteps.
 
 <a id="sec-immunity"></a>
 
@@ -333,13 +325,11 @@ X_i \leftarrow 0
 where $\theta$ is the recovery threshold, a fixed fraction of the peak
 viral load of a typical infection. The viral load is the one calculated at
 step 3 of the previous timestep ([Advancing individuals](#sec-advance)).
-Recovery ends transmission and allows reinfection; it does not change
-immunity.
+Recovery ends transmission and allows reinfection.
 
 Immunity is boosted at infection ([Infection](#sec-infection)). A boost
-sets immunity to the size of the boost, whatever immunity remained. Immunity then
-declines linearly with time since the boost, and is lost after
-$D_{\mathrm{imm}}$ days:
+sets immunity to the size of the boost. Immunity then declines linearly
+with time since the boost, and is lost after $D_{\mathrm{imm}}$ days:
 
 <a id="eq-immunity"></a>
 
@@ -360,8 +350,7 @@ time since the boost reaches $D_{\mathrm{imm}}$.
 
 ### Duration of infection
 
-The duration of infection is not a parameter, but follows from the viral
-load. Setting $V_i = \theta$ in the
+The duration of infection follows from the viral load. Setting $V_i = \theta$ in the
 [viral load equation](#eq-viral-load) gives the time since infection at
 which viral load falls below $\theta$:
 
